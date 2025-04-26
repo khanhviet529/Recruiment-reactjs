@@ -1,0 +1,94 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $border-radius;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &--primary {
+    background-color: $primary-color;
+    color: white;
+
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+
+  &--secondary {
+    background-color: $secondary-color;
+    color: white;
+
+    &:hover {
+      background-color: darken($secondary-color, 10%);
+    }
+  }
+
+  &--outline {
+    border: 1px solid $primary-color;
+    color: $primary-color;
+    background-color: transparent;
+
+    &:hover {
+      background-color: rgba($primary-color, 0.1);
+    }
+  }
+
+  &--danger {
+    background-color: $danger-color;
+    color: white;
+
+    &:hover {
+      background-color: darken($danger-color, 10%);
+    }
+  }
+
+  &--success {
+    background-color: $success-color;
+    color: white;
+
+    &:hover {
+      background-color: darken($success-color, 10%);
+    }
+  }
+
+  &--warning {
+    background-color: $warning-color;
+    color: white;
+
+    &:hover {
+      background-color: darken($warning-color, 10%);
+    }
+  }
+
+  &--info {
+    background-color: $info-color;
+    color: white;
+
+    &:hover {
+      background-color: darken($info-color, 10%);
+    }
+  }
+
+  &--sm {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+  }
+
+  &--lg {
+    padding: $spacing-md $spacing-lg;
+    font-size: $font-size-lg;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &__icon {
+    margin-right: $spacing-sm;
+  }
+} 

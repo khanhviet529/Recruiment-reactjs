@@ -1,0 +1,203 @@
+.employer-dashboard {
+  padding: 20px;
+
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+
+    h1 {
+      margin: 0;
+      color: #333;
+    }
+
+    .logout-button {
+      padding: 8px 16px;
+      background-color: #ff4d4f;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: #ff7875;
+      }
+    }
+  }
+
+  .quick-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      h3 {
+        margin: 0 0 10px 0;
+        color: #666;
+        font-size: 16px;
+      }
+
+      p {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+        color: #1890ff;
+      }
+    }
+  }
+
+  .dashboard-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .recent-applications,
+    .active-jobs {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+
+        h2 {
+          margin: 0;
+          color: #333;
+          font-size: 18px;
+        }
+
+        .view-all-btn,
+        .create-job-btn {
+          padding: 6px 12px;
+          background-color: #1890ff;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 14px;
+          transition: background-color 0.3s;
+
+          &:hover {
+            background-color: #40a9ff;
+          }
+        }
+      }
+
+      .applications-list,
+      .jobs-list {
+        .application-item,
+        .job-item {
+          padding: 15px;
+          border-bottom: 1px solid #f0f0f0;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .job-title {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+          }
+
+          .candidate-name {
+            color: #666;
+            margin-bottom: 5px;
+          }
+
+          .application-date {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 5px;
+          }
+
+          .application-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+
+            &.pending {
+              background-color: #fff7e6;
+              color: #fa8c16;
+            }
+
+            &.reviewed {
+              background-color: #e6f7ff;
+              color: #1890ff;
+            }
+
+            &.accepted {
+              background-color: #f6ffed;
+              color: #52c41a;
+            }
+
+            &.rejected {
+              background-color: #fff1f0;
+              color: #f5222d;
+            }
+          }
+
+          .job-stats {
+            display: flex;
+            gap: 15px;
+            margin: 10px 0;
+            color: #666;
+            font-size: 14px;
+          }
+
+          .job-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+
+            button {
+              padding: 4px 8px;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+              font-size: 14px;
+              transition: all 0.3s;
+
+              &.view-btn {
+                background-color: #e6f7ff;
+                color: #1890ff;
+
+                &:hover {
+                  background-color: #bae7ff;
+                }
+              }
+
+              &.edit-btn {
+                background-color: #fff7e6;
+                color: #fa8c16;
+
+                &:hover {
+                  background-color: #ffd591;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+} 

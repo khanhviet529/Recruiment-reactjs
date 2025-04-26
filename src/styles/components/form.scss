@@ -1,0 +1,140 @@
+.form {
+  &__group {
+    margin-bottom: $spacing-lg;
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: $spacing-xs;
+    color: $text-secondary;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+  }
+
+  &__input {
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    font-size: $font-size-base;
+    color: $text-primary;
+    background-color: $bg-primary;
+    transition: all 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    }
+
+    &::placeholder {
+      color: $text-tertiary;
+    }
+
+    &:disabled {
+      background-color: $bg-secondary;
+      cursor: not-allowed;
+    }
+  }
+
+  &__error {
+    color: $danger-color;
+    font-size: $font-size-sm;
+    margin-top: $spacing-xs;
+  }
+
+  &__help {
+    color: $text-secondary;
+    font-size: $font-size-sm;
+    margin-top: $spacing-xs;
+  }
+
+  &__checkbox {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+
+    input[type="checkbox"] {
+      width: 1rem;
+      height: 1rem;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      cursor: pointer;
+    }
+
+    label {
+      margin: 0;
+      cursor: pointer;
+    }
+  }
+
+  &__radio {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+
+    input[type="radio"] {
+      width: 1rem;
+      height: 1rem;
+      border: 1px solid $border-color;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    label {
+      margin: 0;
+      cursor: pointer;
+    }
+  }
+
+  &__select {
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    font-size: $font-size-base;
+    color: $text-primary;
+    background-color: $bg-primary;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    }
+
+    &:disabled {
+      background-color: $bg-secondary;
+      cursor: not-allowed;
+    }
+  }
+
+  &__textarea {
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    font-size: $font-size-base;
+    color: $text-primary;
+    background-color: $bg-primary;
+    transition: all 0.2s ease;
+    resize: vertical;
+    min-height: 100px;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    }
+
+    &::placeholder {
+      color: $text-tertiary;
+    }
+
+    &:disabled {
+      background-color: $bg-secondary;
+      cursor: not-allowed;
+    }
+  }
+} 

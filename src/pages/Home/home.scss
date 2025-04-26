@@ -1,0 +1,123 @@
+.home {
+  &__hero {
+    background: linear-gradient(to right, $blue-600, $indigo-700);
+    padding: $spacing-xl 0;
+
+    &-container {
+      max-width: $max-w-7xl;
+      margin: 0 auto;
+      padding: 0 $spacing-4;
+    }
+
+    &-title {
+      text-align: center;
+      color: $white;
+      font-size: $font-size-4xl;
+      font-weight: $font-weight-bold;
+      margin-bottom: $spacing-8;
+
+      span {
+        color: $yellow-400;
+      }
+    }
+
+    &-search {
+      max-width: $max-w-2xl;
+      margin: 0 auto;
+      background: $white;
+      border-radius: $border-radius-lg;
+      box-shadow: $shadow-lg;
+      padding: $spacing-4;
+
+      &-input {
+        width: 100%;
+        padding: $spacing-2 $spacing-4;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        font-size: $font-size-base;
+
+        &:focus {
+          outline: none;
+          border-color: $indigo-500;
+          box-shadow: 0 0 0 2px rgba($indigo-500, 0.2);
+        }
+      }
+
+      &-button {
+        padding: $spacing-2 $spacing-6;
+        background: $indigo-600;
+        color: $white;
+        border-radius: $border-radius;
+        display: flex;
+        align-items: center;
+        gap: $spacing-2;
+
+        &:hover {
+          background: $indigo-700;
+        }
+      }
+
+      &-reset {
+        padding: $spacing-2;
+        color: $gray-600;
+
+        &:hover {
+          color: $gray-900;
+        }
+      }
+
+      &-footer {
+        margin-top: $spacing-4;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        &-link {
+          font-size: $font-size-sm;
+          color: $indigo-600;
+
+          &:hover {
+            color: $indigo-800;
+          }
+        }
+
+        &-register {
+          font-size: $font-size-sm;
+          color: $white;
+          background: $green-600;
+          padding: $spacing-2 $spacing-4;
+          border-radius: $border-radius;
+
+          &:hover {
+            background: $green-700;
+          }
+        }
+      }
+    }
+  }
+
+  &__section {
+    padding: $spacing-12 0;
+
+    &-title {
+      font-size: $font-size-2xl;
+      font-weight: $font-weight-bold;
+      color: $gray-900;
+      margin-bottom: $spacing-8;
+    }
+
+    &--white {
+      background: $white;
+    }
+
+    &--gray {
+      background: $gray-50;
+    }
+  }
+
+  &__container {
+    max-width: $max-w-7xl;
+    margin: 0 auto;
+    padding: 0 $spacing-4;
+  }
+} 

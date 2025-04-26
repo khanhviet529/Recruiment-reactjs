@@ -1,0 +1,102 @@
+.footer {
+  background-color: $bg-primary;
+  padding: $spacing-xl 0;
+  margin-top: $spacing-xl;
+
+  &__container {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: $spacing-xl;
+
+    @include responsive(md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include responsive(lg) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  &__section {
+    h3 {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      margin-bottom: $spacing-md;
+      color: $text-primary;
+    }
+
+    p {
+      color: $text-secondary;
+      margin-bottom: $spacing-md;
+    }
+  }
+
+  &__social {
+    display: flex;
+    gap: $spacing-md;
+    margin-top: $spacing-md;
+
+    a {
+      color: $text-secondary;
+      font-size: $font-size-xl;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: $primary-color;
+      }
+    }
+  }
+
+  &__links {
+    list-style: none;
+
+    li {
+      margin-bottom: $spacing-sm;
+    }
+
+    a {
+      color: $text-secondary;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: $primary-color;
+      }
+    }
+  }
+
+  &__bottom {
+    margin-top: $spacing-xl;
+    padding-top: $spacing-lg;
+    border-top: 1px solid $border-color;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    @include responsive(md) {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  &__copyright {
+    color: $text-secondary;
+    font-size: $font-size-sm;
+  }
+
+  &__legal {
+    display: flex;
+    gap: $spacing-md;
+    flex-wrap: wrap;
+
+    a {
+      color: $text-secondary;
+      font-size: $font-size-sm;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: $primary-color;
+      }
+    }
+  }
+} 

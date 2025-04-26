@@ -1,0 +1,68 @@
+.admin-dashboard {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+
+  .admin-dashboard-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px;
+
+    h2 {
+      color: #1a1a1a;
+      margin-bottom: 24px;
+    }
+  }
+
+  .dashboard-header {
+    margin-bottom: 2rem;
+
+    h1 {
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+
+    .quick-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+
+      .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        h3 {
+          color: #666;
+          font-size: 1rem;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          color: #1890ff;
+          font-size: 2rem;
+          font-weight: 600;
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  .dashboard-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+
+    > div {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      h2 {
+        color: #333;
+        margin-bottom: 1rem;
+      }
+    }
+  }
+} 

@@ -1,0 +1,38 @@
+.card {
+  background: $bg-primary;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  padding: $spacing-lg;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+
+  &__header {
+    margin-bottom: $spacing-md;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: $text-secondary;
+  }
+
+  &__body {
+    margin-bottom: $spacing-md;
+  }
+
+  &__footer {
+    margin-top: $spacing-md;
+    padding-top: $spacing-md;
+    border-top: 1px solid $border-color;
+  }
+} 
