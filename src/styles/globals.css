@@ -1,0 +1,139 @@
+/* Thêm vào cuối file */
+
+/* Print styles for CV */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 1cm;
+  }
+
+  /* Reset body */
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: visible !important;
+    background: white !important;
+  }
+  
+  /* Hide everything first */
+  body * {
+    visibility: hidden !important;
+  }
+  
+  /* Make CV content visible */
+  .printing .cv-template-1,
+  .printing .cv-template-1 *,
+  .printing .cv-template-2,
+  .printing .cv-template-2 *,
+  .printing .cv-template-3,
+  .printing .cv-template-3 * {
+    visibility: visible !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  
+  /* Position CV at the top */
+  .printing .cv-template-1,
+  .printing .cv-template-2,
+  .printing .cv-template-3 {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  
+  /* Hide non-printable elements */
+  .printing .print-hide,
+  .printing .cv-actions,
+  .printing button,
+  .printing .ant-btn,
+  .printing .ant-modal-close,
+  .printing .ant-modal-header,
+  .printing .ant-modal-footer,
+  .printing .ant-tabs-nav {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* Remove shadows and borders */
+  .printing .cv-card {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  
+  /* Format modal content properly */
+  .printing .ant-modal,
+  .printing .ant-modal-wrap,
+  .printing .ant-modal-content,
+  .printing .ant-modal-body {
+    position: static !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background: white !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* Ensure all sections are visible and not cut off */
+  .printing .cv-section,
+  .printing .main-section,
+  .printing .sidebar-section,
+  .printing .cv-body,
+  .printing .cv-columns,
+  .printing .cv-column,
+  .printing .cv-container,
+  .printing .section-content,
+  .printing .cv-header {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    position: relative !important;
+  }
+  
+  /* Ensure proper page breaks between major sections */
+  .printing .experience-item,
+  .printing .education-item,
+  .printing .project-item,
+  .printing .certification-item {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  
+  /* Hide scrollbars */
+  .printing ::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  .printing * {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+  
+  /* Hide ant-design tabs that aren't selected */
+  .printing .ant-tabs-content > .ant-tabs-tabpane:not(.ant-tabs-tabpane-active) {
+    display: none !important;
+  }
+  
+  /* Ensure ant tabs content displays properly */
+  .printing .ant-tabs-content {
+    height: auto !important;
+    overflow: visible !important;
+  }
+} 

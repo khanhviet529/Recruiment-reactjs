@@ -1,0 +1,188 @@
+.cv-template-3 {
+  font-family: 'Roboto', 'Arial', sans-serif;
+  
+  .cv-card {
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0;
+  }
+  
+  .cv-header {
+    background: #2c3e50;
+    color: #fff;
+    padding: 40px;
+    
+    .cv-name {
+      font-size: 36px;
+      font-weight: 300;
+      margin: 0 0 10px;
+    }
+    
+    .cv-headline {
+      font-size: 18px;
+      font-weight: 400;
+      margin: 0 0 20px;
+      opacity: 0.9;
+    }
+    
+    .cv-contact {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      
+      .contact-item {
+        margin-right: 20px;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        
+        i {
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+  
+  .cv-body {
+    padding: 30px;
+  }
+  
+  .cv-section {
+    margin-bottom: 30px;
+    
+    .section-title {
+      color: #2c3e50;
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e7e7e7;
+    }
+  }
+  
+  .cv-columns {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 30px;
+    
+    .cv-column {
+      flex: 1 1 48%;
+      min-width: 300px;
+      
+      &:first-child {
+        margin-right: 4%;
+      }
+    }
+  }
+  
+  .item-header {
+    margin-bottom: 10px;
+    
+    .item-title {
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0 0 5px;
+      color: #2c3e50;
+    }
+    
+    .item-subtitle {
+      font-size: 16px;
+      margin: 0 0 5px;
+      color: #34495e;
+    }
+    
+    .item-date {
+      font-size: 14px;
+      color: #7f8c8d;
+      margin: 0 0 5px;
+    }
+  }
+  
+  .item-description {
+    margin: 0 0 20px;
+    line-height: 1.6;
+  }
+  
+  .experience-item,
+  .education-item,
+  .project-item,
+  .certification-item,
+  .reference-item {
+    margin-bottom: 20px;
+  }
+  
+  .skills-container,
+  .interests-container,
+  .tech-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    
+    .skill-tag,
+    .interest-tag,
+    .tech-tag {
+      background: #e7f5ff;
+      color: #2c3e50;
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+  }
+  
+  .language-item {
+    margin-bottom: 10px;
+    
+    .language-name {
+      font-weight: 500;
+      display: inline-block;
+    }
+    
+    .language-level {
+      margin-left: 10px;
+      color: #7f8c8d;
+    }
+    
+    .language-description {
+      margin-top: 5px;
+      font-size: 14px;
+    }
+  }
+  
+  .cv-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
+  }
+  
+  @media print {
+    .print-hide {
+      display: none !important;
+    }
+    
+    body * {
+      visibility: hidden;
+    }
+    
+    .cv-template-3,
+    .cv-template-3 * {
+      visibility: visible;
+    }
+    
+    .cv-template-3 {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .cv-card {
+      box-shadow: none !important;
+      border: none !important;
+      padding: 0 !important;
+    }
+  }
+} 

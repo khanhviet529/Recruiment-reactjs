@@ -1,0 +1,248 @@
+// Select2 Base Styles
+.select2-container--default {
+  .select2-selection--multiple,
+  .select2-selection--single {
+    border-radius: 50rem;
+    border: 1px solid #dee2e6;
+
+    &:focus {
+      border-color: #86b7fe;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+  }
+
+  .select2-selection--multiple {
+    .select2-selection__choice {
+      background-color: #e7f1ff;
+      border-color: #d0e2ff;
+      color: #0d6efd;
+      border-radius: 50rem;
+      padding: 2px 8px;
+
+      &__remove {
+        color: #0d6efd;
+        margin-right: 5px;
+
+        &:hover {
+          // background-color: #0d6efd;
+          color: white;
+        }
+      }
+    }
+  }
+
+  .select2-results__option {
+    &--highlighted[aria-selected] {
+      background-color: #f8f9fa;
+      color: #212529;
+    }
+
+    &[aria-selected=true] {
+      background-color: #e7f1ff;
+      color: #0d6efd;
+      position: relative;
+
+      &::after {
+        content: "✓";
+        position: absolute;
+        right: 10px;
+        color: #0d6efd;
+      }
+    }
+  }
+}
+
+// Blue Select2 Theme
+.blue-select2-container {
+  .select2-selection--single,
+  .select2-selection--multiple {
+    // background-color: #0073e6;
+    color: white;
+  }
+
+  .select2-selection__placeholder {
+    color: white;
+  }
+
+  .select2-selection__arrow b {
+    border-color: white transparent transparent transparent;
+  }
+
+  .select2-selection--multiple {
+    .select2-selection__choice {
+      background-color: transparent;
+      border: none;
+      color: white;
+
+      &__remove {
+        color: white;
+      }
+    }
+  }
+
+  .select2-selection__rendered {
+    color: white;
+  }
+}
+
+// Custom Dropdown Styles
+.custom-select2-dropdown {
+  .select2-results__option {
+    padding: 8px 12px;
+
+    &--highlighted[aria-selected] {
+      background-color: #f5f7fa;
+      color: #0073e6;
+    }
+  }
+}
+
+// Search Field Styles
+.select2-search--dropdown .select2-search__field {
+  padding: 8px 10px;
+  border-radius: 4px;
+}
+
+// Selected Count Badge
+.selected-count {
+  background-color: white;
+  color: #0073e6;
+  border-radius: 50%;
+  padding: 0 6px;
+  font-size: 12px;
+  margin-left: 5px;
+  min-width: 20px;
+  text-align: center;
+  display: inline-block;
+}
+
+// Selected Filter Styles
+.selected-filter {
+  display: inline-flex;
+  align-items: center;
+  background-color: #e7f1ff;
+  color: #0d6efd;
+  border-radius: 50rem;
+  padding: 2px 8px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: #d0e2ff;
+  }
+}
+
+// Custom Wrapper and Container
+.custom-select2-wrapper {
+  width: 100%;
+}
+
+.custom-select2 {
+  width: 100%;
+}
+
+// Location Select Specific Styles
+#location-select {
+  & + .select2-container {
+    .select2-search__field {
+      padding-left: 10px;
+      font-style: italic;
+    }
+
+    .select2-dropdown {
+      margin-top: 5px;
+      border-radius: 8px;
+    }
+  }
+}
+
+// Multiple Selection Rendered
+.select2-container--default .select2-selection--multiple {
+  .select2-selection__rendered {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  .select2-selection__choice {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    & + .select2-selection__choice {
+      display: none;
+    }
+  }
+
+  .select2-selection__choice__remove {
+    display: none;
+  }
+}
+
+// Search Form Styles
+.search-section {
+  .search-form {
+    .input-group {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-radius: 50rem;
+      overflow: hidden;
+
+      .search-input {
+        border: none;
+        padding: 0.75rem 1.25rem;
+        font-size: 1rem;
+
+        &:focus {
+          box-shadow: none;
+        }
+      }
+
+      .search-button {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        background-color: #0073e6;
+        color: white;
+
+        &:hover {
+          background-color: #005bb5;
+        }
+      }
+
+      .advanced-search-toggle {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        background-color: #f8f9fa;
+        color: #0073e6;
+
+        &:hover {
+          background-color: #e9ecef;
+        }
+      }
+    }
+  }
+
+  .advanced-search {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+
+    &.show {
+      max-height: 1000px;
+      padding: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+
+      .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #495057;
+      }
+    }
+  }
+} 

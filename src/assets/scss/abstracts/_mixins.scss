@@ -1,0 +1,149 @@
+// Mixins for the application
+
+// Media Queries
+@mixin respond-to($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @warn "Invalid breakpoint: #{$breakpoint}. Available breakpoints: #{map-keys($breakpoints)}.";
+  }
+}
+
+// Flexbox
+@mixin flex($direction: row, $justify: center, $align: center, $wrap: nowrap) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+  flex-wrap: $wrap;
+}
+
+// Grid
+@mixin grid($columns: 1, $gap: $spacer) {
+  display: grid;
+  grid-template-columns: repeat($columns, 1fr);
+  gap: $gap;
+}
+
+// Typography
+@mixin heading-font {
+  font-family: $font-family-heading;
+  font-weight: $font-weight-semibold;
+  line-height: 1.2;
+}
+
+@mixin body-font {
+  font-family: $font-family-base;
+  font-weight: $font-weight-normal;
+  line-height: 1.5;
+}
+
+@mixin font-size($size, $weight: null) {
+  font-size: $size;
+  @if $weight {
+    font-weight: $weight;
+  }
+}
+
+// Buttons
+@mixin button-style($bg-color, $text-color, $border-color: $bg-color) {
+  background-color: $bg-color;
+  color: $text-color;
+  border-color: $border-color;
+  border-radius: $border-radius;
+  padding: 0.5rem 1.25rem;
+  font-weight: $font-weight-medium;
+  transition: $transition-base;
+  
+  &:hover {
+    background-color: darken($bg-color, 7%);
+    border-color: darken($border-color, 7%);
+  }
+  
+  &:active, &:focus {
+    background-color: darken($bg-color, 10%);
+    border-color: darken($border-color, 10%);
+    box-shadow: 0 0 0 0.2rem rgba($bg-color, 0.25);
+  }
+}
+
+// Cards
+@mixin card-style($bg: $bg-primary, $shadow: $box-shadow, $radius: $border-radius) {
+  background-color: $bg;
+  border-radius: $radius;
+  box-shadow: $shadow;
+  overflow: hidden;
+}
+
+// Form Fields
+@mixin form-field {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  background-color: $bg-primary;
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  transition: $transition-base;
+  
+  &:focus {
+    border-color: $primary;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($primary, 0.1);
+  }
+  
+  &::placeholder {
+    color: $text-muted;
+  }
+}
+
+// Animations
+@mixin fade-in($duration: 0.3s, $delay: 0s) {
+  animation: fadeIn $duration ease-in-out $delay forwards;
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+@mixin slide-up($duration: 0.3s, $delay: 0s, $distance: 20px) {
+  animation: slideUp $duration ease-in-out $delay forwards;
+  
+  @keyframes slideUp {
+    from { 
+      opacity: 0; 
+      transform: translateY($distance);
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0);
+    }
+  }
+}
+
+// Truncate text with ellipsis
+@mixin truncate($lines: 1) {
+  @if $lines == 1 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// Position utilities
+@mixin position-absolute($top: null, $right: null, $bottom: null, $left: null) {
+  position: absolute;
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+  left: $left;
+}

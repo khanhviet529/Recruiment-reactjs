@@ -1,0 +1,202 @@
+// Card Component Styles
+
+// Base Card
+.card {
+  @include card-style;
+  margin-bottom: 1.5rem;
+  background-color: white;
+  border: 1px solid $border-light;
+  
+  // Card Body
+  .card-body {
+    padding: 1.25rem;
+    
+    &.p-4 {
+      padding: 1.5rem !important;
+    }
+    
+    &.p-5 {
+      padding: 3rem !important;
+    }
+  }
+  
+  // Card Header
+  .card-header {
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 0;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid $border-light;
+    
+    &:first-child {
+      border-radius: calc(#{$border-radius} - 1px) calc(#{$border-radius} - 1px) 0 0;
+    }
+  }
+  
+  // Card Footer
+  .card-footer {
+    padding: 0.75rem 1.25rem;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-top: 1px solid $border-light;
+    
+    &:last-child {
+      border-radius: 0 0 calc(#{$border-radius} - 1px) calc(#{$border-radius} - 1px);
+    }
+  }
+  
+  // Card Title
+  .card-title {
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+  }
+  
+  // Card Subtitle
+  .card-subtitle {
+    margin-top: -0.375rem;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    color: $text-secondary;
+  }
+  
+  // Card Text
+  .card-text {
+    margin-bottom: 1rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  // Card Image
+  .card-img-top {
+    width: 100%;
+    border-top-left-radius: calc(#{$border-radius} - 1px);
+    border-top-right-radius: calc(#{$border-radius} - 1px);
+  }
+  
+  .card-img-bottom {
+    width: 100%;
+    border-bottom-right-radius: calc(#{$border-radius} - 1px);
+    border-bottom-left-radius: calc(#{$border-radius} - 1px);
+  }
+}
+
+// Card with Shadow
+.card.shadow-sm {
+  box-shadow: $box-shadow-sm !important;
+  border: none;
+}
+
+.card.shadow {
+  box-shadow: $box-shadow !important;
+  border: none;
+}
+
+.card.shadow-lg {
+  box-shadow: $box-shadow-lg !important;
+  border: none;
+}
+
+// Card Variants
+.card-primary {
+  background-color: $primary;
+  color: white;
+  
+  .card-title, .card-subtitle {
+    color: white;
+  }
+}
+
+.card-secondary {
+  background-color: $secondary;
+  color: white;
+  
+  .card-title, .card-subtitle {
+    color: white;
+  }
+}
+
+// Auth Cards (used for login/register)
+.auth-card {
+  max-width: 460px;
+  margin: 0 auto;
+  border: none;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow;
+  overflow: hidden;
+  transition: $transition-base;
+  
+  .card-body {
+    padding: 2.5rem;
+  }
+  
+  .auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    
+    .logo {
+      margin-bottom: 1rem;
+      max-height: 60px;
+    }
+    
+    .title {
+      font-size: 1.75rem;
+      font-weight: $font-weight-bold;
+      color: $text-primary;
+      margin-bottom: 0.5rem;
+    }
+    
+    .subtitle {
+      font-size: 1rem;
+      color: $text-secondary;
+    }
+  }
+  
+  .divider {
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
+    
+    &::before, 
+    &::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid $border-light;
+    }
+    
+    .divider-text {
+      padding: 0 1rem;
+      color: $text-secondary;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  }
+  
+  .card-footer {
+    background-color: transparent;
+    border-top: none;
+    text-align: center;
+    padding-top: 0;
+    
+    .link {
+      color: $primary;
+      text-decoration: none;
+      font-weight: $font-weight-medium;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// Responsive Card Adjustments
+@media (max-width: 767.98px) {
+  .auth-card {
+    .card-body {
+      padding: 1.5rem;
+    }
+  }
+}

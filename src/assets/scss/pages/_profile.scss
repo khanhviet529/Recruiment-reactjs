@@ -1,0 +1,159 @@
+.candidate-profile-page, .employer-profile-page, .admin-profile-page {
+  .profile-header {
+    margin-bottom: 2rem;
+    
+    .profile-avatar-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      
+      .profile-avatar {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        margin-bottom: 0.75rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        
+        &:not(img) { // For the div avatar placeholder
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 3rem;
+        }
+      }
+    }
+    
+    .profile-info {
+      h2 {
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+      
+      .text-muted {
+        font-size: 1.1rem;
+      }
+      
+      .contact-info {
+        margin: 1rem 0;
+        display: flex;
+        flex-wrap: wrap;
+        
+        div {
+          margin-right: 1.5rem;
+          margin-bottom: 0.5rem;
+          
+          i {
+            color: #4A90E2;
+            width: 20px;
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+  
+  .profile-content {
+    .nav-tabs {
+      border-bottom: 1px solid #dee2e6;
+      margin-bottom: 1.5rem;
+      
+      .nav-item {
+        margin-bottom: -1px;
+      }
+      
+      .nav-link {
+        border: 1px solid transparent;
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+        color: #495057;
+        font-weight: 500;
+        padding: 0.75rem 1.25rem;
+        
+        &:hover {
+          border-color: #e9ecef #e9ecef #dee2e6;
+        }
+        
+        &.active {
+          color: #4A90E2;
+          background-color: #fff;
+          border-color: #dee2e6 #dee2e6 #fff;
+          font-weight: 600;
+        }
+      }
+    }
+    
+    .card {
+      margin-bottom: 1.5rem;
+      border: none;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      
+      .card-header {
+        background-color: #fff;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        padding: 1rem 1.5rem;
+        
+        h5 {
+          margin-bottom: 0;
+          font-weight: 600;
+        }
+      }
+      
+      .card-body {
+        padding: 1.5rem;
+      }
+    }
+    
+    .education-item, .experience-item {
+      border-bottom: 1px solid #e9ecef;
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+      
+      &:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
+      
+      h5 {
+        font-weight: 600;
+      }
+    }
+    
+    .skills-list {
+      .badge {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.75rem;
+        font-weight: 500;
+      }
+    }
+    
+    .form-check {
+      margin-bottom: 0.5rem;
+      
+      .form-check-input {
+        margin-top: 0.25rem;
+      }
+    }
+  }
+  
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    .profile-header {
+      .profile-avatar-container {
+        margin-bottom: 1.5rem;
+      }
+    }
+    
+    .profile-content {
+      .nav-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        
+        .nav-link {
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+}

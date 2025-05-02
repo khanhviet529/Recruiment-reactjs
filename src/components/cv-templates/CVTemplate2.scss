@@ -1,0 +1,288 @@
+.cv-template-2 {
+  font-family: 'Roboto', 'Arial', sans-serif;
+  
+  .cv-card {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0;
+    background: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cv-container {
+    display: flex;
+  }
+  
+  .cv-sidebar {
+    width: 280px;
+    background: #34495e;
+    color: white;
+    padding: 30px 20px;
+    
+    .cv-avatar {
+      text-align: center;
+      margin-bottom: 30px;
+      
+      img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 5px solid #2c3e50;
+        object-fit: cover;
+      }
+      
+      .avatar-placeholder {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 5px solid #2c3e50;
+        background: white;
+        color: #34495e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        font-weight: bold;
+        margin: 0 auto;
+      }
+    }
+    
+    .sidebar-section {
+      margin-bottom: 30px;
+      
+      h2 {
+        color: white;
+        font-size: 18px;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      
+      .contact-info {
+        .contact-item {
+          display: flex;
+          align-items: center;
+          margin-bottom: 10px;
+          
+          i {
+            margin-right: 10px;
+            width: 20px;
+          }
+        }
+      }
+      
+      .skill-item, 
+      .interest-item {
+        margin-bottom: 10px;
+      }
+      
+      .certification-item {
+        margin-bottom: 20px;
+        
+        h3 {
+          margin: 0 0 5px;
+          font-size: 16px;
+        }
+        
+        .cert-issuer {
+          margin: 0 0 5px;
+          font-size: 14px;
+          opacity: 0.8;
+        }
+        
+        .cert-date {
+          margin: 0 0 5px;
+          font-size: 14px;
+          opacity: 0.7;
+        }
+      }
+      
+      .language-item {
+        margin-bottom: 10px;
+        
+        .language-name {
+          font-weight: 500;
+        }
+        
+        .language-level {
+          opacity: 0.8;
+          font-size: 14px;
+          display: block;
+          margin-top: 3px;
+        }
+      }
+    }
+  }
+  
+  .cv-main {
+    flex: 1;
+    padding: 30px;
+    
+    .cv-header {
+      margin-bottom: 30px;
+      text-align: center;
+      
+      h1 {
+        margin: 0 0 10px;
+        color: #2c3e50;
+        font-size: 28px;
+      }
+      
+      .cv-title {
+        color: #7f8c8d;
+        font-size: 18px;
+        margin: 0;
+      }
+    }
+    
+    .main-section {
+      margin-bottom: 30px;
+      
+      h2 {
+        color: #2c3e50;
+        font-size: 18px;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #ecf0f1;
+      }
+      
+      .experience-item,
+      .education-item,
+      .project-item {
+        margin-bottom: 20px;
+        
+        .experience-header,
+        .education-header,
+        .project-header {
+          margin-bottom: 10px;
+          
+          h3 {
+            margin: 0 0 5px;
+            color: #2c3e50;
+            font-size: 18px;
+          }
+          
+          .experience-company,
+          .education-school {
+            margin: 0 0 5px;
+            font-size: 16px;
+            color: #34495e;
+          }
+          
+          .experience-date,
+          .education-date,
+          .project-date {
+            margin: 0;
+            font-size: 14px;
+            color: #7f8c8d;
+          }
+        }
+        
+        .experience-description,
+        .education-description,
+        .project-description {
+          margin: 0;
+          line-height: 1.6;
+        }
+        
+        .project-technologies {
+          margin-top: 10px;
+          
+          .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+            
+            .tech-tag {
+              background: #f5f5f5;
+              color: #2c3e50;
+              padding: 3px 10px;
+              border-radius: 3px;
+              font-size: 14px;
+            }
+          }
+        }
+      }
+      
+      .references-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        
+        .reference-item {
+          flex: 1 1 45%;
+          min-width: 200px;
+          background: #f8f9fa;
+          padding: 15px;
+          border-radius: 5px;
+          
+          h3 {
+            margin: 0 0 5px;
+            color: #2c3e50;
+            font-size: 16px;
+          }
+          
+          .reference-position {
+            margin: 0 0 5px;
+            font-size: 14px;
+            color: #34495e;
+          }
+          
+          .reference-email,
+          .reference-phone {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #7f8c8d;
+          }
+        }
+      }
+    }
+  }
+  
+  .cv-actions {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    padding: 0 20px 20px;
+  }
+  
+  @media print {
+    .print-hide {
+      display: none !important;
+    }
+    
+    body * {
+      visibility: hidden;
+    }
+    
+    .cv-template-2,
+    .cv-template-2 * {
+      visibility: visible;
+    }
+    
+    .cv-template-2 {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .cv-card {
+      box-shadow: none !important;
+      border: none !important;
+      padding: 0 !important;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .cv-container {
+      flex-direction: column;
+    }
+    
+    .cv-sidebar {
+      width: 100%;
+    }
+  }
+} 

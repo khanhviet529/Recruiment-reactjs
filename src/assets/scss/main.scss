@@ -1,0 +1,40 @@
+// Main SCSS File
+
+// Abstracts
+@import 'abstracts/variables';
+@import 'abstracts/mixins';
+@import 'abstracts/functions';
+
+// Base styles
+@import 'base/reset';
+@import 'base/typography';
+@import 'base/utilities';
+
+// Components
+@import 'components/buttons';
+@import 'components/forms';
+@import 'components/cards';
+@import 'components/alerts';
+@import 'components/header';
+// @import 'components/modals';
+// @import 'components/navigation';
+
+// Layouts
+@import 'layouts/header';
+@import 'layouts/footer';
+// @import 'layouts/sidebar';
+@import 'layouts/grid';
+
+// Pages
+@import 'pages/home';
+@import 'pages/auth';  // Login and Register styles
+@import 'pages/dashboard';
+@import 'pages/profile';
+@import 'pages/jobs';
+@import 'pages/applications';
+
+// Themes
+@import 'themes/default';
+
+// Vendors
+// Add any third-party styles overrides here

@@ -1,0 +1,192 @@
+.cv-template-1 {
+  font-family: 'Roboto', 'Arial', sans-serif;
+  
+  .cv-card {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cv-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    
+    .cv-avatar {
+      width: 120px;
+      height: 120px;
+      margin-right: 30px;
+      
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid #eee;
+      }
+      
+      .avatar-placeholder {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: #f0f0f0;
+        color: #888;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+      }
+    }
+    
+    .cv-title {
+      flex: 1;
+      
+      h1 {
+        margin: 0 0 10px;
+        color: #333;
+        font-size: 28px;
+      }
+      
+      .position {
+        margin: 0;
+        color: #777;
+        font-size: 18px;
+      }
+    }
+  }
+  
+  .cv-section {
+    margin-bottom: 30px;
+    
+    h2 {
+      color: #333;
+      font-size: 22px;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f5f5f5;
+    }
+    
+    .contact-info {
+      p {
+        margin: 10px 0;
+      }
+    }
+    
+    .summary {
+      line-height: 1.6;
+    }
+    
+    .experience-item,
+    .education-item,
+    .project-item, 
+    .certification-item,
+    .reference-item {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 5px;
+      
+      h3 {
+        margin: 0 0 10px;
+        color: #333;
+        font-size: 18px;
+      }
+      
+      .company,
+      .school,
+      .issuer,
+      .position {
+        margin: 0 0 5px;
+        color: #555;
+        font-weight: 500;
+      }
+      
+      .duration,
+      .date {
+        margin: 0 0 10px;
+        color: #888;
+        font-size: 14px;
+      }
+      
+      .description {
+        margin: 10px 0 0;
+        line-height: 1.6;
+      }
+      
+      .technologies {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+    }
+    
+    .skills, 
+    .interests {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      
+      .skill-tag,
+      .interest-tag {
+        background: #f0f0f0;
+        color: #333;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+      }
+    }
+    
+    .languages {
+      .language-item {
+        margin-bottom: 10px;
+        
+        .language {
+          font-weight: 500;
+        }
+        
+        .proficiency {
+          color: #777;
+        }
+      }
+    }
+  }
+  
+  .cv-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+  }
+  
+  @media print {
+    .print-hide {
+      display: none !important;
+    }
+    
+    body * {
+      visibility: hidden;
+    }
+    
+    .cv-template-1,
+    .cv-template-1 * {
+      visibility: visible;
+    }
+    
+    .cv-template-1 {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .cv-card {
+      box-shadow: none !important;
+      border: none !important;
+      padding: 0 !important;
+    }
+  }
+} 

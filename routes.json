@@ -1,0 +1,23 @@
+{
+  "/auth/login": "/auth/login",
+  "/auth/register": "/auth/register",
+  "/auth/forgot-password": "/auth/forgot-password",
+  "/auth/reset-password": "/auth/reset-password",
+  "/employers/:id/jobs": "/employers/:id/jobs",
+  "/jobs/:id/applications": "/jobs/:id/applications",
+  "/candidates/:id/applications": "/candidates/:id/applications",
+  "/candidates/:id/savedJobs": "/candidates/:id/savedJobs",
+  "/categories/with-jobs-count": "/categories/with-jobs-count",
+  "/users/:id": "/users/:id",
+  "/jobs/:id": "/jobs/:id",
+  "/applications/:id": "/applications/:id",
+  "/employers/:id": "/employers/:id",
+  "/candidates/:id": "/candidates/:id",
+  "/recruitmentStages/:id": "/recruitmentStages/:id",
+  "/messages/:id": "/messages/:id",
+  "/notifications/:id": "/notifications/:id",
+  "/savedJobs/:id": "/savedJobs/:id",
+  "/categories/:id": "/categories/:id",
+  "/skills/:id": "/skills/:id",
+  "/searchHistory/:id": "/searchHistory/:id"
+} 
