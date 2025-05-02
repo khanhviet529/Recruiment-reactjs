@@ -127,3 +127,4 @@ const RecruitmentProcessPage = () => {
 };
 
 export default RecruitmentProcessPage;
+
