@@ -183,8 +183,6 @@ const EmployerProfilePage = () => {
       const employerData = {
         userId: user.id,
         companyName: values.companyName,
-        logo: logoUrl,
-        coverImage: coverUrl,
         description: values.description,
         industry: values.industry,
         companySize: values.companySize,
@@ -207,36 +205,58 @@ const EmployerProfilePage = () => {
         verified: profile?.verified || false
       };
 
-      // Upload logo if changed
+      // Handle logo file upload first if exists
       if (logoFile) {
         const logoFormData = new FormData();
         logoFormData.append('file', logoFile);
+        logoFormData.append('type', 'logo');
         
         try {
-          const logoResponse = await axios.post('http://localhost:5000/upload', logoFormData);
-          employerData.logo = logoResponse.data.url;
-          setLogoUrl(logoResponse.data.url);
+          // For development with mock API
+          if (logoUrl && logoUrl.startsWith('data:')) {
+            employerData.logo = logoUrl; // Use the base64 data directly for now
+          } else {
+            const logoResponse = await axios.post('http://localhost:5000/upload', logoFormData);
+            employerData.logo = logoResponse.data.url;
+          }
         } catch (error) {
           console.error('Error uploading logo:', error);
-          message.error('Không thể tải lên logo. Sử dụng URL hiện tại.');
-          employerData.logo = logoUrl;
+          // Use base64 data if API fails
+          if (logoUrl && logoUrl.startsWith('data:')) {
+            employerData.logo = logoUrl;
+          } else {
+            message.error('Không thể tải lên logo.');
+          }
         }
+      } else if (logoUrl) {
+        employerData.logo = logoUrl;
       }
       
-      // Upload cover image if changed
+      // Handle cover image file upload if exists
       if (coverFile) {
         const coverFormData = new FormData();
         coverFormData.append('file', coverFile);
+        coverFormData.append('type', 'cover');
         
         try {
-          const coverResponse = await axios.post('http://localhost:5000/upload', coverFormData);
-          employerData.coverImage = coverResponse.data.url;
-          setCoverUrl(coverResponse.data.url);
+          // For development with mock API
+          if (coverUrl && coverUrl.startsWith('data:')) {
+            employerData.coverImage = coverUrl; // Use the base64 data directly for now
+          } else {
+            const coverResponse = await axios.post('http://localhost:5000/upload', coverFormData);
+            employerData.coverImage = coverResponse.data.url;
+          }
         } catch (error) {
           console.error('Error uploading cover image:', error);
-          message.error('Không thể tải lên ảnh bìa. Sử dụng URL hiện tại.');
-          employerData.coverImage = coverUrl;
+          // Use base64 data if API fails
+          if (coverUrl && coverUrl.startsWith('data:')) {
+            employerData.coverImage = coverUrl;
+          } else {
+            message.error('Không thể tải lên ảnh bìa.');
+          }
         }
+      } else if (coverUrl) {
+        employerData.coverImage = coverUrl;
       }
       
       // Update user data
@@ -279,9 +299,9 @@ const EmployerProfilePage = () => {
   };
 
   const handleLogoChange = (info) => {
-    if (info.file.status === 'done') {
+    if (info.file) {
       setLogoFile(info.file.originFileObj);
-      // Preview image
+      // Preview image immediately
       getBase64(info.file.originFileObj, url => {
         setLogoUrl(url);
       });
@@ -289,9 +309,9 @@ const EmployerProfilePage = () => {
   };
 
   const handleCoverChange = (info) => {
-    if (info.file.status === 'done') {
+    if (info.file) {
       setCoverFile(info.file.originFileObj);
-      // Preview image
+      // Preview image immediately
       getBase64(info.file.originFileObj, url => {
         setCoverUrl(url);
       });
@@ -479,7 +499,7 @@ const EmployerProfilePage = () => {
                       maxCount={1}
                     >
                       {logoUrl ? (
-                        <img src={logoUrl} alt="Logo" style={{ width: '100%' }} />
+                        <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                       ) : (
                         <div>
                           <PlusOutlined />

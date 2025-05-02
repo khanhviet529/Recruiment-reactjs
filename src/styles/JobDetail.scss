@@ -24,5 +24,51 @@
     transform: scale(1.05);
   }
 
+  // Application form and modal styles
+  .application-step {
+    padding: 15px 5px;
+    min-height: 300px;
+
+    .step-actions {
+      margin-top: 30px;
+    }
+  }
+  
+  // Ant Design modal styles
+  .ant-modal-content {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .ant-modal-header {
+    padding: 16px 24px;
+    
+    .ant-modal-title {
+      .ant-steps {
+        margin-top: 25px;
+      }
+    }
+  }
+  
+  .ant-steps-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  // File upload
+  .ant-upload-list {
+    margin-top: 10px;
+  }
+  
+  .ant-upload-list-item {
+    margin-top: 8px;
+  }
+  
+  // Success step
+  .ant-result {
+    padding: 30px 0;
+  }
+
   // ... rest of existing styles ...
 } 

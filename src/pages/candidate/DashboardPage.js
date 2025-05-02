@@ -70,14 +70,67 @@ const CandidateDashboardPage = () => {
       ];
       
       try {
-        // Try to fetch real data first
-        const [statsRes, applicationsRes] = await Promise.all([
-          axios.get(`http://localhost:5000/candidates/${user.id}/stats`),
-          axios.get(`http://localhost:5000/candidates/${user.id}/applications?limit=5`)
-        ]);
+        // Sửa API endpoint phù hợp với cấu trúc JSON Server hiện tại
+        // Thay vì gọi API chuyên biệt, chúng ta sẽ lấy applications từ API có sẵn và tính toán thống kê
+        let applications = [];
         
-        setStats(statsRes.data);
-        setRecentApplications(applicationsRes.data);
+        // Lấy thông tin ứng viên trước để biết candidateId
+        const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
+        if (candidateResponse.data && candidateResponse.data.length > 0) {
+          const candidateId = candidateResponse.data[0].id;
+          
+          // Lấy danh sách đơn ứng tuyển của ứng viên
+          const applicationsResponse = await axios.get(`http://localhost:5000/applications?candidateId=${candidateId}`);
+          applications = applicationsResponse.data || [];
+          
+          // Lấy thông tin chi tiết của mỗi công việc đã ứng tuyển để hiển thị
+          const processedApplications = await Promise.all(applications.slice(0, 5).map(async (app) => {
+            try {
+              const jobResponse = await axios.get(`http://localhost:5000/jobs/${app.jobId}`);
+              const job = jobResponse.data;
+              
+              // Lấy thông tin công ty
+              const employerResponse = await axios.get(`http://localhost:5000/employers/${job.employerId}`);
+              const employer = employerResponse.data;
+              
+              return {
+                id: app.id,
+                jobId: app.jobId,
+                jobTitle: job.title,
+                companyName: employer.companyName,
+                appliedDate: app.appliedAt,
+                status: app.status
+              };
+            } catch (error) {
+              console.error('Error fetching job details:', error);
+              return {
+                id: app.id,
+                jobId: app.jobId,
+                jobTitle: 'Unknown Job',
+                companyName: 'Unknown Company',
+                appliedDate: app.appliedAt,
+                status: app.status
+              };
+            }
+          }));
+          
+          // Tính toán thống kê từ danh sách đơn ứng tuyển
+          const stats = {
+            totalApplications: applications.length,
+            pendingApplications: applications.filter(app => app.status === 'pending').length,
+            interviewApplications: applications.filter(app => app.status === 'interviewing').length,
+            acceptedApplications: applications.filter(app => ['hired', 'offered'].includes(app.status)).length,
+            rejectedApplications: applications.filter(app => app.status === 'rejected').length
+          };
+          
+          setStats(stats);
+          setRecentApplications(processedApplications);
+        } else {
+          // Không tìm thấy thông tin ứng viên, sử dụng dữ liệu giả
+          console.warn('No candidate information found, using mock data');
+          setStats(mockStats);
+          setRecentApplications(mockApplications);
+        }
       } catch (apiError) {
         console.warn('Using mock data due to API error:', apiError);
         // Use mock data if API fails

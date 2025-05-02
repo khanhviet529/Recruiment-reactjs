@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Table, Button, Space, Tag, Input, Select, DatePicker, Card } from 'antd';
-import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Table, Button, Space, Tag, Input, Select, DatePicker, Card, Modal, message } from 'antd';
+import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
 
 const { Search } = Input;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+const { confirm } = Modal;
 
 const JobsPage = () => {
   const { user } = useSelector((state) => state.auth);
@@ -57,12 +58,24 @@ const JobsPage = () => {
   };
 
   const handleDeleteJob = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/jobs/${id}`);
-      fetchJobs();
-    } catch (error) {
-      console.error('Error deleting job:', error);
-    }
+    confirm({
+      title: 'Bạn có chắc chắn muốn xóa tin tuyển dụng này?',
+      icon: <ExclamationCircleOutlined />,
+      content: 'Dữ liệu sẽ bị xóa vĩnh viễn và không thể khôi phục.',
+      okText: 'Xóa',
+      okType: 'danger',
+      cancelText: 'Hủy',
+      async onOk() {
+        try {
+          await axios.delete(`http://localhost:5000/jobs/${id}`);
+          message.success('Xóa tin tuyển dụng thành công');
+          fetchJobs();
+        } catch (error) {
+          console.error('Error deleting job:', error);
+          message.error('Có lỗi xảy ra khi xóa tin tuyển dụng');
+        }
+      },
+    });
   };
 
   const columns = [
@@ -120,7 +133,7 @@ const JobsPage = () => {
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <Link to={`/employer/jobs/${record.id}/edit`}>
+          <Link to={`/employer/jobs/edit/${record.id}`}>
             <Button type="link" icon={<EditOutlined />}>Sửa</Button>
           </Link>
           <Button 

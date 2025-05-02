@@ -17,7 +17,11 @@ import {
   Typography,
   Divider,
   message,
-  Empty
+  Empty,
+  Collapse,
+  Tooltip,
+  Badge,
+  Popover
 } from 'antd';
 import { 
   SearchOutlined, 
@@ -27,14 +31,20 @@ import {
   BookOutlined,
   HeartOutlined,
   HeartFilled,
-  EyeOutlined
+  EyeOutlined,
+  FilterOutlined,
+  SortAscendingOutlined,
+  AppstoreOutlined,
+  BarsOutlined
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
+import '../../styles/JobSearchPage.scss';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 const { Search } = Input;
+const { Panel } = Collapse;
 
 const JobSearchPage = () => {
   const { user } = useSelector((state) => state.auth || {});
@@ -58,7 +68,56 @@ const JobSearchPage = () => {
   
   const [filters, setFilters] = useState(defaultFilters);
   const [savedJobs, setSavedJobs] = useState([]);
-
+  const [sortOption, setSortOption] = useState('newest');
+  const [viewMode, setViewMode] = useState('card'); // 'card' or 'list'
+  const [mobileFiltersVisible, setMobileFiltersVisible] = useState(false);
+  const [selectedLocations, setSelectedLocations] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [showLocationPopover, setShowLocationPopover] = useState(false);
+  const [showCategoryPopover, setShowCategoryPopover] = useState(false);
+  
+  // Mock data for locations and categories
+  const locations = [
+    { id: 1, name: 'Hồ Chí Minh', count: 845 },
+    { id: 2, name: 'Hà Nội', count: 723 },
+    { id: 3, name: 'Đà Nẵng', count: 241 },
+    { id: 4, name: 'An Giang', count: 38 },
+    { id: 5, name: 'Bà Rịa - Vũng Tàu', count: 79 },
+    { id: 6, name: 'Bình Dương', count: 156 },
+    { id: 7, name: 'Cần Thơ', count: 112 },
+  ];
+  
+  const categories = [
+    { id: 1, name: 'Công nghệ thông tin', count: 623 },
+    { id: 2, name: 'DevOps', count: 145 },
+    { id: 3, name: 'Data Science', count: 98 },
+    { id: 4, name: 'Marketing', count: 211 },
+    { id: 5, name: 'Ngân hàng đầu tư', count: 76 },
+    { id: 6, name: 'Giáo dục / Đào tạo', count: 134 },
+  ];
+  
+  const [locationOptions, setLocationOptions] = useState([
+    { value: '1', label: 'Hồ Chí Minh', count: 845 },
+    { value: '2', label: 'Hà Nội', count: 723 },
+    { value: '3', label: 'Đà Nẵng', count: 241 },
+    { value: '4', label: 'An Giang', count: 38 },
+    { value: '5', label: 'Bà Rịa - Vũng Tàu', count: 79 },
+    { value: '6', label: 'Bình Dương', count: 156 },
+    { value: '7', label: 'Cần Thơ', count: 112 },
+  ]);
+  
+  const [categoryOptions, setCategoryOptions] = useState([
+    { value: '1', label: 'Công nghệ thông tin', count: 623 },
+    { value: '2', label: 'DevOps', count: 145 },
+    { value: '3', label: 'Data Science', count: 98 },
+    { value: '4', label: 'Marketing', count: 211 },
+    { value: '5', label: 'Ngân hàng đầu tư', count: 76 },
+    { value: '6', label: 'Giáo dục / Đào tạo', count: 134 },
+  ]);
+  
+  const [selectedLocationValues, setSelectedLocationValues] = useState([]);
+  const [selectedCategoryValues, setSelectedCategoryValues] = useState([]);
+  
   useEffect(() => {
     fetchJobs();
     fetchSavedJobs();
@@ -284,6 +343,118 @@ const JobSearchPage = () => {
     });
   };
 
+  const handleSortChange = (value) => {
+    setSortOption(value);
+    // You could sort the jobs here or update your API call
+  };
+
+  const handleViewModeChange = (mode) => {
+    setViewMode(mode);
+  };
+
+  const handleLocationSelect = (location) => {
+    const index = selectedLocations.findIndex(loc => loc.id === location.id);
+    
+    if (index === -1) {
+      // Add location
+      setSelectedLocations([...selectedLocations, location]);
+    } else {
+      // Remove if already selected
+      const newLocations = [...selectedLocations];
+      newLocations.splice(index, 1);
+      setSelectedLocations(newLocations);
+    }
+    
+    // Update filters
+    handleFilterChange('location', location.name);
+  };
+  
+  const handleCategorySelect = (category) => {
+    const index = selectedCategories.findIndex(cat => cat.id === category.id);
+    
+    if (index === -1) {
+      // Add category
+      setSelectedCategories([...selectedCategories, category]);
+    } else {
+      // Remove if already selected
+      const newCategories = [...selectedCategories];
+      newCategories.splice(index, 1);
+      setSelectedCategories(newCategories);
+    }
+    
+    // Update filters
+    handleFilterChange('category', category.name);
+  };
+  
+  const removeSelectedLocation = (locationId) => {
+    const newLocations = selectedLocations.filter(loc => loc.id !== locationId);
+    setSelectedLocations(newLocations);
+    
+    // If all locations removed, clear the filter
+    if (newLocations.length === 0) {
+      handleFilterChange('location', '');
+    } else {
+      // Otherwise update with remaining locations
+      handleFilterChange('location', newLocations[0].name);
+    }
+  };
+  
+  const removeSelectedCategory = (categoryId) => {
+    const newCategories = selectedCategories.filter(cat => cat.id !== categoryId);
+    setSelectedCategories(newCategories);
+    
+    // If all categories removed, clear the filter
+    if (newCategories.length === 0) {
+      handleFilterChange('category', '');
+    } else {
+      // Otherwise update with remaining categories
+      handleFilterChange('category', newCategories[0].name);
+    }
+  };
+  
+  const locationPopoverContent = (
+    <div className="location-popover">
+      <div className="location-search">
+        <Input placeholder="Chọn địa điểm..." prefix={<SearchOutlined />} />
+      </div>
+      <div className="location-list">
+        {locations.map(location => (
+          <div 
+            key={location.id} 
+            className={`location-item ${selectedLocations.some(loc => loc.id === location.id) ? 'selected' : ''}`}
+            onClick={() => handleLocationSelect(location)}
+          >
+            <div className="location-name">{location.name}</div>
+            <div className="location-count">({location.count})</div>
+            {selectedLocations.some(loc => loc.id === location.id) && (
+              <div className="location-check">✓</div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+  
+  const categoryPopoverContent = (
+    <div className="category-popover">
+      <div className="category-list">
+        {categories.map(category => (
+          <div 
+            key={category.id} 
+            className={`category-item ${selectedCategories.some(cat => cat.id === category.id) ? 'selected' : ''}`}
+            onClick={() => handleCategorySelect(category)}
+          >
+            <div className="category-name">{category.name}</div>
+            <div className="category-count">({category.count})</div>
+            {selectedCategories.some(cat => cat.id === category.id) && (
+              <div className="category-check">✓</div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   const renderJobCard = (job) => {
     // If job is undefined, don't render anything
     if (!job) return null;
@@ -357,58 +528,138 @@ const JobSearchPage = () => {
     );
   };
 
+  const handleLocationChange = (values) => {
+    setSelectedLocationValues(values);
+    
+    // Get the location names from the values
+    const selectedLocations = locationOptions
+      .filter(option => values.includes(option.value))
+      .map(option => option.label);
+    
+    // Update the filter with the first selected location or empty string if none selected
+    handleFilterChange('location', selectedLocations[0] || '');
+  };
+  
+  const handleCategoryChange = (values) => {
+    setSelectedCategoryValues(values);
+    
+    // Get the category names from the values
+    const selectedCategories = categoryOptions
+      .filter(option => values.includes(option.value))
+      .map(option => option.label);
+    
+    // Update the filter with the first selected category or empty string if none selected
+    handleFilterChange('category', selectedCategories[0] || '');
+  };
+
+  const locationOptionRender = (option) => (
+    <div className="custom-select-option">
+      <div className="option-label">{option.label}</div>
+      <div className="option-count">({option.count})</div>
+    </div>
+  );
+  
+  const categoryOptionRender = (option) => (
+    <div className="custom-select-option">
+      <div className="option-label">{option.label}</div>
+      <div className="option-count">({option.count})</div>
+    </div>
+  );
+
   return (
     <div className="job-search-page">
-      <Row gutter={[16, 16]}>
-        {/* Search and filters */}
+      <Row gutter={[24, 24]}>
+        {/* Search header with main search input */}
         <Col xs={24}>
-          <Card>
+          <Card className="search-header-card">
             <div style={{ maxWidth: 800, margin: '0 auto' }}>
+              <Title level={4} className="text-center mb-4">Tìm kiếm công việc phù hợp</Title>
               <Search
                 placeholder="Tìm kiếm theo vị trí, công ty, từ khóa..."
                 allowClear
                 enterButton={<Button type="primary" icon={<SearchOutlined />}>Tìm kiếm</Button>}
                 size="large"
                 onSearch={handleSearch}
+                className="main-search-input"
               />
             </div>
-            
-            <Divider />
-            
-            <Row gutter={[16, 16]}>
-              <Col xs={24} sm={12} md={6}>
+          </Card>
+        </Col>
+
+        {/* Filter sidebar - Desktop */}
+        <Col xs={24} lg={6} className="filter-sidebar d-none d-lg-block">
+          <Card title="Bộ lọc tìm kiếm" extra={
+            <Button type="link" onClick={() => {
+              setFilters(defaultFilters);
+              setSelectedLocationValues([]);
+              setSelectedCategoryValues([]);
+            }}>
+              Đặt lại
+            </Button>
+          }>
+            <Collapse defaultActiveKey={['1', '2', '3', '4']} bordered={false} expandIconPosition="end">
+              <Panel header={<strong>Địa điểm</strong>} key="1">
                 <Select
-                  placeholder="Địa điểm"
+                  mode="multiple"
+                  style={{ width: '100%' }}
+                  placeholder={<span><EnvironmentOutlined /> Chọn địa điểm...</span>}
+                  value={selectedLocationValues}
+                  onChange={handleLocationChange}
+                  optionLabelProp="label"
+                  options={locationOptions}
+                  optionRender={locationOptionRender}
+                  maxTagCount={3}
+                  maxTagTextLength={12}
+                  allowClear
+                  showSearch
+                  filterOption={(input, option) =>
+                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                  }
+                  className="location-select"
+                  tagRender={(props) => (
+                    <Tag closable={props.closable} onClose={props.onClose} className="custom-select-tag">
+                      {props.label}
+                    </Tag>
+                  )}
+                  dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
+                  dropdownClassName="location-dropdown"
+                />
+              </Panel>
+              
+              <Panel header={<strong>Ngành nghề</strong>} key="2">
+                <Select
+                  mode="multiple"
+                  style={{ width: '100%' }}
+                  placeholder={<span><AppstoreOutlined /> Chọn ngành nghề...</span>}
+                  value={selectedCategoryValues}
+                  onChange={handleCategoryChange}
+                  optionLabelProp="label"
+                  options={categoryOptions}
+                  optionRender={categoryOptionRender}
+                  maxTagCount={3}
+                  maxTagTextLength={12}
+                  allowClear
+                  showSearch
+                  filterOption={(input, option) =>
+                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                  }
+                  className="category-select"
+                  tagRender={(props) => (
+                    <Tag closable={props.closable} onClose={props.onClose} className="custom-select-tag">
+                      {props.label}
+                    </Tag>
+                  )}
+                  dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
+                  dropdownClassName="category-dropdown"
+                />
+              </Panel>
+              
+              <Panel header={<strong>Loại công việc</strong>} key="3">
+                <Select
+                  placeholder="Chọn loại công việc"
                   style={{ width: '100%' }}
                   allowClear
-                  onChange={(value) => handleFilterChange('location', value)}
-                >
-                  <Option value="Hà Nội">Hà Nội</Option>
-                  <Option value="Hồ Chí Minh">Hồ Chí Minh</Option>
-                  <Option value="Đà Nẵng">Đà Nẵng</Option>
-                  <Option value="Nha Trang">Nha Trang</Option>
-                  <Option value="Cần Thơ">Cần Thơ</Option>
-                </Select>
-              </Col>
-              <Col xs={24} sm={12} md={6}>
-                <Select
-                  placeholder="Ngành nghề"
-                  style={{ width: '100%' }}
-                  allowClear
-                  onChange={(value) => handleFilterChange('category', value)}
-                >
-                  <Option value="Web Development">Web Development</Option>
-                  <Option value="Mobile Development">Mobile Development</Option>
-                  <Option value="UI/UX Design">UI/UX Design</Option>
-                  <Option value="DevOps">DevOps</Option>
-                  <Option value="Data Science">Data Science</Option>
-                </Select>
-              </Col>
-              <Col xs={24} sm={12} md={6}>
-                <Select
-                  placeholder="Loại công việc"
-                  style={{ width: '100%' }}
-                  allowClear
+                  value={filters.jobType}
                   onChange={(value) => handleFilterChange('jobType', value)}
                 >
                   <Option value="Full-time">Toàn thời gian</Option>
@@ -417,77 +668,244 @@ const JobSearchPage = () => {
                   <Option value="Freelance">Freelance</Option>
                   <Option value="Internship">Thực tập</Option>
                 </Select>
-              </Col>
-              <Col xs={24} sm={12} md={6}>
-                <Button 
-                  type="primary"
-                  onClick={fetchJobs}
-                  style={{ width: '100%' }}
-                >
-                  Áp dụng bộ lọc
-                </Button>
-              </Col>
-            </Row>
-            
-            <Divider />
-            
-            <Row gutter={[16, 16]}>
-              <Col xs={24} md={12}>
-                <div className="filter-section">
-                  <Title level={5}>Mức lương (triệu đồng)</Title>
-                  <Slider
-                    range
-                    min={0}
-                    max={100}
-                    value={filters.salaryRange}
-                    onChange={(value) => handleFilterChange('salaryRange', value)}
-                    marks={{
-                      0: '0',
-                      25: '25',
-                      50: '50',
-                      75: '75',
-                      100: '100+'
-                    }}
-                  />
+              </Panel>
+              
+              <Panel header={<strong>Mức lương (triệu đồng)</strong>} key="4">
+                <Slider
+                  range
+                  min={0}
+                  max={100}
+                  value={filters.salaryRange}
+                  onChange={(value) => handleFilterChange('salaryRange', value)}
+                  marks={{
+                    0: '0',
+                    25: '25',
+                    50: '50',
+                    75: '75',
+                    100: '100+'
+                  }}
+                />
+                <div className="salary-range-display mt-2 text-center">
+                  <Badge.Ribbon text="Mức lương" color="blue">
+                    <Card size="small">
+                      {filters.salaryRange[0]} - {filters.salaryRange[1]} triệu đồng
+                    </Card>
+                  </Badge.Ribbon>
                 </div>
-              </Col>
-              <Col xs={24} md={12}>
-                <div className="filter-section">
-                  <Title level={5}>Kinh nghiệm</Title>
-                  <Checkbox.Group
-                    options={[
-                      { label: '0-1 năm', value: '0-1 năm' },
-                      { label: '1-3 năm', value: '1-3 năm' },
-                      { label: '3-5 năm', value: '3-5 năm' },
-                      { label: '5-7 năm', value: '5-7 năm' },
-                      { label: '7+ năm', value: '7+ năm' }
-                    ]}
-                    value={filters.experience}
-                    onChange={(values) => handleFilterChange('experience', values)}
-                  />
+              </Panel>
+              
+              <Panel header={<strong>Kinh nghiệm</strong>} key="5">
+                <Checkbox.Group
+                  options={[
+                    { label: '0-1 năm', value: '0-1 năm' },
+                    { label: '1-3 năm', value: '1-3 năm' },
+                    { label: '3-5 năm', value: '3-5 năm' },
+                    { label: '5-7 năm', value: '5-7 năm' },
+                    { label: '7+ năm', value: '7+ năm' }
+                  ]}
+                  value={filters.experience}
+                  onChange={(values) => handleFilterChange('experience', values)}
+                />
+              </Panel>
+            </Collapse>
+            
+            <Button 
+              type="primary"
+              onClick={fetchJobs}
+              style={{ width: '100%', marginTop: '20px' }}
+              icon={<FilterOutlined />}
+            >
+              Áp dụng bộ lọc
+            </Button>
+          </Card>
+        </Col>
+        
+        {/* Mobile Filters - Collapsible */}
+        <Col xs={24} className="d-block d-lg-none">
+          <Card>
+            <Collapse bordered={false}>
+              <Panel 
+                header={<Text strong><FilterOutlined /> Bộ lọc tìm kiếm</Text>} 
+                key="mobile-filters"
+              >
+                <Row gutter={[16, 16]}>
+                  <Col xs={24}>
+                    <Text strong>Địa điểm</Text>
+                    <Select
+                      mode="multiple"
+                      style={{ width: '100%', marginTop: '8px' }}
+                      placeholder={<span><EnvironmentOutlined /> Chọn địa điểm...</span>}
+                      value={selectedLocationValues}
+                      onChange={handleLocationChange}
+                      optionLabelProp="label"
+                      options={locationOptions}
+                      optionRender={locationOptionRender}
+                      maxTagCount={2}
+                      maxTagTextLength={10}
+                      allowClear
+                      showSearch
+                      filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
+                      className="location-select"
+                      tagRender={(props) => (
+                        <Tag closable={props.closable} onClose={props.onClose} className="custom-select-tag">
+                          {props.label}
+                        </Tag>
+                      )}
+                      dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
+                      dropdownClassName="location-dropdown"
+                    />
+                  </Col>
+                  
+                  <Col xs={24}>
+                    <Text strong>Ngành nghề</Text>
+                    <Select
+                      mode="multiple"
+                      style={{ width: '100%', marginTop: '8px' }}
+                      placeholder={<span><AppstoreOutlined /> Chọn ngành nghề...</span>}
+                      value={selectedCategoryValues}
+                      onChange={handleCategoryChange}
+                      optionLabelProp="label"
+                      options={categoryOptions}
+                      optionRender={categoryOptionRender}
+                      maxTagCount={2}
+                      maxTagTextLength={10}
+                      allowClear
+                      showSearch
+                      filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
+                      className="category-select"
+                      tagRender={(props) => (
+                        <Tag closable={props.closable} onClose={props.onClose} className="custom-select-tag">
+                          {props.label}
+                        </Tag>
+                      )}
+                      dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
+                      dropdownClassName="category-dropdown"
+                    />
+                  </Col>
+                  
+                  <Col xs={24}>
+                    <Text strong>Loại công việc</Text>
+                    <Select
+                      placeholder="Chọn loại công việc"
+                      style={{ width: '100%', marginTop: '8px' }}
+                      allowClear
+                      value={filters.jobType}
+                      onChange={(value) => handleFilterChange('jobType', value)}
+                    >
+                      <Option value="Full-time">Toàn thời gian</Option>
+                      <Option value="Part-time">Bán thời gian</Option>
+                      <Option value="Contract">Hợp đồng</Option>
+                      <Option value="Freelance">Freelance</Option>
+                      <Option value="Internship">Thực tập</Option>
+                    </Select>
+                  </Col>
+                  
+                  <Col xs={24}>
+                    <Text strong>Mức lương (triệu đồng)</Text>
+                    <Slider
+                      range
+                      min={0}
+                      max={100}
+                      value={filters.salaryRange}
+                      onChange={(value) => handleFilterChange('salaryRange', value)}
+                      marks={{
+                        0: '0',
+                        50: '50',
+                        100: '100+'
+                      }}
+                      style={{ marginTop: '16px' }}
+                    />
+                  </Col>
+                  
+                  <Col xs={24}>
+                    <Text strong>Kinh nghiệm</Text>
+                    <Checkbox.Group
+                      options={[
+                        { label: '0-1 năm', value: '0-1 năm' },
+                        { label: '1-3 năm', value: '1-3 năm' },
+                        { label: '3-5 năm', value: '3-5 năm' },
+                        { label: '5-7 năm', value: '5-7 năm' },
+                        { label: '7+ năm', value: '7+ năm' }
+                      ]}
+                      value={filters.experience}
+                      onChange={(values) => handleFilterChange('experience', values)}
+                      style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}
+                    />
+                  </Col>
+                </Row>
+                
+                <div className="mt-3 d-flex justify-content-between">
+                  <Button onClick={() => {
+                    setFilters(defaultFilters);
+                    setSelectedLocationValues([]);
+                    setSelectedCategoryValues([]);
+                  }}>
+                    Đặt lại
+                  </Button>
+                  <Button 
+                    type="primary"
+                    onClick={fetchJobs}
+                    icon={<FilterOutlined />}
+                  >
+                    Áp dụng bộ lọc
+                  </Button>
                 </div>
-              </Col>
-            </Row>
+              </Panel>
+            </Collapse>
           </Card>
         </Col>
         
         {/* Job listings */}
-        <Col xs={24}>
+        <Col xs={24} lg={18}>
           <Card>
-            <div className="d-flex justify-content-between align-items-center mb-3">
+            <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap">
               <Title level={4} style={{ margin: 0 }}>
-                Kết quả tìm kiếm ({pagination.total} công việc)
+                {pagination.total > 0 ? (
+                  <Badge count={pagination.total} overflowCount={9999} style={{ backgroundColor: '#52c41a' }}>
+                    <span style={{ marginRight: '10px' }}>Kết quả tìm kiếm</span>
+                  </Badge>
+                ) : (
+                  'Kết quả tìm kiếm'
+                )}
               </Title>
-              <Select
-                defaultValue="newest"
-                style={{ width: 180 }}
-              >
-                <Option value="newest">Mới nhất</Option>
-                <Option value="salary-desc">Lương cao đến thấp</Option>
-                <Option value="salary-asc">Lương thấp đến cao</Option>
-                <Option value="relevance">Phù hợp nhất</Option>
-              </Select>
+              
+              <Space className="mb-2 mb-md-0">
+                <Select
+                  value={sortOption}
+                  style={{ width: 180 }}
+                  onChange={handleSortChange}
+                  suffixIcon={<SortAscendingOutlined />}
+                >
+                  <Option value="newest">Mới nhất</Option>
+                  <Option value="salary-desc">Lương cao đến thấp</Option>
+                  <Option value="salary-asc">Lương thấp đến cao</Option>
+                  <Option value="relevance">Phù hợp nhất</Option>
+                </Select>
+                
+                <Space className="view-mode-toggle">
+                  <Tooltip title="Xem dạng lưới">
+                    <Button 
+                      type={viewMode === 'card' ? 'primary' : 'default'} 
+                      icon={<AppstoreOutlined />}
+                      onClick={() => handleViewModeChange('card')}
+                    />
+                  </Tooltip>
+                  <Tooltip title="Xem dạng danh sách">
+                    <Button 
+                      type={viewMode === 'list' ? 'primary' : 'default'} 
+                      icon={<BarsOutlined />}
+                      onClick={() => handleViewModeChange('list')}
+                    />
+                  </Tooltip>
+                </Space>
+              </Space>
             </div>
+            
+            <Divider style={{ margin: '12px 0' }} />
             
             {loading ? (
               <div className="text-center py-5">
@@ -511,7 +929,16 @@ const JobSearchPage = () => {
               </div>
             ) : (
               <Empty
-                description="Không tìm thấy công việc nào phù hợp với tiêu chí tìm kiếm"
+                description={
+                  <span>
+                    Không tìm thấy công việc nào phù hợp với tiêu chí tìm kiếm
+                    <div className="mt-3">
+                      <Button type="primary" onClick={() => setFilters(defaultFilters)}>
+                        Xóa bộ lọc
+                      </Button>
+                    </div>
+                  </span>
+                }
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
               />
             )}

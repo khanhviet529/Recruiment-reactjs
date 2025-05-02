@@ -2,8 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Table, Button, Space, Tag, Input, Select, Card, Modal, message } from 'antd';
-import { SearchOutlined, EyeOutlined, CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { Table, Button, Space, Tag, Input, Select, Card, Modal, message, Tooltip, Badge } from 'antd';
+import { 
+  SearchOutlined, 
+  EyeOutlined, 
+  CheckCircleOutlined, 
+  CloseCircleOutlined, 
+  ClockCircleOutlined,
+  RedoOutlined,
+  InfoCircleOutlined
+} from '@ant-design/icons';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -18,6 +26,8 @@ const ApplicationsPage = () => {
     jobId: 'all'
   });
   const [jobs, setJobs] = useState([]);
+  const [candidates, setCandidates] = useState({});
+  const [filterSummary, setFilterSummary] = useState({});
 
   useEffect(() => {
     fetchJobs();
@@ -43,19 +53,82 @@ const ApplicationsPage = () => {
   const fetchApplications = async () => {
     try {
       setLoading(true);
+      
+      // First, get all jobs for this employer
+      const jobsResponse = await axios.get(`http://localhost:5000/jobs`, {
+        params: {
+          employerId: user.id
+        }
+      });
+      
+      const employerJobs = jobsResponse.data;
+      const employerJobIds = employerJobs.map(job => job.id);
+      setJobs(employerJobs);
+      
+      // Now get applications for these jobs
       const response = await axios.get(`http://localhost:5000/applications`, {
         params: {
-          employerId: user.id,
+          ...(employerJobIds.length > 0 ? { jobId: employerJobIds } : {}),
           status: filters.status !== 'all' ? filters.status : undefined,
           q: filters.search || undefined,
-          jobId: filters.jobId !== 'all' ? filters.jobId : undefined,
+          ...(filters.jobId !== 'all' ? { jobId: filters.jobId } : {}),
           _sort: 'appliedAt',
           _order: 'desc'
         }
       });
-      setApplications(response.data);
+
+      const applications = response.data;
+      
+      // Get unique candidate IDs
+      const candidateIds = [...new Set(applications.map(app => app.candidateId))];
+      
+      // Fetch candidate info for all applications
+      const candidatesData = {};
+      await Promise.all(
+        candidateIds.map(async (candidateId) => {
+          try {
+            const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${candidateId}`);
+            candidatesData[candidateId] = candidateResponse.data;
+          } catch (err) {
+            console.error(`Error fetching candidate ${candidateId}:`, err);
+            candidatesData[candidateId] = { firstName: 'Unknown', lastName: 'Candidate' };
+          }
+        })
+      );
+      
+      setCandidates(candidatesData);
+      
+      // Get status summary
+      const statusCounts = applications.reduce((acc, app) => {
+        acc[app.status] = (acc[app.status] || 0) + 1;
+        return acc;
+      }, {});
+      
+      setFilterSummary({
+        total: applications.length,
+        ...statusCounts
+      });
+      
+      // Map applications with candidate names and job titles
+      const mappedApplications = applications.map(app => {
+        const candidate = candidatesData[app.candidateId] || { firstName: 'Unknown', lastName: 'Candidate' };
+        const job = jobs.find(j => j.id === app.jobId) || { title: `Vị trí #${app.jobId}` };
+        
+        return {
+          ...app,
+          candidateName: `${candidate.firstName || ''} ${candidate.lastName || ''}`.trim() || `Ứng viên #${app.candidateId}`,
+          jobTitle: job.title || `Vị trí #${app.jobId}`,
+          appliedDate: app.appliedAt || app.createdAt,
+          hasNotes: app.notes && app.notes.length > 0,
+          recentActivity: app.updatedAt || app.appliedAt,
+          reapplied: app.reappliedAt ? true : false
+        };
+      });
+      
+      setApplications(mappedApplications);
     } catch (error) {
       console.error('Error fetching applications:', error);
+      message.error('Không thể tải danh sách ứng viên');
     } finally {
       setLoading(false);
     }
@@ -75,9 +148,35 @@ const ApplicationsPage = () => {
 
   const handleStatusUpdate = async (applicationId, newStatus) => {
     try {
-      await axios.put(`http://localhost:5000/applications/${applicationId}/status`, {
-        status: newStatus
-      });
+      const now = new Date().toISOString();
+      
+      // Get current application data
+      const applicationResponse = await axios.get(`http://localhost:5000/applications/${applicationId}`);
+      const currentApplication = applicationResponse.data;
+      
+      // Update with stage history
+      const updatedApplication = {
+        ...currentApplication,
+        status: newStatus,
+        updatedAt: now,
+        stageHistory: [
+          ...(currentApplication.stageHistory || []),
+          {
+            stage: newStatus === 'rejected' ? 'rejected' : (newStatus === 'reviewing' ? 2 : newStatus === 'interviewing' ? 3 : newStatus === 'offered' ? 4 : newStatus === 'hired' ? 5 : 1),
+            enteredAt: now,
+            exitedAt: null,
+            notes: `Trạng thái được thay đổi thành ${newStatus} bởi nhà tuyển dụng`
+          }
+        ]
+      };
+      
+      // If changing from withdrawn to reviewing, add reappliedAt field
+      if (currentApplication.status === 'withdrawn' && newStatus === 'reviewing') {
+        updatedApplication.reappliedAt = now;
+      }
+      
+      await axios.put(`http://localhost:5000/applications/${applicationId}`, updatedApplication);
+      
       message.success('Cập nhật trạng thái thành công');
       fetchApplications();
     } catch (error) {
@@ -86,17 +185,27 @@ const ApplicationsPage = () => {
     }
   };
 
-  const showConfirm = (applicationId, newStatus) => {
+  const showConfirm = (applicationId, newStatus, appStatus) => {
     const statusText = {
+      'reviewing': 'xem xét',
       'interviewing': 'mời phỏng vấn',
       'offered': 'đề nghị công việc',
       'hired': 'tuyển dụng',
       'rejected': 'từ chối'
     }[newStatus];
+    
+    const isReturning = appStatus === 'withdrawn' && newStatus === 'reviewing';
+    const confirmTitle = isReturning 
+      ? 'Khôi phục đơn đã rút' 
+      : 'Xác nhận thay đổi trạng thái';
+    
+    const confirmContent = isReturning 
+      ? 'Ứng viên này đã rút hồ sơ trước đây. Bạn có muốn khôi phục đơn ứng tuyển và chuyển sang trạng thái "Đang xem xét"?'
+      : `Bạn có chắc chắn muốn ${statusText} ứng viên này?`;
 
     Modal.confirm({
-      title: 'Xác nhận thay đổi trạng thái',
-      content: `Bạn có chắc chắn muốn ${statusText} ứng viên này?`,
+      title: confirmTitle,
+      content: confirmContent,
       onOk: () => handleStatusUpdate(applicationId, newStatus)
     });
   };
@@ -107,7 +216,14 @@ const ApplicationsPage = () => {
       dataIndex: 'candidateName',
       key: 'candidateName',
       render: (text, record) => (
-        <Link to={`/employer/applications/${record.id}`}>{text}</Link>
+        <Link to={`/employer/applications/${record.id}`}>
+          {text} 
+          {record.reapplied && (
+            <Tooltip title="Đã nộp lại sau khi rút">
+              <Badge color="blue" style={{ marginLeft: 8 }} />
+            </Tooltip>
+          )}
+        </Link>
       ),
     },
     {
@@ -132,7 +248,8 @@ const ApplicationsPage = () => {
           'interviewing': { color: 'info', text: 'Phỏng vấn', icon: <ClockCircleOutlined /> },
           'offered': { color: 'success', text: 'Đã đề nghị', icon: <CheckCircleOutlined /> },
           'hired': { color: 'success', text: 'Đã tuyển', icon: <CheckCircleOutlined /> },
-          'rejected': { color: 'error', text: 'Từ chối', icon: <CloseCircleOutlined /> }
+          'rejected': { color: 'error', text: 'Từ chối', icon: <CloseCircleOutlined /> },
+          'withdrawn': { color: 'default', text: 'Đã rút hồ sơ', icon: <CloseCircleOutlined /> }
         };
         const config = statusConfig[status] || { color: 'default', text: status };
         return (
@@ -143,45 +260,65 @@ const ApplicationsPage = () => {
       },
     },
     {
+      title: 'Hoạt động gần nhất',
+      dataIndex: 'recentActivity',
+      key: 'recentActivity',
+      render: (date) => new Date(date).toLocaleDateString('vi-VN'),
+    },
+    {
       title: 'Hành động',
       key: 'action',
       render: (_, record) => {
-        const actions = {
-          'pending': [
-            { status: 'reviewing', text: 'Xem xét', type: 'primary' },
-            { status: 'rejected', text: 'Từ chối', type: 'danger' }
-          ],
-          'reviewing': [
-            { status: 'interviewing', text: 'Mời phỏng vấn', type: 'primary' },
-            { status: 'rejected', text: 'Từ chối', type: 'danger' }
-          ],
-          'interviewing': [
-            { status: 'offered', text: 'Đề nghị', type: 'primary' },
-            { status: 'rejected', text: 'Từ chối', type: 'danger' }
-          ],
-          'offered': [
-            { status: 'hired', text: 'Tuyển dụng', type: 'primary' },
-            { status: 'rejected', text: 'Từ chối', type: 'danger' }
-          ]
-        };
-
-        const availableActions = actions[record.status] || [];
+        let actions;
+        
+        if (record.status === 'withdrawn') {
+          // For withdrawn applications, allow restoring to reviewing
+          actions = [
+            { status: 'reviewing', text: 'Khôi phục', type: 'primary', icon: <RedoOutlined /> }
+          ];
+        } else {
+          // For other statuses, show regular action flow
+          actions = {
+            'pending': [
+              { status: 'reviewing', text: 'Xem xét', type: 'primary' },
+              { status: 'rejected', text: 'Từ chối', type: 'danger' }
+            ],
+            'reviewing': [
+              { status: 'interviewing', text: 'Mời phỏng vấn', type: 'primary' },
+              { status: 'rejected', text: 'Từ chối', type: 'danger' }
+            ],
+            'interviewing': [
+              { status: 'offered', text: 'Đề nghị', type: 'primary' },
+              { status: 'rejected', text: 'Từ chối', type: 'danger' }
+            ],
+            'offered': [
+              { status: 'hired', text: 'Tuyển dụng', type: 'primary' },
+              { status: 'rejected', text: 'Từ chối', type: 'danger' }
+            ]
+          }[record.status] || [];
+        }
 
         return (
           <Space size="middle">
             <Link to={`/employer/applications/${record.id}`}>
               <Button type="link" icon={<EyeOutlined />}>Xem</Button>
             </Link>
-            {availableActions.map(action => (
+            {actions && actions.map(action => (
               <Button
                 key={action.status}
                 type={action.type === 'danger' ? 'link' : 'primary'}
                 danger={action.type === 'danger'}
-                onClick={() => showConfirm(record.id, action.status)}
+                icon={action.icon}
+                onClick={() => showConfirm(record.id, action.status, record.status)}
               >
                 {action.text}
               </Button>
             ))}
+            {record.hasNotes && (
+              <Tooltip title="Có ghi chú">
+                <InfoCircleOutlined style={{ color: '#1890ff' }} />
+              </Tooltip>
+            )}
           </Space>
         );
       },
@@ -196,23 +333,24 @@ const ApplicationsPage = () => {
 
       <Card className="mb-4">
         <div className="filters">
-          <Space size="large">
+          <Space size="large" wrap>
             <Select
-              defaultValue="all"
+              value={filters.status}
               style={{ width: 120 }}
               onChange={handleStatusChange}
             >
-              <Option value="all">Tất cả</Option>
-              <Option value="pending">Chờ xử lý</Option>
-              <Option value="reviewing">Đang xem xét</Option>
-              <Option value="interviewing">Phỏng vấn</Option>
-              <Option value="offered">Đã đề nghị</Option>
-              <Option value="hired">Đã tuyển</Option>
-              <Option value="rejected">Từ chối</Option>
+              <Option value="all">Tất cả ({filterSummary.total || 0})</Option>
+              <Option value="pending">Chờ xử lý ({filterSummary.pending || 0})</Option>
+              <Option value="reviewing">Đang xem xét ({filterSummary.reviewing || 0})</Option>
+              <Option value="interviewing">Phỏng vấn ({filterSummary.interviewing || 0})</Option>
+              <Option value="offered">Đã đề nghị ({filterSummary.offered || 0})</Option>
+              <Option value="hired">Đã tuyển ({filterSummary.hired || 0})</Option>
+              <Option value="rejected">Từ chối ({filterSummary.rejected || 0})</Option>
+              <Option value="withdrawn">Đã rút hồ sơ ({filterSummary.withdrawn || 0})</Option>
             </Select>
 
             <Select
-              defaultValue="all"
+              value={filters.jobId}
               style={{ width: 200 }}
               onChange={handleJobChange}
             >

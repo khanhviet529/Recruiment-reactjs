@@ -7,7 +7,7 @@ const API_URL = 'http://localhost:5000';
 // Register user
 export const register = createAsyncThunk(
   'auth/register',
-  async ({ email, password, phone, role, firstName, lastName }, { rejectWithValue }) => {
+  async ({ email, password, phone, role, firstName, lastName, name, website, companySize, industry }, { rejectWithValue }) => {
     try {
       // Kiểm tra xem email đã tồn tại chưa
       const existingUsers = await axios.get(`${API_URL}/users?email=${email}`);
@@ -20,7 +20,7 @@ export const register = createAsyncThunk(
         email,
         password,
         phone,
-        role,
+        role, 
         isVerified: false,
         status: 'active',
         createdAt: new Date().toISOString(),
@@ -34,7 +34,10 @@ export const register = createAsyncThunk(
       if (role === 'employer') {
         const employerData = {
           userId: userResponse.data.id,
-          companyName: '',
+          companyName: name,
+          website: website,
+          companySize: companySize,
+          industry: industry,
           description: '',
           verified: false,
           createdAt: new Date().toISOString(),

@@ -1,0 +1,86 @@
+.home-page {
+  .hero-section {
+    // background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.85)), 
+    //             url('/images/hero-bg.jpg') no-repeat center center/cover;
+    padding: 80px 0;
+    
+    h1 {
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+    
+    .lead {
+      color: #555;
+      font-size: 1.2rem;
+    }
+  }
+
+  .search-box {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    
+    .ant-input-affix-wrapper, .ant-select {
+      border-radius: 4px;
+    }
+  }
+
+  .jobs-section {
+    padding: 60px 0;
+    
+    .section-title {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 2rem;
+      position: relative;
+      
+      &:after {
+        content: "";
+        display: block;
+        width: 50px;
+        height: 3px;
+        background: #1890ff;
+        margin-top: 10px;
+      }
+    }
+    
+    .ant-card {
+      height: 100%;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+      }
+      
+      .ant-card-meta-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: #333;
+      }
+      
+      .ant-card-meta-description {
+        color: #666;
+      }
+    }
+    
+    .ant-tag {
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+  }
+
+  // Mobile responsiveness
+  @media (max-width: 768px) {
+    .hero-section {
+      padding: 50px 0;
+      
+      h1 {
+        font-size: 2rem;
+      }
+    }
+    
+    .search-box {
+      padding: 15px !important;
+    }
+  }
+} 

@@ -1,192 +1,187 @@
+
+
 .cv-template-1 {
-  font-family: 'Roboto', 'Arial', sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: 'Roboto', Arial, sans-serif;
+  color: #333;
+  line-height: 1.5;
   
   .cv-card {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    background: white;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  .cv-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+    padding: 30px;
     
-    .cv-avatar {
-      width: 120px;
-      height: 120px;
-      margin-right: 30px;
+    .cv-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
       
-      img {
-        width: 100%;
-        height: 100%;
+      .cv-avatar {
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
-        object-fit: cover;
-        border: 1px solid #eee;
+        margin-right: 20px;
+        overflow: hidden;
+        
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        
+        .avatar-placeholder {
+          width: 100%;
+          height: 100%;
+          background-color: #3498db;
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 32px;
+          font-weight: bold;
+        }
       }
       
-      .avatar-placeholder {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        background: #f0f0f0;
-        color: #888;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.5rem;
-        font-weight: bold;
+      .cv-title {
+        h1 {
+          margin: 0 0 5px 0;
+          font-size: 24px;
+          font-weight: 700;
+        }
+        
+        .position {
+          margin: 5px 0;
+          font-size: 18px;
+          color: #666;
+        }
+        
+        .cv-slogan {
+          margin: 5px 0 0 0;
+          font-size: 14px;
+          color: #666;
+          font-style: italic;
+        }
       }
     }
     
-    .cv-title {
-      flex: 1;
+    .cv-section {
+      margin-bottom: 25px;
       
-      h1 {
-        margin: 0 0 10px;
-        color: #333;
-        font-size: 28px;
+      h2 {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #2c3e50;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 8px;
       }
       
-      .position {
-        margin: 0;
-        color: #777;
-        font-size: 18px;
-      }
-    }
-  }
-  
-  .cv-section {
-    margin-bottom: 30px;
-    
-    h2 {
-      color: #333;
-      font-size: 22px;
-      margin-bottom: 15px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #f5f5f5;
-    }
-    
-    .contact-info {
-      p {
-        margin: 10px 0;
-      }
-    }
-    
-    .summary {
-      line-height: 1.6;
-    }
-    
-    .experience-item,
-    .education-item,
-    .project-item, 
-    .certification-item,
-    .reference-item {
-      margin-bottom: 20px;
-      padding: 15px;
-      background: #f9f9f9;
-      border-radius: 5px;
-      
-      h3 {
-        margin: 0 0 10px;
-        color: #333;
-        font-size: 18px;
+      .contact-info {
+        p {
+          margin: 7px 0;
+        }
       }
       
-      .company,
-      .school,
-      .issuer,
-      .position {
-        margin: 0 0 5px;
-        color: #555;
-        font-weight: 500;
-      }
-      
-      .duration,
-      .date {
-        margin: 0 0 10px;
-        color: #888;
-        font-size: 14px;
-      }
-      
-      .description {
-        margin: 10px 0 0;
+      .summary {
         line-height: 1.6;
       }
       
-      .technologies {
-        margin-top: 10px;
+      .experience-item, 
+      .education-item, 
+      .project-item, 
+      .certification-item, 
+      .reference-item {
+        margin-bottom: 20px;
+        
+        h3 {
+          margin: 0 0 5px 0;
+          font-size: 18px;
+          font-weight: 600;
+          color: #3498db;
+        }
+        
+        .company, 
+        .school, 
+        .issuer {
+          font-weight: 600;
+          margin: 5px 0;
+        }
+        
+        .duration, 
+        .date {
+          color: #666;
+          font-style: italic;
+          margin: 5px 0;
+        }
+        
+        .description {
+          margin-top: 8px;
+          line-height: 1.5;
+        }
+      }
+      
+      .skills, 
+      .interests {
         display: flex;
         flex-wrap: wrap;
-        gap: 5px;
+        gap: 8px;
+        margin-top: 8px;
+        
+        .skill-tag, 
+        .interest-tag {
+          background-color: #f0f0f0;
+          border-radius: 4px;
+          padding: 5px 10px;
+          font-size: 14px;
+          display: inline-block;
+          margin: 0 4px 4px 0;
+        }
       }
-    }
-    
-    .skills, 
-    .interests {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
       
-      .skill-tag,
-      .interest-tag {
-        background: #f0f0f0;
-        color: #333;
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 14px;
+      .technologies {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
       }
-    }
-    
-    .languages {
-      .language-item {
-        margin-bottom: 10px;
-        
-        .language {
-          font-weight: 500;
-        }
-        
-        .proficiency {
-          color: #777;
+      
+      .languages {
+        .language-item {
+          margin-bottom: 8px;
+          
+          .language {
+            font-weight: 600;
+          }
         }
       }
     }
+    
+    .cv-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 30px;
+    }
+  }
+}
+
+@media print {
+  body * {
+    visibility: hidden;
   }
   
-  .cv-actions {
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
+  .cv-template-1, .cv-template-1 * {
+    visibility: visible;
   }
   
-  @media print {
-    .print-hide {
-      display: none !important;
-    }
-    
-    body * {
-      visibility: hidden;
-    }
-    
-    .cv-template-1,
-    .cv-template-1 * {
-      visibility: visible;
-    }
-    
-    .cv-template-1 {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-    }
-    
-    .cv-card {
-      box-shadow: none !important;
-      border: none !important;
-      padding: 0 !important;
-    }
+  .cv-template-1 {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
   }
-} 
+  
+  .print-hide {
+    display: none !important;
+  }
+}

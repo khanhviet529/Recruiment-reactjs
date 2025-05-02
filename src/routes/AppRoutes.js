@@ -19,6 +19,7 @@ import SearchPage from '../pages/SearchPage';
 import JobsPage from '../pages/JobsPage';
 import CompaniesPage from '../pages/CompaniesPage';
 import CompanyDetail from '../pages/CompanyDetail';
+import NotificationsPage from '../pages/NotificationsPage';
 
 // Auth Pages
 import LoginPage from '../pages/auth/LoginPage';
@@ -34,6 +35,7 @@ import EmployerNewJobPage from '../pages/employer/NewJobPage';
 import EmployerEditJobPage from '../pages/employer/EditJobPage';
 import EmployerJobDetailPage from '../pages/employer/JobDetailPage';
 import EmployerApplicationsPage from '../pages/employer/ApplicationsPage';
+import EmployerApplicationDetailPage from '../pages/employer/ApplicationDetailPage';
 import EmployerRecruitmentProcessPage from '../pages/employer/RecruitmentProcessPage';
 
 // Candidate Pages
@@ -117,6 +119,7 @@ const AppRoutes = () => {
         <Route path="jobs/edit/:id" element={<EmployerEditJobPage />} />
         <Route path="jobs/:id" element={<EmployerJobDetailPage />} />
         <Route path="applications" element={<EmployerApplicationsPage />} />
+        <Route path="applications/:id" element={<EmployerApplicationDetailPage />} />
         <Route path="recruitment-process" element={<EmployerRecruitmentProcessPage />} />
       </Route>
 
@@ -158,6 +161,18 @@ const AppRoutes = () => {
         <Route path="jobs" element={<AdminJobsPage />} />
         <Route path="messages" element={<AdminMessagesPage />} />
         <Route path="reports" element={<AdminReportsPage />} />
+      </Route>
+
+      {/* Protected Notification Route (accessible for all logged-in users) */}
+      <Route
+        path="/notifications"
+        element={
+          <PrivateRoute>
+            <MainLayout />
+          </PrivateRoute>
+        }
+      >
+        <Route index element={<NotificationsPage />} />
       </Route>
     </Routes>
   );

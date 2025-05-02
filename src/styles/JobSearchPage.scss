@@ -1,0 +1,217 @@
+.job-search-page {
+  .search-header-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    
+    .main-search-input {
+      .ant-input-affix-wrapper {
+        border-radius: 4px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        height: 48px;
+      }
+      
+      .ant-btn {
+        height: 48px;
+        border-radius: 0 4px 4px 0;
+      }
+    }
+  }
+  
+  .filter-sidebar {
+    .ant-collapse {
+      background: transparent;
+      
+      .ant-collapse-item {
+        border-bottom: 1px solid #f0f0f0;
+        
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+      
+      .ant-collapse-header {
+        padding: 12px 0;
+      }
+      
+      .ant-collapse-content-box {
+        padding: 12px 0 16px;
+      }
+    }
+    
+    .salary-range-display {
+      margin-top: 16px;
+    }
+    
+    .ant-checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+  
+  // Improved Ant Design Select styling
+  .location-select, .category-select {
+    .ant-select-selector {
+      padding: 1px 8px !important;
+      min-height: 36px;
+      border-radius: 8px !important;
+      
+      .ant-select-selection-placeholder {
+        padding-left: 4px;
+        color: #999;
+      }
+    }
+    
+    .ant-select-selection-item {
+      background: #f0f7ff;
+      border-color: #d4e8ff;
+      border-radius: 4px;
+      color: #0052cc;
+      margin-top: 3px;
+      margin-bottom: 3px;
+      height: auto;
+      padding: 1px 8px;
+      
+      .ant-select-selection-item-remove {
+        color: #0052cc;
+        font-size: 10px;
+      }
+    }
+    
+    &.ant-select-focused .ant-select-selector {
+      border-color: #1890ff !important;
+      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+    }
+  }
+  
+  // Custom styling for select dropdown
+  .location-dropdown, .category-dropdown {
+    .ant-select-item {
+      padding: 8px 12px;
+      border-radius: 4px;
+      
+      &:hover {
+        background-color: #f5f5f5;
+      }
+      
+      &.ant-select-item-option-selected {
+        background-color: #e6f7ff;
+        font-weight: normal;
+        
+        .ant-select-item-option-state {
+          color: #1890ff;
+        }
+      }
+    }
+  }
+  
+  // Custom select option with count
+  .custom-select-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    
+    .option-label {
+      flex: 1;
+    }
+    
+    .option-count {
+      color: #888;
+      font-size: 0.85em;
+      margin-left: 8px;
+    }
+  }
+  
+  // Custom tag rendering
+  .custom-select-tag {
+    background: #f0f7ff;
+    border-color: #d4e8ff;
+    color: #0052cc;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    
+    .anticon-close {
+      color: #0052cc;
+      font-size: 10px;
+    }
+  }
+  
+  .view-mode-toggle {
+    .ant-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  
+  .job-card {
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    overflow: hidden;
+    
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .company-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      
+      img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+    }
+    
+    .job-meta {
+      margin-top: 8px;
+      
+      .anticon {
+        margin-right: 4px;
+      }
+    }
+    
+    .ant-space-vertical {
+      width: 100%;
+    }
+  }
+  
+  // Mobile responsiveness
+  @media (max-width: 992px) {
+    .search-header-card {
+      margin-bottom: 16px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .job-card {
+      .company-logo {
+        margin-bottom: 16px;
+      }
+      
+      .text-right {
+        text-align: left !important;
+        margin-top: 16px;
+        
+        .ant-space {
+          flex-direction: row !important;
+          flex-wrap: wrap;
+          
+          .ant-btn {
+            margin-right: 10px;
+            margin-bottom: 10px;
+          }
+        }
+      }
+    }
+  }
+} 

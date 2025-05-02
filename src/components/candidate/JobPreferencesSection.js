@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import { Select, Input, Switch, Button, Row, Col, Divider, Typography } from 'antd';
+
+const { Option } = Select;
+const { Text } = Typography;
 
 const jobPreferencesSchema = Yup.object({
   jobTypes: Yup.array().of(Yup.string()),
@@ -21,11 +25,13 @@ const JobPreferencesSection = ({ candidate, setCandidate }) => {
   const [jobTypes, setJobTypes] = useState([]);
   const [locations, setLocations] = useState([]);
   const [industries, setIndustries] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchJobPreferencesData = async () => {
       try {
-        // Define mock data in case the APIs fail
+        setLoading(true);
+        // Define mock data in case the API fails
         const mockJobTypes = [
           { id: '1', name: 'Toàn thời gian' },
           { id: '2', name: 'Bán thời gian' },
@@ -51,19 +57,33 @@ const JobPreferencesSection = ({ candidate, setCandidate }) => {
         ];
 
         try {
-          // Try to fetch real data first
-          const [jobTypesRes, locationsRes, industriesRes] = await Promise.all([
-            axios.get('http://localhost:5000/job-types'),
-            axios.get('http://localhost:5000/locations'),
-            axios.get('http://localhost:5000/industries')
-          ]);
-          
-          setJobTypes(jobTypesRes.data);
-          setLocations(locationsRes.data);
-          setIndustries(industriesRes.data);
+          // Lấy dữ liệu từ API /jobFilters
+          const response = await axios.get('http://localhost:5000/jobFilters');
+          const responseLocation = await axios.get('http://localhost:5000/locations');
+          if (response.data) {
+            // Cập nhật state với dữ liệu từ API
+            if (response.data.jobTypes) {
+              setJobTypes(response.data.jobTypes);
+            }
+            
+            if (response.data.industries) {
+              setIndustries(response.data.industries);
+            }
+            
+          } else {
+            setJobTypes(mockJobTypes);
+            setIndustries(mockIndustries);
+          }
+
+          if(responseLocation.data){
+            setLocations(responseLocation.data);
+          }
+          else{
+            setLocations(mockLocations);
+          }
         } catch (apiError) {
           console.warn('Using mock data for job preferences due to API error:', apiError);
-          // Use mock data if APIs fail
+          // Sử dụng dữ liệu mẫu nếu API lỗi
           setJobTypes(mockJobTypes);
           setLocations(mockLocations);
           setIndustries(mockIndustries);
@@ -74,6 +94,8 @@ const JobPreferencesSection = ({ candidate, setCandidate }) => {
         setJobTypes([]);
         setLocations([]);
         setIndustries([]);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -122,129 +144,164 @@ const JobPreferencesSection = ({ candidate, setCandidate }) => {
             validationSchema={jobPreferencesSchema}
             onSubmit={handleUpdateJobPreferences}
           >
-            {({ isSubmitting }) => (
+            {({ isSubmitting, values, setFieldValue }) => (
               <Form>
-                <div className="row mb-3">
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">Loại công việc</label>
-                    <div className="d-flex flex-wrap gap-2">
-                      {jobTypes.map(type => (
-                        <div key={type.id} className="form-check">
-                          <Field 
-                            type="checkbox" 
-                            name="jobTypes" 
-                            value={type.id} 
-                            className="form-check-input" 
-                            id={`job-type-${type.id}`}
-                          />
-                          <label className="form-check-label" htmlFor={`job-type-${type.id}`}>
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} md={12}>
+                    <div className="mb-3">
+                      <label className="form-label">Loại công việc</label>
+                      <Select
+                        mode="multiple"
+                        style={{ width: '100%' }}
+                        placeholder="Chọn loại công việc"
+                        value={values.jobTypes}
+                        onChange={(value) => setFieldValue('jobTypes', value)}
+                        loading={loading}
+                        optionFilterProp="children"
+                        showSearch
+                        maxTagCount={3}
+                        maxTagTextLength={10}
+                      >
+                        {jobTypes.map(type => (
+                          <Option key={type.id} value={type.id}>
                             {type.name}
-                          </label>
-                        </div>
-                      ))}
+                          </Option>
+                        ))}
+                      </Select>
                     </div>
-                  </div>
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">Địa điểm làm việc</label>
-                    <div className="d-flex flex-wrap gap-2">
-                      {locations.map(location => (
-                        <div key={location.id} className="form-check">
-                          <Field 
-                            type="checkbox" 
-                            name="locations" 
-                            value={location.id} 
-                            className="form-check-input" 
-                            id={`location-${location.id}`}
-                          />
-                          <label className="form-check-label" htmlFor={`location-${location.id}`}>
+                  </Col>
+                  <Col xs={24} md={12}>
+                    <div className="mb-3">
+                      <label className="form-label">Địa điểm làm việc</label>
+                      <Select
+                        mode="multiple"
+                        style={{ width: '100%' }}
+                        placeholder="Chọn địa điểm làm việc"
+                        value={values.locations}
+                        onChange={(value) => setFieldValue('locations', value)}
+                        loading={loading}
+                        optionFilterProp="children"
+                        showSearch
+                        maxTagCount={3}
+                        maxTagTextLength={10}
+                      >
+                        {locations.map(location => (
+                          <Option key={location.id} value={location.id}>
                             {location.name}
-                          </label>
-                        </div>
-                      ))}
+                          </Option>
+                        ))}
+                      </Select>
                     </div>
-                  </div>
-                </div>
-                <div className="row mb-3">
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">Ngành nghề</label>
-                    <div className="d-flex flex-wrap gap-2">
-                      {industries.map(industry => (
-                        <div key={industry.id} className="form-check">
-                          <Field 
-                            type="checkbox" 
-                            name="industries" 
-                            value={industry.id} 
-                            className="form-check-input" 
-                            id={`industry-${industry.id}`}
-                          />
-                          <label className="form-check-label" htmlFor={`industry-${industry.id}`}>
+                  </Col>
+                </Row>
+                
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} md={12}>
+                    <div className="mb-3">
+                      <label className="form-label">Ngành nghề</label>
+                      <Select
+                        mode="multiple"
+                        style={{ width: '100%' }}
+                        placeholder="Chọn ngành nghề"
+                        value={values.industries}
+                        onChange={(value) => setFieldValue('industries', value)}
+                        loading={loading}
+                        optionFilterProp="children"
+                        showSearch
+                        maxTagCount={3}
+                        maxTagTextLength={10}
+                      >
+                        {industries.map(industry => (
+                          <Option key={industry.id} value={industry.id}>
                             {industry.name}
-                          </label>
+                          </Option>
+                        ))}
+                      </Select>
+                    </div>
+                  </Col>
+                  <Col xs={24} md={12}>
+                    <div className="mb-3">
+                      <label className="form-label">Mức lương mong muốn</label>
+                      <div className="d-flex align-items-center gap-2">
+                        <div style={{ flex: 1 }}>
+                          <Input
+                            type="number"
+                            placeholder="Tối thiểu"
+                            value={values.expectedSalary.min}
+                            onChange={(e) => {
+                              setFieldValue('expectedSalary.min', Number(e.target.value));
+                            }}
+                          />
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">Mức lương mong muốn</label>
-                    <div className="row">
-                      <div className="col-6">
-                        <Field type="number" name="expectedSalary.min" className="form-control" placeholder="Tối thiểu" />
+                        <div style={{ flex: 0 }}>-</div>
+                        <div style={{ flex: 1 }}>
+                          <Input
+                            type="number"
+                            placeholder="Tối đa"
+                            value={values.expectedSalary.max}
+                            onChange={(e) => {
+                              setFieldValue('expectedSalary.max', Number(e.target.value));
+                            }}
+                          />
+                        </div>
+                        <div style={{ flex: 0.5 }}>
+                          <Select
+                            style={{ width: '100%' }}
+                            value={values.expectedSalary.currency}
+                            onChange={(value) => setFieldValue('expectedSalary.currency', value)}
+                          >
+                            <Option value="USD">USD</Option>
+                            <Option value="VND">VND</Option>
+                          </Select>
+                        </div>
                       </div>
-                      <div className="col-6">
-                        <Field type="number" name="expectedSalary.max" className="form-control" placeholder="Tối đa" />
-                      </div>
                     </div>
-                    <div className="mt-2">
-                      <Field as="select" name="expectedSalary.currency" className="form-select">
-                        <option value="USD">USD</option>
-                        <option value="VND">VND</option>
-                      </Field>
+                  </Col>
+                </Row>
+                
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} md={12}>
+                    <div className="mb-3">
+                      <Switch
+                        checked={values.openToRelocate}
+                        onChange={(checked) => setFieldValue('openToRelocate', checked)}
+                      /> <span className="ms-2">Sẵn sàng chuyển địa điểm làm việc</span>
                     </div>
-                  </div>
-                </div>
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <div className="form-check form-switch">
-                      <Field 
-                        type="checkbox" 
-                        name="openToRelocate" 
-                        className="form-check-input" 
-                        id="relocate"
-                      />
-                      <label className="form-check-label" htmlFor="relocate">
-                        Sẵn sàng chuyển địa điểm làm việc
-                      </label>
+                  </Col>
+                  <Col xs={24} md={12}>
+                    <div className="mb-3">
+                      <Switch
+                        checked={values.openToRemote}
+                        onChange={(checked) => setFieldValue('openToRemote', checked)}
+                      /> <span className="ms-2">Sẵn sàng làm việc từ xa</span>
                     </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-check form-switch">
-                      <Field 
-                        type="checkbox" 
-                        name="openToRemote" 
-                        className="form-check-input" 
-                        id="remote"
-                      />
-                      <label className="form-check-label" htmlFor="remote">
-                        Sẵn sàng làm việc từ xa
-                      </label>
-                    </div>
-                  </div>
-                </div>
+                  </Col>
+                </Row>
+                
+                <Divider />
+                
                 <div className="d-flex justify-content-end">
-                  <button type="button" className="btn btn-secondary me-2" onClick={() => setEditMode(null)}>
+                  <Button 
+                    className="me-2" 
+                    onClick={() => setEditMode(null)}
+                  >
                     Hủy
-                  </button>
-                  <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                  </Button>
+                  <Button 
+                    type="primary" 
+                    htmlType="submit" 
+                    loading={isSubmitting}
+                  >
                     Lưu thay đổi
-                  </button>
+                  </Button>
                 </div>
               </Form>
             )}
           </Formik>
         ) : (
           <div>
-            <div className="row mb-3">
-              <div className="col-md-6">
+            <Row gutter={[16, 16]} className="mb-3">
+              <Col xs={24} md={12}>
                 <h6>Loại công việc</h6>
                 <p>
                   {candidate?.jobPreferences?.jobTypes?.length > 0
@@ -254,8 +311,8 @@ const JobPreferencesSection = ({ candidate, setCandidate }) => {
                         .join(', ')
                     : 'Chưa cập nhật'}
                 </p>
-              </div>
-              <div className="col-md-6">
+              </Col>
+              <Col xs={24} md={12}>
                 <h6>Địa điểm làm việc</h6>
                 <p>
                   {candidate?.jobPreferences?.locations?.length > 0
@@ -265,10 +322,10 @@ const JobPreferencesSection = ({ candidate, setCandidate }) => {
                         .join(', ')
                     : 'Chưa cập nhật'}
                 </p>
-              </div>
-            </div>
-            <div className="row mb-3">
-              <div className="col-md-6">
+              </Col>
+            </Row>
+            <Row gutter={[16, 16]} className="mb-3">
+              <Col xs={24} md={12}>
                 <h6>Ngành nghề</h6>
                 <p>
                   {candidate?.jobPreferences?.industries?.length > 0
@@ -278,26 +335,26 @@ const JobPreferencesSection = ({ candidate, setCandidate }) => {
                         .join(', ')
                     : 'Chưa cập nhật'}
                 </p>
-              </div>
-              <div className="col-md-6">
+              </Col>
+              <Col xs={24} md={12}>
                 <h6>Mức lương mong muốn</h6>
                 <p>
                   {candidate?.jobPreferences?.expectedSalary ? 
                     `${candidate.jobPreferences.expectedSalary.min} - ${candidate.jobPreferences.expectedSalary.max} ${candidate.jobPreferences.expectedSalary.currency}` : 
                     'Chưa cập nhật'}
                 </p>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6">
+              </Col>
+            </Row>
+            <Row gutter={[16, 16]}>
+              <Col xs={24} md={12}>
                 <h6>Sẵn sàng chuyển địa điểm</h6>
                 <p>{candidate?.jobPreferences?.openToRelocate ? 'Có' : 'Không'}</p>
-              </div>
-              <div className="col-md-6">
+              </Col>
+              <Col xs={24} md={12}>
                 <h6>Sẵn sàng làm việc từ xa</h6>
                 <p>{candidate?.jobPreferences?.openToRemote ? 'Có' : 'Không'}</p>
-              </div>
-            </div>
+              </Col>
+            </Row>
           </div>
         )}
       </div>

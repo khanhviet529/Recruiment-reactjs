@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Card, Row, Col, Button, Modal, Tabs, Form, Input, Switch, Divider, message, Space, Popconfirm, Tooltip } from 'antd';
+import { Card, Row, Col, Button, Modal, Tabs, Form, Input, Switch, Divider, message, Space, Popconfirm, Tooltip, Tag } from 'antd';
 import { EyeOutlined, DownloadOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import CVTemplate1 from '../../components/cv-templates/CVTemplate1';
@@ -75,25 +75,66 @@ const CVTemplatesPage = () => {
   }, [user, isChanged]);
 
   // Load saved CVs from localStorage
-  const loadSavedCVs = () => {
+  const loadSavedCVs = async () => {
     try {
-      const savedCVsData = localStorage.getItem('savedCVs');
-      if (savedCVsData) {
-        setSavedCVs(JSON.parse(savedCVsData));
+      setLoading(true);
+      // Lấy dữ liệu từ API thay vì localStorage
+      const response = await axios.get(`http://localhost:5000/savedCVs?candidateId=${user.id}`);
+      if (response.data && response.data.length > 0) {
+        setSavedCVs(response.data);
       }
     } catch (error) {
       console.error('Error loading saved CVs:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Save CVs to localStorage
-  const saveCVToStorage = (newCV) => {
+  // Save CV to database
+  const saveCVToDatabase = async (newCV) => {
     try {
-      const updatedCVs = [...savedCVs, newCV];
-      localStorage.setItem('savedCVs', JSON.stringify(updatedCVs));
-      setSavedCVs(updatedCVs);
+      // Lưu CV mới vào API
+      const response = await axios.post('http://localhost:5000/savedCVs', newCV);
+      if (response.data) {
+        // Cập nhật danh sách CV đã lưu
+        setSavedCVs([...savedCVs, response.data]);
+        message.success('Đã lưu CV thành công');
+      }
     } catch (error) {
       console.error('Error saving CV:', error);
+      message.error('Có lỗi xảy ra khi lưu CV');
+    }
+  };
+
+  // Update existing CV in database
+  const updateCVInDatabase = async (updatedCV) => {
+    try {
+      // Cập nhật CV đã tồn tại vào API
+      const response = await axios.put(`http://localhost:5000/savedCVs/${updatedCV.id}`, updatedCV);
+      if (response.data) {
+        // Cập nhật danh sách CV đã lưu
+        const updatedCVs = savedCVs.map(cv => cv.id === updatedCV.id ? response.data : cv);
+        setSavedCVs(updatedCVs);
+        message.success('CV đã được cập nhật thành công');
+      }
+    } catch (error) {
+      console.error('Error updating CV:', error);
+      message.error('Có lỗi xảy ra khi cập nhật CV');
+    }
+  };
+
+  // Delete CV from database
+  const deleteCVFromDatabase = async (cvId) => {
+    try {
+      // Xóa CV từ API
+      await axios.delete(`http://localhost:5000/savedCVs/${cvId}`);
+      // Cập nhật danh sách CV đã lưu
+      const updatedCVs = savedCVs.filter(cv => cv.id !== cvId);
+      setSavedCVs(updatedCVs);
+      message.success('Đã xóa CV thành công');
+    } catch (error) {
+      console.error('Error deleting CV:', error);
+      message.error('Có lỗi xảy ra khi xóa CV');
     }
   };
 
@@ -108,20 +149,17 @@ const CVTemplatesPage = () => {
     
     if (existingCVIndex !== -1) {
       // Nếu đang chỉnh sửa CV đã lưu, cập nhật trực tiếp
-      const updatedCVs = [...savedCVs];
-      updatedCVs[existingCVIndex] = {
-        ...updatedCVs[existingCVIndex],
+      const updatedCV = {
+        ...savedCVs[existingCVIndex],
         data: customCvData,
         template: selectedTemplate?.id || 1,
         activeSections: activeSections,
         updatedAt: new Date().toISOString()
       };
       
-      localStorage.setItem('savedCVs', JSON.stringify(updatedCVs));
-      setSavedCVs(updatedCVs);
+      updateCVInDatabase(updatedCV);
       setIsChanged(false);
       setPreviewVisible(false);
-      message.success('CV đã được cập nhật thành công');
     } else {
       // Nếu tạo mới CV, hiển thị modal để nhập tên
       setSaveModalVisible(true);
@@ -136,9 +174,8 @@ const CVTemplatesPage = () => {
         // Tạo bản sao của customCvData nhưng loại bỏ trường savedId
         const { savedId, ...cvDataWithoutId } = customCvData;
         
-        const updatedCVs = [...savedCVs];
-        updatedCVs[existingCVIndex] = {
-          ...updatedCVs[existingCVIndex],
+        const updatedCV = {
+          ...savedCVs[existingCVIndex],
           name: values.cvName,  // Cập nhật tên CV nếu người dùng đổi tên
           data: cvDataWithoutId,
           template: selectedTemplate?.id || 1,
@@ -146,13 +183,11 @@ const CVTemplatesPage = () => {
           updatedAt: new Date().toISOString()
         };
         
-        localStorage.setItem('savedCVs', JSON.stringify(updatedCVs));
-        setSavedCVs(updatedCVs);
+        updateCVInDatabase(updatedCV);
         setIsChanged(false);
         setSaveModalVisible(false);
         cvNameForm.resetFields();
         setPreviewVisible(false);
-        message.success('Đã cập nhật CV thành công');
       } else {
         // CV không tồn tại trong danh sách đã lưu, tạo mới
         createNewCV(values);
@@ -166,20 +201,21 @@ const CVTemplatesPage = () => {
   // Hàm tạo CV mới
   const createNewCV = (values) => {
     const newCV = {
-      id: Date.now(),
+      candidateId: user.id,
       name: values.cvName,
       data: customCvData,
       template: selectedTemplate?.id || 1,
       activeSections: activeSections,
-      createdAt: new Date().toISOString()
+      isDefault: savedCVs.length === 0, // Đặt làm mặc định nếu là CV đầu tiên
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
     
-    saveCVToStorage(newCV);
+    saveCVToDatabase(newCV);
     setIsChanged(false);
     setSaveModalVisible(false);
     cvNameForm.resetFields();
     setPreviewVisible(false);
-    message.success('Đã lưu CV thành công');
   };
 
   const fetchCandidateData = async () => {
@@ -595,6 +631,32 @@ const CVTemplatesPage = () => {
     setPreviewVisible(true);
   };
 
+  // Thêm hàm để đặt CV mặc định
+  const setDefaultCV = async (cvId) => {
+    try {
+      // Cập nhật tất cả CV hiện tại để không phải là mặc định
+      for (const cv of savedCVs) {
+        if (cv.isDefault && cv.id !== cvId) {
+          await axios.patch(`http://localhost:5000/savedCVs/${cv.id}`, {
+            isDefault: false
+          });
+        }
+      }
+      
+      // Đặt CV được chọn làm mặc định
+      await axios.patch(`http://localhost:5000/savedCVs/${cvId}`, {
+        isDefault: true
+      });
+      
+      // Tải lại danh sách CV đã lưu
+      loadSavedCVs();
+      message.success('Đã đặt CV mặc định thành công');
+    } catch (error) {
+      console.error('Error setting default CV:', error);
+      message.error('Có lỗi xảy ra khi đặt CV mặc định');
+    }
+  };
+
   return (
     <div className="cv-templates-page">
       <h1 className="mb-4">Mẫu CV xin việc</h1>
@@ -625,10 +687,7 @@ const CVTemplatesPage = () => {
                             title="Xóa CV này?"
                             description="Bạn có chắc chắn muốn xóa CV này không?"
                             onConfirm={() => {
-                              const updatedCVs = savedCVs.filter(item => item.id !== cv.id);
-                              localStorage.setItem('savedCVs', JSON.stringify(updatedCVs));
-                              setSavedCVs(updatedCVs);
-                              message.success('Đã xóa CV thành công');
+                              deleteCVFromDatabase(cv.id);
                             }}
                             okText="Có"
                             cancelText="Không"
@@ -644,6 +703,17 @@ const CVTemplatesPage = () => {
                     >
                       <p>Tạo lúc: {new Date(cv.createdAt).toLocaleString()}</p>
                       <p>Mẫu: {templates.find(t => t.id === cv.template)?.name || 'Mẫu CV 1'}</p>
+                      {cv.isDefault ? (
+                        <Tag color="green">CV Mặc định</Tag>
+                      ) : (
+                        <Button 
+                          type="link"
+                          size="small"
+                          onClick={() => setDefaultCV(cv.id)}
+                        >
+                          Đặt làm mặc định
+                        </Button>
+                      )}
                     </Card>
                   </Col>
                 ))}
@@ -885,6 +955,7 @@ const CVTemplatesPage = () => {
         width="90%"
         style={{ top: 20 }}
         bodyStyle={{ maxHeight: "calc(100vh - 200px)", overflow: "auto" }}
+        zIndex={1050}
         footer={[
           <Button key="back" onClick={() => {
             console.log("Back button clicked");
@@ -1039,6 +1110,7 @@ const CVTemplatesPage = () => {
         open={saveModalVisible}
         onCancel={() => setSaveModalVisible(false)}
         footer={null}
+        zIndex={1051}
       >
         <Form
           form={cvNameForm}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { Table, Tag, Button, Card, Input, DatePicker, Select, Space, message } from 'antd';
+import { Table, Tag, Button, Card, Input, DatePicker, Select, Space, message, Empty } from 'antd';
 import { 
   EyeOutlined, 
   ClockCircleOutlined, 
@@ -17,6 +17,7 @@ const { Option } = Select;
 const ApplicationsPage = () => {
   const { user } = useSelector((state) => state.auth);
   const [applications, setApplications] = useState([]);
+  const [jobData, setJobData] = useState({});
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({
     current: 1,
@@ -30,53 +31,72 @@ const ApplicationsPage = () => {
   });
 
   useEffect(() => {
-    fetchApplications();
+    if (user && user.id) {
+      fetchApplications();
+    }
   }, [user, pagination.current, pagination.pageSize, filters]);
 
   const fetchApplications = async () => {
     try {
       setLoading(true);
       
-      // Build query parameters
-      const params = {
-        page: pagination.current,
-        limit: pagination.pageSize,
-        userId: user.id
-      };
-      
-      if (filters.keyword) params.keyword = filters.keyword;
-      if (filters.status) params.status = filters.status;
-      if (filters.dateRange && filters.dateRange[0] && filters.dateRange[1]) {
-        params.startDate = filters.dateRange[0].format('YYYY-MM-DD');
-        params.endDate = filters.dateRange[1].format('YYYY-MM-DD');
+      // Check if the user is logged in
+      if (!user || !user.id) {
+        message.error('Vui lòng đăng nhập để xem đơn ứng tuyển của bạn');
+        setLoading(false);
+        return;
       }
+
+      // Fetch applications for this specific candidate
+      const candidateId = user.id;
+      const response = await axios.get(`http://localhost:5000/applications?candidateId=${candidateId}`);
       
-      // For development, fetch mock data if API doesn't exist yet
-      try {
-        const response = await axios.get('http://localhost:5000/applications', { params });
+      if (response.data && response.data.length > 0) {
+        // Collect all job IDs to fetch job details
+        const jobIds = [...new Set(response.data.map(app => app.jobId))];
+        const jobsData = {};
         
-        setApplications(response.data.items);
-        setPagination({
-          ...pagination,
-          total: response.data.total
-        });
-      } catch (apiError) {
-        console.warn('Using mock data for applications:', apiError);
-        
-        // Mock data
-        const mockApplications = Array(20).fill(null).map((_, index) => ({
-          id: index + 1,
-          jobId: 100 + index,
-          jobTitle: `${['Frontend Developer', 'Backend Developer', 'Full Stack Engineer', 'UI/UX Designer', 'DevOps Engineer'][index % 5]} (${index + 1})`,
-          companyName: `${['TechCorp', 'Digital Solutions', 'Web Masters', 'IT Innovations', 'Code Factory'][index % 5]}`,
-          location: `${['Hà Nội', 'Hồ Chí Minh', 'Đà Nẵng', 'Nha Trang', 'Cần Thơ'][index % 5]}`,
-          appliedDate: moment().subtract(index % 30, 'days').format(),
-          status: ['pending', 'reviewing', 'interviewing', 'rejected', 'hired'][index % 5],
-          salary: `${(index % 10 + 10) * 1000000} - ${(index % 10 + 15) * 1000000} VND`
+        // Fetch job details for each application
+        await Promise.all(jobIds.map(async (jobId) => {
+          try {
+            const jobResponse = await axios.get(`http://localhost:5000/jobs/${jobId}`);
+            if (jobResponse.data) {
+              // Also fetch employer info
+              const employerResponse = await axios.get(`http://localhost:5000/employers/${jobResponse.data.employerId}`);
+              
+              jobsData[jobId] = {
+                ...jobResponse.data,
+                employerName: employerResponse.data?.companyName || 'Unknown',
+                employerLogo: employerResponse.data?.logo || null
+              };
+            }
+          } catch (err) {
+            console.error(`Error fetching job ${jobId}:`, err);
+            jobsData[jobId] = { title: `Job #${jobId}`, location: 'Unknown' };
+          }
         }));
         
-        // Filter mock data based on filters
-        let filteredData = [...mockApplications];
+        setJobData(jobsData);
+        
+        // Format the applications with job data
+        const formattedApplications = response.data.map(app => ({
+          id: app.id,
+          jobId: app.jobId,
+          jobTitle: jobsData[app.jobId]?.title || `Job #${app.jobId}`,
+          companyName: jobsData[app.jobId]?.employerName || 'Unknown Company',
+          companyLogo: jobsData[app.jobId]?.employerLogo || null,
+          location: jobsData[app.jobId]?.location || 'Unknown',
+          appliedDate: app.appliedAt || new Date().toISOString(),
+          status: app.status || 'pending',
+          salary: jobsData[app.jobId]?.salary ? 
+            (jobsData[app.jobId].salary.isHidden ? 
+              'Thương lượng' : 
+              `${jobsData[app.jobId].salary.min} - ${jobsData[app.jobId].salary.max} ${jobsData[app.jobId].salary.currency}`) : 
+            'N/A'
+        }));
+        
+        // Apply filters
+        let filteredData = [...formattedApplications];
         
         if (filters.keyword) {
           const keyword = filters.keyword.toLowerCase();
@@ -100,7 +120,8 @@ const ApplicationsPage = () => {
           });
         }
         
-        // Pagination calculation for mock data
+        // Apply pagination
+        const total = filteredData.length;
         const startIndex = (pagination.current - 1) * pagination.pageSize;
         const endIndex = startIndex + pagination.pageSize;
         const paginatedData = filteredData.slice(startIndex, endIndex);
@@ -108,12 +129,20 @@ const ApplicationsPage = () => {
         setApplications(paginatedData);
         setPagination({
           ...pagination,
-          total: filteredData.length
+          total
+        });
+      } else {
+        // No applications found
+        setApplications([]);
+        setPagination({
+          ...pagination,
+          total: 0
         });
       }
     } catch (error) {
       console.error('Error fetching applications:', error);
       message.error('Không thể tải danh sách ứng tuyển');
+      setApplications([]);
     } finally {
       setLoading(false);
     }
@@ -202,7 +231,8 @@ const ApplicationsPage = () => {
           'interviewing': { color: 'blue', text: 'Phỏng vấn', icon: <ClockCircleOutlined /> },
           'offered': { color: 'success', text: 'Đã đề nghị', icon: <CheckCircleOutlined /> },
           'hired': { color: 'success', text: 'Đã tuyển', icon: <CheckCircleOutlined /> },
-          'rejected': { color: 'error', text: 'Từ chối', icon: <CloseCircleOutlined /> }
+          'rejected': { color: 'error', text: 'Từ chối', icon: <CloseCircleOutlined /> },
+          'withdrawn': { color: 'default', text: 'Đã rút hồ sơ', icon: <CloseCircleOutlined /> }
         };
         const config = statusConfig[status] || { color: 'default', text: status };
         return (
@@ -218,6 +248,7 @@ const ApplicationsPage = () => {
         { text: 'Đã đề nghị', value: 'offered' },
         { text: 'Đã tuyển', value: 'hired' },
         { text: 'Từ chối', value: 'rejected' },
+        { text: 'Đã rút hồ sơ', value: 'withdrawn' },
       ],
       onFilter: (value, record) => record.status === value,
     },
@@ -263,6 +294,7 @@ const ApplicationsPage = () => {
                 <Option value="offered">Đã đề nghị</Option>
                 <Option value="hired">Đã tuyển</Option>
                 <Option value="rejected">Từ chối</Option>
+                <Option value="withdrawn">Đã rút hồ sơ</Option>
               </Select>
             </div>
             
@@ -277,14 +309,24 @@ const ApplicationsPage = () => {
       </Card>
       
       <Card>
-        <Table
-          columns={columns}
-          dataSource={applications}
-          rowKey="id"
-          pagination={pagination}
-          loading={loading}
-          onChange={handleTableChange}
-        />
+        {applications.length > 0 ? (
+          <Table
+            columns={columns}
+            dataSource={applications}
+            rowKey="id"
+            pagination={pagination}
+            loading={loading}
+            onChange={handleTableChange}
+          />
+        ) : (
+          <Empty 
+            description={
+              <span>
+                {loading ? 'Đang tải dữ liệu...' : 'Bạn chưa có đơn ứng tuyển nào'}
+              </span>
+            }
+          />
+        )}
       </Card>
     </div>
   );

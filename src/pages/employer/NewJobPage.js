@@ -40,7 +40,7 @@ const NewJobPage = () => {
   const [salaryHidden, setSalaryHidden] = useState(false);
   const [isFeatured, setIsFeatured] = useState(false);
   const [isUrgent, setIsUrgent] = useState(false);
-  const [questions, setQuestions] = useState([{ id: Date.now(), question: '', isRequired: true }]);
+  const [questions, setQuestions] = useState([{ id: Date.now().toString(), question: '', isRequired: true }]);
   const [activeTab, setActiveTab] = useState('general');
   
   // Rich text editor configurations
@@ -117,11 +117,13 @@ const NewJobPage = () => {
         workType: isRemote ? 'remote' : values.workType || 'onsite',
         isFeatured,
         isUrgent,
-        questions: questions.filter(q => q.question.trim() !== '').map(q => ({
-          id: q.id.toString(),
-          question: q.question,
-          isRequired: q.isRequired
-        })),
+        questions: questions
+          .filter(q => q.question.trim() !== '')
+          .map(q => ({
+            id: q.id,
+            question: q.question,
+            isRequired: q.isRequired
+          })),
         responsibilities: Array.isArray(values.responsibilities) 
           ? values.responsibilities 
           : values.responsibilities.split('\n').filter(item => item.trim() !== ''),
@@ -222,7 +224,9 @@ const NewJobPage = () => {
 
   // Handle questions
   const addQuestion = () => {
-    setQuestions([...questions, { id: Date.now(), question: '', isRequired: true }]);
+    // Generate a unique string ID for the question (using timestamp)
+    const newId = Date.now().toString();
+    setQuestions([...questions, { id: newId, question: '', isRequired: true }]);
   };
 
   const removeQuestion = (id) => {
@@ -754,15 +758,15 @@ const NewJobPage = () => {
             <TabPane 
               tab={
                 <span>
-                  <QuestionCircleOutlined /> Câu hỏi phỏng vấn
+                  <QuestionCircleOutlined /> Câu hỏi ứng tuyển
                 </span>
               } 
               key="questions"
             >
-              <Card title="Câu hỏi sàng lọc ứng viên" className="mb-3">
+              <Card title="Câu hỏi sàng lọc ứng viên khi nộp đơn" className="mb-3">
                 <Alert
                   message="Câu hỏi tùy chỉnh"
-                  description="Thêm các câu hỏi để ứng viên trả lời khi ứng tuyển vào vị trí của bạn. Điều này giúp bạn sàng lọc ứng viên hiệu quả hơn."
+                  description="Thêm các câu hỏi để ứng viên trả lời khi ứng tuyển vào vị trí của bạn. Mỗi câu hỏi sẽ xuất hiện trong form ứng tuyển và ứng viên phải trả lời trước khi nộp đơn. Câu trả lời sẽ được hiển thị trong hồ sơ ứng tuyển để giúp bạn đánh giá ứng viên tốt hơn."
                   type="info"
                   showIcon
                   className="mb-4"
@@ -772,6 +776,9 @@ const NewJobPage = () => {
                   <div className="question-item mb-3" key={question.id}>
                     <div className="d-flex align-items-start">
                       <div className="flex-grow-1 me-2">
+                        <div className="mb-1">
+                          <small className="text-muted">ID: {question.id}</small>
+                        </div>
                         <Input
                           placeholder={`Câu hỏi ${index + 1}`}
                           value={question.question}
