@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { Empty } from 'antd';
+import { Empty, Tooltip } from 'antd';
 import { 
   Card, 
   Row, 
@@ -19,7 +19,9 @@ import {
   Modal,
   List,
   Avatar,
-  Space
+  Space,
+  Tabs,
+  Popconfirm
 } from 'antd';
 import {
   ClockCircleOutlined,
@@ -35,11 +37,25 @@ import {
   FileDoneOutlined,
   FileTextOutlined,
   QuestionCircleOutlined,
-  RedoOutlined
+  RedoOutlined,
+  FileOutlined,
+  FilePdfOutlined,
+  CloseOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  MessageOutlined,
+  BankOutlined,
+  UserOutlined,
+  ExclamationCircleOutlined,
+  SendOutlined
 } from '@ant-design/icons';
 import moment from 'moment';
+import parse from 'html-react-parser';
+import ApplicationStatus from '../../components/candidate/Applications/ApplicationStatus';
 
 const { Title, Text, Paragraph } = Typography;
+const { TabPane } = Tabs;
+const { confirm } = Modal;
 
 const ApplicationDetailPage = () => {
   const { id } = useParams();
@@ -54,6 +70,9 @@ const ApplicationDetailPage = () => {
   const [reapplyModalVisible, setReapplyModalVisible] = useState(false);
   const [similarJobs, setSimilarJobs] = useState([]);
   const [processingAction, setProcessingAction] = useState(false);
+  const [pdfPreviewVisible, setPdfPreviewVisible] = useState(false);
+  const [withdrawConfirmVisible, setWithdrawConfirmVisible] = useState(false);
+  const [advancedWithdrawModalVisible, setAdvancedWithdrawModalVisible] = useState(false);
 
   useEffect(() => {
     if (id && user && user.id) {
@@ -76,21 +95,44 @@ const ApplicationDetailPage = () => {
       }
       
       const appData = applicationResponse.data;
+      
+      // Check if this application belongs to the current user
+      if (appData.candidateId != user.id) {
+        setError('Bạn không có quyền xem đơn ứng tuyển này');
+        setLoading(false);
+        return;
+      }
+      
       setApplication(appData);
       
       // Get job details
       const jobResponse = await axios.get(`http://localhost:5000/jobs/${appData.jobId}`);
+      if (!jobResponse.data) {
+        setError('Không tìm thấy thông tin công việc');
+        setLoading(false);
+        return;
+      }
+      
       const jobData = jobResponse.data;
       setJob(jobData);
       
       // Get employer details
-      const employerResponse = await axios.get(`http://localhost:5000/employers/${jobData.employerId}`);
-      setEmployer(employerResponse.data);
+      const employerResponse = await axios.get(`http://localhost:5000/employers?userId=${jobData.employerId}`);
+      if (!employerResponse.data) {
+        console.warn(`Employer not found for ID: ${jobData.employerId}`);
+      } else {
+        setEmployer(employerResponse.data);
+      }
       
       // Check for similar jobs
       try {
-        const similarJobsResponse = await axios.get(`http://localhost:5000/jobs?categoryIds=${jobData.categoryIds.join('&categoryIds=')}&_limit=3`);
-        setSimilarJobs(similarJobsResponse.data.filter(j => j.id !== jobData.id));
+        if (jobData.categoryIds && jobData.categoryIds.length > 0) {
+          const categoryParams = jobData.categoryIds.map(id => `categoryIds=${id}`).join('&');
+          const similarJobsResponse = await axios.get(`http://localhost:5000/jobs?${categoryParams}&_limit=3`);
+          setSimilarJobs(similarJobsResponse.data.filter(j => j.id !== jobData.id));
+        } else {
+          setSimilarJobs([]);
+        }
       } catch (err) {
         console.error('Error fetching similar jobs:', err);
         setSimilarJobs([]);
@@ -101,6 +143,39 @@ const ApplicationDetailPage = () => {
       console.error('Error fetching application details:', err);
       setError('Không thể tải thông tin ứng tuyển. Vui lòng thử lại sau.');
       setLoading(false);
+    }
+  };
+
+  const canWithdrawApplication = (status) => {
+    // Các trạng thái mà ứng viên có thể rút hồ sơ
+    const withdrawableStatuses = ['pending', 'reviewing'];
+    
+    // Các trạng thái cần xác nhận đặc biệt
+    const advancedWithdrawStatuses = ['interviewing'];
+    
+    // Các trạng thái không thể rút
+    const nonWithdrawableStatuses = ['offered', 'hired', 'rejected', 'withdrawn'];
+    
+    if (withdrawableStatuses.includes(status)) {
+      return 'normal'; // Có thể rút bình thường
+    } else if (advancedWithdrawStatuses.includes(status)) {
+      return 'advanced'; // Cần xác nhận đặc biệt
+    } else if (nonWithdrawableStatuses.includes(status)) {
+      return 'denied'; // Không thể rút
+    }
+    
+    return 'denied'; // Mặc định không cho phép
+  };
+
+  const handleWithdrawClick = () => {
+    const withdrawType = canWithdrawApplication(application.status);
+    
+    if (withdrawType === 'normal') {
+      setWithdrawModalVisible(true);
+    } else if (withdrawType === 'advanced') {
+      setAdvancedWithdrawModalVisible(true);
+    } else {
+      message.error('Không thể rút hồ sơ ở trạng thái hiện tại.');
     }
   };
 
@@ -141,6 +216,7 @@ const ApplicationDetailPage = () => {
       
       message.success('Đã rút hồ sơ ứng tuyển thành công');
       setWithdrawModalVisible(false);
+      setAdvancedWithdrawModalVisible(false);
     } catch (error) {
       console.error('Error withdrawing application:', error);
       message.error('Có lỗi xảy ra khi rút hồ sơ ứng tuyển');
@@ -159,6 +235,17 @@ const ApplicationDetailPage = () => {
       
       if (applicationDeadline < now) {
         message.error('Thời hạn ứng tuyển đã kết thúc. Không thể nộp lại hồ sơ.');
+        setReapplyModalVisible(false);
+        setProcessingAction(false);
+        return;
+      }
+      
+      // Kiểm tra xem đã có đơn ứng tuyển hoạt động nào khác cho công việc này không
+      const checkResponse = await axios.get(`http://localhost:5000/applications?candidateId=${user.id}&jobId=${application.jobId}`);
+      const activeApplications = checkResponse.data.filter(app => app.id !== id && app.status !== 'withdrawn');
+      
+      if (activeApplications.length > 0) {
+        message.error('Bạn đã có đơn ứng tuyển khác cho công việc này. Không thể nộp lại hồ sơ.');
         setReapplyModalVisible(false);
         setProcessingAction(false);
         return;
@@ -211,6 +298,11 @@ const ApplicationDetailPage = () => {
 
   const navigateToJobDetail = () => {
     navigate(`/jobs/${job.id}`);
+  };
+
+  const navigateToJobDetailForReapply = () => {
+    // Add a query parameter to indicate user wants to reapply
+    navigate(`/jobs/${job.id}?reapply=true`);
   };
 
   const renderStatusTag = (status) => {
@@ -333,34 +425,100 @@ const ApplicationDetailPage = () => {
     return `${salary.min} - ${salary.max} ${salary.currency}/${salary.period}`;
   };
   
+  const handlePdfPreview = () => {
+    if (application?.resume?.url || application?.resumeUrl) {
+      // Open resume URL in a new tab
+      window.open(application?.resume?.url || application?.resumeUrl, '_blank');
+    } else {
+      message.error('Không tìm thấy CV của bạn');
+    }
+  };
+
   const renderActionButtons = () => {
-    // Check if application deadline has passed
-    const isDeadlinePassed = job && new Date(job.applicationDeadline) < new Date();
+    // Kiểm tra khả năng rút hồ sơ
+    const withdrawStatus = application ? canWithdrawApplication(application.status) : 'denied';
+    const canWithdraw = withdrawStatus === 'normal' || withdrawStatus === 'advanced';
     
-    if (application.status === 'withdrawn') {
-      return (
+    return (
+      <Space direction="vertical" className="w-100">
+        {/* View Job button */}
         <Button 
           type="primary" 
-          icon={<RedoOutlined />} 
-          onClick={() => setReapplyModalVisible(true)}
-          disabled={isDeadlinePassed || processingAction}
+          icon={<EyeOutlined />} 
+          onClick={navigateToJobDetail}
+          block
         >
-          {isDeadlinePassed ? 'Hết hạn nộp đơn' : 'Nộp lại hồ sơ'}
+          Xem tin tuyển dụng
         </Button>
-      );
-    } else if (['pending', 'reviewing', 'interviewing'].includes(application.status)) {
-      return (
+        
+        {/* View Resume button */}
         <Button 
-          danger 
-          onClick={() => setWithdrawModalVisible(true)}
-          disabled={processingAction}
+          icon={<FilePdfOutlined />} 
+          onClick={handlePdfPreview}
+          disabled={!application?.resume?.url && !application?.resumeUrl}
+          block
         >
-          Rút hồ sơ ứng tuyển
+          Xem CV của bạn
         </Button>
-      );
-    }
-    
-    return null;
+        
+        {/* Withdraw application button */}
+        {application && application.status !== 'withdrawn' && 
+          application.status !== 'rejected' && 
+          application.status !== 'hired' && 
+          canWithdraw && (
+          <Button 
+            danger 
+            icon={<CloseOutlined />}
+            onClick={handleWithdrawClick}
+            block
+          >
+            Rút hồ sơ ứng tuyển
+          </Button>
+        )}
+
+        {/* Hiển thị thông tin nếu không thể rút hồ sơ */}
+        {application && application.status !== 'withdrawn' && 
+          application.status !== 'rejected' && 
+          application.status !== 'hired' && 
+          !canWithdraw && (
+          <Tooltip title="Bạn không thể rút hồ sơ ở trạng thái hiện tại">
+            <Button 
+              danger 
+              icon={<CloseOutlined />}
+              disabled
+              block
+            >
+              Không thể rút hồ sơ
+            </Button>
+          </Tooltip>
+        )}
+        
+        {/* Reapply buttons */}
+        {application && application.status === 'withdrawn' && (
+          <>
+            <Button 
+              type="dashed" 
+              icon={<RedoOutlined />}
+              onClick={() => setReapplyModalVisible(true)}
+              block
+            >
+              Nộp lại hồ sơ ứng tuyển
+            </Button>
+            
+            <Tooltip title="Đến trang chi tiết công việc để ứng tuyển lại với CV mới">
+              <Button
+                type="link"
+                icon={<SendOutlined />}
+                onClick={navigateToJobDetailForReapply}
+                block
+              >
+                Ứng tuyển với CV mới
+              </Button>
+            </Tooltip>
+          </>
+        )}
+      </Space>
+    );
   };
 
   if (loading) {
@@ -512,9 +670,17 @@ const ApplicationDetailPage = () => {
           <Card title="Hồ sơ ứng tuyển của bạn" className="mb-4">
             <Descriptions layout="vertical" column={{ xs: 1, sm: 2 }} bordered>
               <Descriptions.Item label="CV">
-                <Button type="link" icon={<FileTextOutlined />}>
-                  {application.resume?.name || 'CV của bạn'}
-                </Button>
+                {application.resume?.url || application.resumeUrl ? (
+                  <Button 
+                    type="link" 
+                    icon={<FileTextOutlined />} 
+                    onClick={handlePdfPreview}
+                  >
+                    {application.resume?.name || 'CV của bạn'}
+                  </Button>
+                ) : (
+                  <Text type="secondary">Không có CV đính kèm</Text>
+                )}
               </Descriptions.Item>
               
               {application.coverLetter && (
@@ -701,6 +867,43 @@ const ApplicationDetailPage = () => {
             </Descriptions>
           </Space>
         </div>
+      </Modal>
+      
+      {/* Advanced Withdraw Modal for interview stage */}
+      <Modal
+        title="Cảnh báo: Rút hồ sơ ứng tuyển trong giai đoạn phỏng vấn"
+        open={advancedWithdrawModalVisible}
+        onCancel={() => setAdvancedWithdrawModalVisible(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setAdvancedWithdrawModalVisible(false)}>
+            Hủy
+          </Button>,
+          <Button 
+            key="withdraw" 
+            danger 
+            type="primary" 
+            loading={processingAction} 
+            onClick={handleWithdraw}
+          >
+            Tôi hiểu và vẫn muốn rút hồ sơ
+          </Button>
+        ]}
+      >
+        <Alert
+          message="Cảnh báo"
+          description="Rút hồ sơ ở giai đoạn này có thể ảnh hưởng tiêu cực đến quá trình ứng tuyển của bạn với công ty này trong tương lai."
+          type="warning"
+          showIcon
+          className="mb-3"
+        />
+        <p>Bạn đang ở giai đoạn phỏng vấn của quá trình tuyển dụng. Rút hồ sơ vào lúc này:</p>
+        <ul>
+          <li>Có thể tạo ấn tượng không tốt với nhà tuyển dụng</li>
+          <li>Có thể bị đánh dấu là ứng viên không nghiêm túc</li>
+          <li>Nhà tuyển dụng đã đầu tư thời gian xem xét và sắp xếp phỏng vấn cho bạn</li>
+        </ul>
+        <p>Nếu bạn có khó khăn với lịch phỏng vấn, hãy cân nhắc liên hệ trực tiếp với nhà tuyển dụng để điều chỉnh thay vì rút hồ sơ.</p>
+        <p><strong>Bạn có chắc chắn muốn rút hồ sơ ứng tuyển này không?</strong></p>
       </Modal>
     </div>
   );

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import emailjs from '@emailjs/browser';
 import { 
   Card, 
   Row, 
@@ -47,6 +48,17 @@ const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
 const { TabPane } = Tabs;
 
+// Function to format email content for preview
+const formatEmailContent = (text) => {
+  if (!text) return '';
+  return text.split('\n').map((line, i) => (
+    <React.Fragment key={i}>
+      {line}
+      <br />
+    </React.Fragment>
+  ));
+};
+
 const ApplicationDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -63,6 +75,40 @@ const ApplicationDetailPage = () => {
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
   const [actionToConfirm, setActionToConfirm] = useState(null);
   const [processingAction, setProcessingAction] = useState(false);
+  const [emailPreviewVisible, setEmailPreviewVisible] = useState(false);
+  const emailFormRef = useRef();
+
+  // EmailJS configuration constants
+  const SERVICE_ID = 'service_tvwa1o9';
+  const TEMPLATE_ID = 'template_enpsglf';
+  const PUBLIC_KEY = 'Kdi2J8L4OUPkdE5Fx';
+  
+  // Initialize EmailJS
+  useEffect(() => {
+    try {
+      emailjs.init(PUBLIC_KEY);
+      console.log('EmailJS initialized successfully');
+    } catch (error) {
+      console.error('Error initializing EmailJS:', error);
+      message.error('Không thể khởi tạo dịch vụ email. Một số tính năng có thể không hoạt động.');
+    }
+  }, []);
+
+  // Test EmailJS connection on component mount
+  useEffect(() => {
+    const testConnection = async () => {
+      try {
+        // Just checking if the keys are valid
+        if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
+          console.warn('EmailJS configuration is incomplete');
+        }
+      } catch (error) {
+        console.error('Error testing EmailJS connection:', error);
+      }
+    };
+    
+    testConnection();
+  }, []);
 
   useEffect(() => {
     fetchApplicationDetail();
@@ -74,9 +120,21 @@ const ApplicationDetailPage = () => {
       const applicationResponse = await axios.get(`http://localhost:5000/applications/${id}`);
       const applicationData = applicationResponse.data;
       
+      if (!applicationData) {
+        setError('Không tìm thấy thông tin đơn ứng tuyển');
+        setLoading(false);
+        return;
+      }
+      
       // Get the job first to check ownership
       const jobResponse = await axios.get(`http://localhost:5000/jobs/${applicationData.jobId}`);
       const jobData = jobResponse.data;
+      
+      if (!jobData) {
+        setError('Không tìm thấy thông tin công việc');
+        setLoading(false);
+        return;
+      }
       
       // Check if job belongs to employer
       if (jobData.employerId != user.id) {
@@ -86,13 +144,42 @@ const ApplicationDetailPage = () => {
       }
       
       // Get employer data
-      const employerResponse = await axios.get(`http://localhost:5000/employers/${jobData.employerId}`);
+      const employerResponse = await axios.get(`http://localhost:5000/employers?userId=${jobData.employerId}`);
       
-      // Get candidate data
-      const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${applicationData.candidateId}`);
+      // Get candidate data - first try by userId
+      let candidateData = null;
+      try {
+        const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${applicationData.candidateId}`);
+        
+        if (candidateResponse.data && candidateResponse.data.length > 0) {
+          candidateData = candidateResponse.data[0];
+        } else {
+          // If not found by userId, try by id directly
+          const directResponse = await axios.get(`http://localhost:5000/candidates?id=${applicationData.candidateId}`);
+          if (directResponse.data && directResponse.data.length > 0) {
+            candidateData = directResponse.data[0];
+          }
+        }
+        
+        if (!candidateData) {
+          console.warn(`Candidate not found for ID: ${applicationData.candidateId}`);
+          candidateData = { 
+            firstName: 'Unknown', 
+            lastName: 'Candidate',
+            id: applicationData.candidateId
+          };
+        }
+      } catch (error) {
+        console.error('Error fetching candidate details:', error);
+        candidateData = { 
+          firstName: 'Unknown', 
+          lastName: 'Candidate',
+          id: applicationData.candidateId
+        };
+      }
       
       setApplication(applicationData);
-      setCandidate(candidateResponse.data);
+      setCandidate(candidateData);
       setJob(jobData);
       setEmployer(employerResponse.data);
     } catch (error) {
@@ -181,10 +268,15 @@ const ApplicationDetailPage = () => {
     const subject = type === 'offer' 
       ? `Thư mời phỏng vấn: ${job?.title}`
       : `Kết quả ứng tuyển: ${job?.title}`;
+    
+    const currentDate = new Date().toLocaleDateString('vi-VN');
+    const companyName = employer?.companyName || 'Công ty chúng tôi';
+    const employerName = user.fullName || 'Nhà tuyển dụng';
+    const candidateName = `${candidate?.firstName || ''} ${candidate?.lastName || ''}`.trim();
       
     const content = type === 'offer'
-      ? `Kính gửi ${candidate?.firstName} ${candidate?.lastName},\n\nChúng tôi vui mừng thông báo rằng hồ sơ của bạn đã được chọn cho vị trí ${job?.title}. Chúng tôi muốn mời bạn tham gia buổi phỏng vấn để thảo luận thêm về vị trí này.\n\nThời gian: [Thời gian phỏng vấn]\nĐịa điểm: [Địa điểm phỏng vấn]\n\nVui lòng xác nhận sự tham dự của bạn bằng cách trả lời email này.\n\nTrân trọng,\n${user.name}\n${employer?.companyName || ''}`
-      : `Kính gửi ${candidate?.firstName} ${candidate?.lastName},\n\nCảm ơn bạn đã quan tâm đến vị trí ${job?.title}.\n\nSau khi xem xét kỹ lưỡng hồ sơ của bạn, chúng tôi rất tiếc phải thông báo rằng chúng tôi đã quyết định tiếp tục với các ứng viên khác phù hợp hơn với yêu cầu hiện tại của chúng tôi.\n\nChúng tôi đánh giá cao sự quan tâm của bạn và khuyến khích bạn theo dõi các cơ hội tuyển dụng khác từ công ty chúng tôi trong tương lai.\n\nChúc bạn thành công trong sự nghiệp.\n\nTrân trọng,\n${user.name}\n${employer?.companyName || ''}`;
+      ? `Kính gửi ${candidateName},\n\nChúng tôi vui mừng thông báo rằng hồ sơ của bạn đã được chọn cho vị trí ${job?.title}. Chúng tôi muốn mời bạn tham gia buổi phỏng vấn để thảo luận thêm về vị trí này.\n\nThời gian: [Thời gian phỏng vấn]\nĐịa điểm: [Địa điểm phỏng vấn]\nHình thức: [Trực tiếp/Online]\n\nVui lòng xác nhận sự tham dự của bạn bằng cách trả lời email này.\n\nTrân trọng,\n${employerName}\n${companyName}`
+      : `Kính gửi ${candidateName},\n\nCảm ơn bạn đã quan tâm đến vị trí ${job?.title}.\n\nSau khi xem xét kỹ lưỡng hồ sơ của bạn, chúng tôi rất tiếc phải thông báo rằng chúng tôi đã quyết định tiếp tục với các ứng viên khác phù hợp hơn với yêu cầu hiện tại của chúng tôi.\n\nChúng tôi đánh giá cao sự quan tâm của bạn và khuyến khích bạn theo dõi các cơ hội tuyển dụng khác từ công ty chúng tôi trong tương lai.\n\nChúc bạn thành công trong sự nghiệp.\n\nTrân trọng,\n${employerName}\n${companyName}`;
     
     emailForm.setFieldsValue({
       to: candidate?.email,
@@ -199,38 +291,100 @@ const ApplicationDetailPage = () => {
     try {
       setProcessingAction(true);
       
-      await axios.post('http://localhost:5000/send-email', {
-        to: values.to,
-        subject: values.subject,
-        body: values.body,
-        applicationId: application.id,
-        employerId: job.employerId
-      });
+      // Show loading message
+      const loadingMessage = message.loading('Đang gửi email...', 0);
       
-      message.success('Email đã được gửi thành công');
+      // Prepare email parameters for EmailJS
+      const emailParams = {
+        title: values.subject,
+        name: user.fullName || employer?.companyName || 'Nhà tuyển dụng',
+        email_form: employer?.contactEmail || user.email || 'admin@recruitment.com',
+        email_to: values.to,
+        time: new Date().toLocaleString('vi-VN'),
+        message: values.body,
+        to_email: values.to,
+        to_name: `${candidate?.firstName || ''} ${candidate?.lastName || 'Ứng viên'}`
+      };
       
-      // Update application status based on email type
-      if (emailType === 'offer') {
-        updateApplicationStatus('interviewing');
-      } else if (emailType === 'reject') {
-        updateApplicationStatus('rejected');
+      console.log('Sending email with params:', emailParams);
+      
+      try {
+        // Send email using EmailJS
+        const result = await emailjs.send(
+          SERVICE_ID,
+          TEMPLATE_ID,
+          emailParams,
+          PUBLIC_KEY
+        );
+        
+        // Close loading message
+        loadingMessage();
+        
+        console.log('Email sent successfully:', result);
+        message.success('Email đã được gửi thành công');
+        
+        // Create a record of the email sent
+        try {
+          await axios.post('http://localhost:5000/emails', {
+            applicationId: application.id,
+            candidateId: application.candidateId,
+            employerId: job.employerId,
+            jobId: job.id,
+            type: emailType,
+            subject: values.subject,
+            content: values.body,
+            sentAt: new Date().toISOString(),
+            status: 'sent'
+          });
+        } catch (recordError) {
+          console.error('Error recording email in database:', recordError);
+          // Just log the error but don't show message to user
+        }
+        
+        // Update application status based on email type
+        if (emailType === 'offer') {
+          updateApplicationStatus('interviewing');
+        } else if (emailType === 'reject') {
+          updateApplicationStatus('rejected');
+        }
+        
+        setEmailModalVisible(false);
+      } catch (emailError) {
+        // Close loading message
+        loadingMessage();
+        
+        console.error('Error sending email with EmailJS:', emailError);
+        
+        // For development environment, implement a fallback
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Development environment detected, simulating email success');
+          message.success('Email đã được gửi thành công (giả lập)');
+          
+          // Update application status based on email type
+          if (emailType === 'offer') {
+            updateApplicationStatus('interviewing');
+          } else if (emailType === 'reject') {
+            updateApplicationStatus('rejected');
+          }
+          
+          setEmailModalVisible(false);
+          return;
+        }
+        
+        // For production, show the error
+        let errorMessage = 'Không thể gửi email. Vui lòng thử lại sau.';
+        
+        if (emailError.text) {
+          errorMessage = `Lỗi gửi email: ${emailError.text}`;
+        } else if (emailError.message) {
+          errorMessage = `Lỗi gửi email: ${emailError.message}`;
+        }
+        
+        message.error(errorMessage);
       }
-      
-      setEmailModalVisible(false);
     } catch (error) {
-      console.error('Error sending email:', error);
-      
-      // For development, show success message even if API fails
-      message.success('Email đã được gửi thành công (simulated)');
-      
-      // Update application status based on email type
-      if (emailType === 'offer') {
-        updateApplicationStatus('interviewing');
-      } else if (emailType === 'reject') {
-        updateApplicationStatus('rejected');
-      }
-      
-      setEmailModalVisible(false);
+      console.error('General error in handleSendEmail:', error);
+      message.error('Có lỗi xảy ra. Vui lòng thử lại sau.');
     } finally {
       setProcessingAction(false);
     }
@@ -351,6 +505,22 @@ const ApplicationDetailPage = () => {
           Khôi phục hồ sơ
         </Button>
       );
+      
+      // Hiển thị thông báo cho nhà tuyển dụng biết ứng viên đã rút hồ sơ
+      return (
+        <>
+          <Alert
+            message="Ứng viên đã rút hồ sơ"
+            description="Ứng viên này đã chủ động rút hồ sơ ứng tuyển. Bạn có thể khôi phục đơn ứng tuyển này nếu muốn tiếp tục xem xét."
+            type="warning"
+            showIcon
+            className="mb-4"
+          />
+          <Space>
+            {actions}
+          </Space>
+        </>
+      );
     } else if (application.status === 'pending' || application.status === 'reviewing') {
       actions.push(
         <Button 
@@ -404,7 +574,27 @@ const ApplicationDetailPage = () => {
       );
     }
     
-    return actions;
+    return <Space>{actions}</Space>;
+  };
+
+  const handleResumePreview = () => {
+    // Check if application has resume URL (either in resume.url or resumeUrl field)
+    if (application?.resume?.url || application?.resumeUrl) {
+      // Open resume URL in a new tab
+      window.open(application?.resume?.url || application?.resumeUrl, '_blank');
+    } else {
+      message.error('Không tìm thấy CV của ứng viên');
+    }
+  };
+
+  // Preview email function
+  const handlePreviewEmail = () => {
+    // Validate form fields
+    emailForm.validateFields().then(values => {
+      setEmailPreviewVisible(true);
+    }).catch(error => {
+      console.log('Validation failed:', error);
+    });
   };
 
   if (loading) {
@@ -528,16 +718,15 @@ const ApplicationDetailPage = () => {
               <Divider />
               
               <div className="candidate-links">
-                {application.resume && (
+                {(application?.resume?.url || application?.resumeUrl) && (
                   <Button 
                     type="primary" 
                     block 
                     className="mb-3" 
                     icon={<FileTextOutlined />}
-                    href={application.resume.url}
-                    target="_blank"
+                    onClick={handleResumePreview}
                   >
-                    {application.resume.name || 'Xem CV ứng viên'}
+                    {application?.resume?.name || 'Xem CV ứng viên'}
                   </Button>
                 )}
                 {candidate.id && (
@@ -611,9 +800,7 @@ const ApplicationDetailPage = () => {
           </Tabs>
 
           <Card title="Hành động" className="mb-4">
-            <Space size="middle">
-              {renderActionButtons()}
-            </Space>
+            {renderActionButtons()}
           </Card>
         </Col>
       </Row>
@@ -628,7 +815,12 @@ const ApplicationDetailPage = () => {
         maskClosable={!processingAction}
         closable={!processingAction}
       >
-        <Form form={emailForm} onFinish={handleSendEmail} layout="vertical">
+        <Form 
+          form={emailForm} 
+          onFinish={handleSendEmail} 
+          layout="vertical"
+          ref={emailFormRef}
+        >
           <Form.Item name="to" label="Người nhận">
             <Input readOnly />
           </Form.Item>
@@ -649,10 +841,43 @@ const ApplicationDetailPage = () => {
           <Form.Item className="text-right">
             <Space>
               <Button onClick={() => setEmailModalVisible(false)} disabled={processingAction}>Hủy</Button>
+              <Button onClick={handlePreviewEmail} disabled={processingAction}>Xem trước</Button>
               <Button type="primary" htmlType="submit" loading={processingAction}>Gửi email</Button>
             </Space>
           </Form.Item>
         </Form>
+      </Modal>
+      
+      {/* Email Preview Modal */}
+      <Modal
+        title="Xem trước email"
+        open={emailPreviewVisible}
+        onCancel={() => setEmailPreviewVisible(false)}
+        footer={[
+          <Button key="back" onClick={() => setEmailPreviewVisible(false)}>
+            Đóng
+          </Button>,
+          <Button 
+            key="submit" 
+            type="primary" 
+            onClick={() => {
+              setEmailPreviewVisible(false);
+              emailForm.submit();
+            }}
+          >
+            Gửi email
+          </Button>,
+        ]}
+        width={700}
+      >
+        <div className="email-preview" style={{ padding: '20px', border: '1px solid #eee', borderRadius: '5px', backgroundColor: '#f9f9f9' }}>
+          <div><strong>Người nhận:</strong> {emailForm.getFieldValue('to')}</div>
+          <div style={{ marginTop: '10px' }}><strong>Tiêu đề:</strong> {emailForm.getFieldValue('subject')}</div>
+          <Divider />
+          <div style={{ marginTop: '10px', whiteSpace: 'pre-wrap' }}>
+            {formatEmailContent(emailForm.getFieldValue('body'))}
+          </div>
+        </div>
       </Modal>
       
       {/* Confirm Action Modal */}

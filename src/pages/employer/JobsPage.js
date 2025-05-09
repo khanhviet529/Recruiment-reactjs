@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Table, Button, Space, Tag, Input, Select, DatePicker, Card, Modal, message } from 'antd';
-import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Table, Button, Space, Tag, Input, Select, DatePicker, Card, Modal, message, Tooltip } from 'antd';
+import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined, InfoCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
 
 const { Search } = Input;
@@ -78,6 +78,28 @@ const JobsPage = () => {
     });
   };
 
+  const handleResumeJob = async (id) => {
+    confirm({
+      title: 'Tiếp tục đăng tin tuyển dụng này?',
+      icon: <CheckCircleOutlined />,
+      content: 'Tin tuyển dụng sẽ được tiếp tục phát hành và hiển thị cho ứng viên.',
+      okText: 'Tiếp tục',
+      cancelText: 'Hủy',
+      async onOk() {
+        try {
+          await axios.patch(`http://localhost:5000/jobs/${id}/status`, {
+            status: 'active'
+          });
+          message.success('Đã tiếp tục đăng tin tuyển dụng');
+          fetchJobs();
+        } catch (error) {
+          console.error('Error resuming job:', error);
+          message.error('Có lỗi xảy ra khi tiếp tục đăng tin tuyển dụng');
+        }
+      },
+    });
+  };
+
   const columns = [
     {
       title: 'Tiêu đề',
@@ -118,14 +140,25 @@ const JobsPage = () => {
       title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
-      render: (status) => {
+      render: (status, record) => {
         const statusConfig = {
           'active': { color: 'success', text: 'Đang tuyển' },
           'closed': { color: 'error', text: 'Đã đóng' },
-          'draft': { color: 'warning', text: 'Bản nháp' }
+          'draft': { color: 'warning', text: 'Bản nháp' },
+          'paused': { color: 'orange', text: 'Tạm dừng' }
         };
         const config = statusConfig[status] || { color: 'default', text: status };
-        return <Tag color={config.color}>{config.text}</Tag>;
+        
+        return (
+          <div>
+            <Tag color={config.color}>{config.text}</Tag>
+            {status === 'paused' && record.pauseReason && (
+              <Tooltip title={record.pauseReason}>
+                <InfoCircleOutlined style={{ marginLeft: 8, color: '#faad14' }} />
+              </Tooltip>
+            )}
+          </div>
+        );
       },
     },
     {
@@ -136,6 +169,15 @@ const JobsPage = () => {
           <Link to={`/employer/jobs/edit/${record.id}`}>
             <Button type="link" icon={<EditOutlined />}>Sửa</Button>
           </Link>
+          {record.status === 'paused' && (
+            <Button 
+              type="link" 
+              icon={<CheckCircleOutlined />}
+              onClick={() => handleResumeJob(record.id)}
+            >
+              Tiếp tục đăng tin
+            </Button>
+          )}
           <Button 
             type="link" 
             danger 
@@ -170,6 +212,7 @@ const JobsPage = () => {
             >
               <Option value="all">Tất cả</Option>
               <Option value="active">Đang tuyển</Option>
+              <Option value="paused">Tạm dừng</Option>
               <Option value="closed">Đã đóng</Option>
               <Option value="draft">Bản nháp</Option>
             </Select>

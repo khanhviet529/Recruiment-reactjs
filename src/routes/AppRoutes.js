@@ -23,6 +23,7 @@ import NotificationsPage from '../pages/NotificationsPage';
 
 // Auth Pages
 import LoginPage from '../pages/auth/LoginPage';
+import AdminLoginPage from '../pages/auth/AdminLoginPage';
 import RegisterPage from '../pages/auth/RegisterPage';
 import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage';
 import ResetPasswordPage from '../pages/auth/ResetPasswordPage';
@@ -55,6 +56,7 @@ import AdminUsersPage from '../pages/admin/UsersPage';
 import AdminJobsPage from '../pages/admin/JobsPage';
 import AdminMessagesPage from '../pages/admin/MessagesPage';
 import AdminReportsPage from '../pages/admin/ReportsPage';
+import AdminSettingsPage from '../pages/admin/SettingsPage';
 
 // Custom Routes
 import PrivateRoute from './PrivateRoute';
@@ -91,6 +93,14 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="admin-login"
+          element={
+            <PublicRoute>
+              <AdminLoginPage />
+            </PublicRoute>
+          }
+        />
+        <Route
           path="register"
           element={
             <PublicRoute>
@@ -100,6 +110,24 @@ const AppRoutes = () => {
         />
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
         <Route path="reset-password/:token" element={<ResetPasswordPage />} />
+      </Route>
+
+      {/* Role-specific Auth Routes */}
+      <Route element={<AuthLayout />}>
+        {/* Candidate Auth */}
+        <Route path="candidate/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+        <Route path="candidate/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+        
+        {/* Employer Auth */}
+        <Route path="employer/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+        <Route path="employer/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+        
+        {/* General Use Auth Routes */}
+        <Route path="login" element={<Navigate to="/candidate/login" replace />} />
+        <Route path="register" element={<Navigate to="/candidate/register" replace />} />
+        
+        {/* Admin Auth */}
+        <Route path="admin/login" element={<PublicRoute><AdminLoginPage /></PublicRoute>} />
       </Route>
 
       {/* Employer Routes */}
@@ -161,6 +189,7 @@ const AppRoutes = () => {
         <Route path="jobs" element={<AdminJobsPage />} />
         <Route path="messages" element={<AdminMessagesPage />} />
         <Route path="reports" element={<AdminReportsPage />} />
+        <Route path="settings" element={<AdminSettingsPage />} />
       </Route>
 
       {/* Protected Notification Route (accessible for all logged-in users) */}

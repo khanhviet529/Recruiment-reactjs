@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { 
   Form, Input, Button, Select, DatePicker, InputNumber, Card, 
-  message, Divider, Switch, Tag, Space, Tabs, Tooltip, Alert 
+  message, Divider, Switch, Tag, Space, Tabs, Tooltip, Alert, Typography 
 } from 'antd';
 import { 
   SaveOutlined, ArrowLeftOutlined, PlusOutlined, 
@@ -20,6 +20,7 @@ import '../../styles/NewJobPage.scss';
 const { TextArea } = Input;
 const { Option } = Select;
 const { TabPane } = Tabs;
+const { Text } = Typography;
 
 const NewJobPage = () => {
   const { user } = useSelector((state) => state.auth);
@@ -36,11 +37,28 @@ const NewJobPage = () => {
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [newSkill, setNewSkill] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [isRemote, setIsRemote] = useState(false);
+  const [isRemote, setIsRemote] = useState(true);
   const [salaryHidden, setSalaryHidden] = useState(false);
   const [isFeatured, setIsFeatured] = useState(false);
   const [isUrgent, setIsUrgent] = useState(false);
-  const [questions, setQuestions] = useState([{ id: Date.now().toString(), question: '', isRequired: true }]);
+  const [pauseReason, setPauseReason] = useState('');
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [newTag, setNewTag] = useState('');
+  const [languages, setLanguages] = useState([
+    { name: "Tiếng Anh", proficiency: "intermediate" }
+  ]);
+  const [questions, setQuestions] = useState([
+    { 
+      id: "1", 
+      question: "Mô tả kinh nghiệm của bạn với các dự án full stack?", 
+      isRequired: true 
+    },
+    { 
+      id: "2", 
+      question: "Bạn đã từng làm việc remote chưa và bạn thích nghi với nó như thế nào?", 
+      isRequired: true 
+    }
+  ]);
   const [activeTab, setActiveTab] = useState('general');
   
   // Rich text editor configurations
@@ -61,8 +79,26 @@ const NewJobPage = () => {
     'link'
   ];
 
+  // Language proficiency options
+  const languageProficiencyOptions = [
+    { value: 'basic', label: 'Cơ bản' },
+    { value: 'intermediate', label: 'Trung bình' },
+    { value: 'advanced', label: 'Nâng cao' },
+    { value: 'fluent', label: 'Thành thạo' },
+    { value: 'native', label: 'Bản ngữ' }
+  ];
+
   useEffect(() => {
     fetchOptions();
+    
+    // Set initial tags based on the example data
+    setSelectedTags(["Remote", "Full Stack", "JavaScript", "React", "Node.js"]);
+    
+    // Set initial skills based on the example data
+    setSelectedSkills(["JavaScript", "TypeScript", "React", "Node.js", "MongoDB", "AWS"]);
+    
+    // Set initial categories
+    setSelectedCategories(["1", "2", "7"]); // Assuming these IDs map to the given categories
   }, []);
 
   const fetchOptions = async () => {
@@ -95,35 +131,16 @@ const NewJobPage = () => {
     try {
       setLoading(true);
       
+      // Convert deadline to ISO format for storage
+      const deadlineISO = values.deadline.format('YYYY-MM-DDT23:59:59.000Z');
+      const postedAtISO = moment().format('YYYY-MM-DDT10:00:00.000Z');
+      
       // Prepare data with all fields
       const jobData = {
-        ...values,
         employerId: user.id,
-        postedAt: moment().format('YYYY-MM-DD'),
-        applicationDeadline: values.deadline.format('YYYY-MM-DD'),
-        salary: {
-          min: values.salaryMin,
-          max: values.salaryMax,
-          currency: values.salaryCurrency,
-          period: values.salaryPeriod || 'monthly',
-          isHidden: salaryHidden
-        },
-        skills: selectedSkills,
-        categories: selectedCategories.map(id => {
-          const category = categories.find(cat => cat.id === id);
-          return category ? category.name : id;
-        }),
-        isRemote,
-        workType: isRemote ? 'remote' : values.workType || 'onsite',
-        isFeatured,
-        isUrgent,
-        questions: questions
-          .filter(q => q.question.trim() !== '')
-          .map(q => ({
-            id: q.id,
-            question: q.question,
-            isRequired: q.isRequired
-          })),
+        title: values.title,
+        description: values.description,
+        shortDescription: values.shortDescription,
         responsibilities: Array.isArray(values.responsibilities) 
           ? values.responsibilities 
           : values.responsibilities.split('\n').filter(item => item.trim() !== ''),
@@ -133,22 +150,60 @@ const NewJobPage = () => {
         benefits: Array.isArray(values.benefits) 
           ? values.benefits 
           : values.benefits.split('\n').filter(item => item.trim() !== ''),
-        status: values.status || 'active',
-        visibility: values.visibility || 'public',
-        createdAt: moment().format(),
-        updatedAt: moment().format(),
-        shortDescription: values.shortDescription,
+        jobTypeId: values.jobTypeId,
+        jobType: jobTypes.find(type => type.id === values.jobTypeId)?.name || "remote",
+        experienceLevelId: values.experienceLevelId,
+        experienceLevel: jobLevels.find(level => level.id === values.experienceLevelId)?.name || "intermediate",
+        minExperienceYears: values.minExperienceYears || 0,
+        educationLevelId: values.educationLevelId,
+        educationLevel: educationLevels.find(level => level.id === values.educationLevelId)?.name || "bachelor",
+        salary: {
+          min: values.salaryMin,
+          max: values.salaryMax,
+          currency: values.salaryCurrency,
+          period: values.salaryPeriod || 'monthly',
+          isHidden: salaryHidden,
+          salaryRangeId: "5" // This would ideally be determined based on range
+        },
+        locationId: isRemote ? "1" : values.locationId,
+        location: isRemote ? "Remote" : locations.find(loc => loc.id === values.locationId)?.name || "Remote",
+        isRemote,
+        workType: isRemote ? 'remote' : values.workType || 'onsite',
+        industryIds: values.industryIds || ["1"],
+        skills: selectedSkills,
+        categories: selectedCategories.map(id => {
+          const category = categories.find(cat => cat.id === id);
+          return category ? category.name : id;
+        }),
         positions: values.positions || 1,
-        minExperienceYears: values.minExperienceYears || 0
+        applicationDeadline: deadlineISO,
+        postedAt: postedAtISO,
+        status: values.status || 'active',
+        isFeatured,
+        isUrgent,
+        pauseReason: values.status === 'paused' ? pauseReason : '',
+        pausedAt: values.status === 'paused' ? moment().format('YYYY-MM-DDT14:30:00.000Z') : null,
+        views: 0,
+        applications: 0,
+        questions: questions
+          .filter(q => q.question.trim() !== '')
+          .map(q => ({
+            id: q.id,
+            question: q.question,
+            isRequired: q.isRequired
+          })),
+        languages,
+        tags: [...selectedTags, ...selectedSkills.slice(0, 3)],
+        visibility: values.visibility || 'public',
+        displayInFeed: true,
+        allowSearch: true,
+        premium: false,
+        companyName: user.companyName || "Digital Enterprise",
+        companyLogo: user.companyLogo || "https://via.placeholder.com/150?text=DE",
+        createdAt: moment().format(),
+        updatedAt: moment().format()
       };
       
-      // Remove fields that are already structured in other objects
-      delete jobData.salaryMin;
-      delete jobData.salaryMax;
-      delete jobData.salaryCurrency;
-      delete jobData.salaryPeriod;
-      delete jobData.deadline;
-
       console.log('Submitting job data:', jobData);
 
       // Submit to API
@@ -244,6 +299,35 @@ const NewJobPage = () => {
     setActiveTab(key);
   };
 
+  // Handle tag selection
+  const handleTagAdd = () => {
+    if (newTag && !selectedTags.includes(newTag)) {
+      setSelectedTags([...selectedTags, newTag]);
+      setNewTag('');
+    }
+  };
+
+  const handleTagRemove = (tag) => {
+    setSelectedTags(selectedTags.filter(t => t !== tag));
+  };
+
+  // Handle language changes
+  const handleLanguageChange = (index, field, value) => {
+    const newLanguages = [...languages];
+    newLanguages[index][field] = value;
+    setLanguages(newLanguages);
+  };
+
+  const addLanguage = () => {
+    setLanguages([...languages, { name: '', proficiency: 'basic' }]);
+  };
+
+  const removeLanguage = (index) => {
+    const newLanguages = [...languages];
+    newLanguages.splice(index, 1);
+    setLanguages(newLanguages);
+  };
+
   return (
     <div className="new-job-page">
       <div className="page-header mb-4">
@@ -287,15 +371,17 @@ const NewJobPage = () => {
           onFinish={onFinish}
           initialValues={{
             status: 'active',
-            salaryCurrency: 'VND',
+            salaryCurrency: 'USD',
             salaryPeriod: 'monthly',
-            jobTypeId: '1', // Full-time
-            workType: 'onsite',
+            jobTypeId: '4', // Remote
+            workType: 'remote',
             experienceLevelId: '3', // Regular employee
             educationLevelId: '3', // Bachelor
             visibility: 'public',
-            positions: 1,
-            minExperienceYears: 0
+            positions: 2,
+            minExperienceYears: 3,
+            salaryMin: 2000,
+            salaryMax: 3500
           }}
           requiredMark={true}
         >
@@ -371,7 +457,7 @@ const NewJobPage = () => {
                       name="status"
                       label="Trạng thái"
                     >
-                      <Select>
+                      <Select onChange={(value) => value === 'paused' && setActiveTab('general')}>
                         <Option value="active">Đang hoạt động (Active)</Option>
                         <Option value="paused">Tạm dừng (Paused)</Option>
                         <Option value="closed">Đã đóng (Closed)</Option>
@@ -379,6 +465,20 @@ const NewJobPage = () => {
                         <Option value="pending">Chờ duyệt (Pending)</Option>
                       </Select>
                     </Form.Item>
+
+                    {form.getFieldValue('status') === 'paused' && (
+                      <Form.Item
+                        name="pauseReason"
+                        label="Lý do tạm dừng"
+                      >
+                        <TextArea 
+                          placeholder="Nhập lý do tạm dừng tin tuyển dụng" 
+                          rows={2}
+                          value={pauseReason}
+                          onChange={(e) => setPauseReason(e.target.value)}
+                        />
+                      </Form.Item>
+                    )}
                   </Card>
 
                   <Card title="Quảng cáo tin" className="mb-3">
@@ -596,8 +696,95 @@ const NewJobPage = () => {
                       </Select>
                     </Form.Item>
                   </Card>
+                  
+                  <Card title="Yêu cầu ngôn ngữ" className="mb-3">
+                    <div className="mb-3">
+                      <Text type="secondary">
+                        Chọn ngôn ngữ và trình độ yêu cầu cho vị trí này
+                      </Text>
+                    </div>
+                    
+                    {languages.map((language, index) => (
+                      <div key={index} className="language-item mb-3">
+                        <div className="d-flex align-items-start">
+                          <div className="flex-grow-1 me-2">
+                            <Input
+                              placeholder="Tên ngôn ngữ"
+                              value={language.name}
+                              onChange={(e) => handleLanguageChange(index, 'name', e.target.value)}
+                              className="mb-2"
+                            />
+                            <Select 
+                              style={{ width: '100%' }} 
+                              value={language.proficiency}
+                              onChange={(value) => handleLanguageChange(index, 'proficiency', value)}
+                            >
+                              {languageProficiencyOptions.map(option => (
+                                <Option key={option.value} value={option.value}>
+                                  {option.label}
+                                </Option>
+                              ))}
+                            </Select>
+                          </div>
+                          <Button
+                            type="text"
+                            danger
+                            icon={<CloseOutlined />}
+                            onClick={() => removeLanguage(index)}
+                            disabled={languages.length <= 1}
+                          />
+                        </div>
+                      </div>
+                    ))}
+
+                    <Button
+                      type="dashed"
+                      onClick={addLanguage}
+                      block
+                      icon={<PlusOutlined />}
+                    >
+                      Thêm ngôn ngữ
+                    </Button>
+                  </Card>
                 </div>
               </div>
+
+              <Card title="Thẻ tìm kiếm" className="mb-3">
+                <div className="mb-1">
+                  <Text type="secondary">
+                    Thêm các thẻ tìm kiếm để tin tuyển dụng dễ dàng được tìm thấy hơn
+                  </Text>
+                </div>
+                <div className="mt-2 mb-3">
+                  <Input
+                    placeholder="Thêm thẻ tìm kiếm mới"
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    onPressEnter={handleTagAdd}
+                    suffix={
+                      <Button 
+                        type="text" 
+                        icon={<PlusOutlined />} 
+                        onClick={handleTagAdd}
+                      />
+                    }
+                  />
+                </div>
+                
+                <div className="tag-list">
+                  {selectedTags.map(tag => (
+                    <Tag
+                      key={tag}
+                      closable
+                      onClose={() => handleTagRemove(tag)}
+                      className="mb-1 me-1"
+                      color="blue"
+                    >
+                      {tag}
+                    </Tag>
+                  ))}
+                </div>
+              </Card>
             </TabPane>
 
             <TabPane 

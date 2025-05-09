@@ -42,7 +42,9 @@ const SavedJobsPage = () => {
   });
 
   useEffect(() => {
-    fetchSavedJobs();
+    if (user) {
+      fetchSavedJobs();
+    }
   }, [user, pagination.current, pagination.pageSize]);
 
   const fetchSavedJobs = async () => {
@@ -54,134 +56,105 @@ const SavedJobsPage = () => {
         return;
       }
       
-      try {
-        // Lấy thông tin ứng viên trước để biết candidateId
-        const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
-        
-        if (candidateResponse.data && candidateResponse.data.length > 0) {
-          const candidateId = candidateResponse.data[0].id;
-          
-          // Lấy danh sách công việc đã lưu của ứng viên
-          const savedJobsResponse = await axios.get(`http://localhost:5000/savedJobs?candidateId=${candidateId}`);
-          const savedJobsData = savedJobsResponse.data || [];
-          
-          // Lấy thông tin chi tiết của mỗi công việc đã lưu
-          const processedJobs = await Promise.all(savedJobsData.map(async (savedJob) => {
-            try {
-              const jobResponse = await axios.get(`http://localhost:5000/jobs/${savedJob.jobId}`);
-              const job = jobResponse.data;
-              
-              // Lấy thông tin công ty
-              const employerResponse = await axios.get(`http://localhost:5000/employers/${job.employerId}`);
-              const employer = employerResponse.data;
-              
-              return {
-                id: job.id,
-                title: job.title,
-                company: {
-                  id: employer.id,
-                  name: employer.companyName,
-                  logo: employer.logo || 'https://via.placeholder.com/100'
-                },
-                location: job.location,
-                jobType: job.jobType,
-                category: job.categories ? job.categories[0] : '',
-                experience: job.experienceLevel,
-                salary: job.salary,
-                postedDate: job.postedAt,
-                description: job.shortDescription || job.description,
-                savedAt: savedJob.createdAt || new Date().toISOString()
-              };
-            } catch (error) {
-              console.error('Error fetching job details:', error);
-              return {
-                id: savedJob.jobId,
-                title: 'Unknown Job',
-                company: {
-                  id: 0,
-                  name: 'Unknown Company',
-                  logo: 'https://via.placeholder.com/100'
-                },
-                location: 'Unknown',
-                jobType: 'Unknown',
-                category: 'Unknown',
-                experience: 'Unknown',
-                salary: {
-                  min: 0,
-                  max: 0,
-                  currency: 'VND',
-                  isDisplayed: false
-                },
-                postedDate: new Date().toISOString(),
-                description: 'No description available',
-                savedAt: savedJob.createdAt || new Date().toISOString()
-              };
-            }
-          }));
-          
-          // Phân trang dữ liệu
-          const startIndex = (pagination.current - 1) * pagination.pageSize;
-          const endIndex = startIndex + pagination.pageSize;
-          const paginatedJobs = processedJobs.slice(startIndex, endIndex);
-          
-          setSavedJobs(paginatedJobs);
-          setPagination({
-            ...pagination,
-            total: processedJobs.length
-          });
-        } else {
-          // Không tìm thấy thông tin ứng viên, sử dụng dữ liệu mẫu
-          generateMockJobs();
-        }
-      } catch (apiError) {
-        console.warn('Using mock data for saved jobs:', apiError);
-        generateMockJobs();
+      // First get the candidate ID for the current user
+      const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
+      
+      if (!candidateResponse.data || candidateResponse.data.length === 0) {
+        setSavedJobs([]);
+        setPagination({
+          ...pagination,
+          total: 0
+        });
+        setLoading(false);
+        return;
       }
+      
+      const candidateId = candidateResponse.data[0].id;
+      
+      // Get saved jobs for this candidate
+      const savedJobsResponse = await axios.get(`http://localhost:5000/savedJobs?candidateId=${candidateId}`);
+      const savedJobsData = savedJobsResponse.data || [];
+      
+      if (savedJobsData.length === 0) {
+        setSavedJobs([]);
+        setPagination({
+          ...pagination,
+          total: 0
+        });
+        setLoading(false);
+        return;
+      }
+      
+      // Get job details for each saved job
+      const jobDetailsPromises = savedJobsData.map(async (savedJob) => {
+        try {
+          const jobResponse = await axios.get(`http://localhost:5000/jobs/${savedJob.jobId}`);
+          const job = jobResponse.data;
+          
+          if (!job) {
+            return null;
+          }
+          
+          // Get employer details
+          let employer = { companyName: 'Unknown Company', logo: 'https://via.placeholder.com/100' };
+          try {
+            const employerResponse = await axios.get(`http://localhost:5000/employers/${job.employerId}`);
+            if (employerResponse.data) {
+              employer = employerResponse.data;
+            }
+          } catch (err) {
+            console.error(`Error fetching employer ${job.employerId}:`, err);
+          }
+          
+          return {
+            id: job.id,
+            savedJobId: savedJob.id, // Add the saved job ID for easier deletion
+            title: job.title,
+            company: {
+              id: employer.id,
+              name: employer.companyName,
+              logo: employer.logo || 'https://via.placeholder.com/100'
+            },
+            location: job.location,
+            jobType: job.jobType,
+            category: job.categories ? job.categories[0] : '',
+            experience: job.experienceLevel || job.minExperienceYears + '+ years',
+            salary: job.salary,
+            postedDate: job.postedAt,
+            applicationDeadline: job.applicationDeadline,
+            description: job.shortDescription || job.description,
+            savedAt: savedJob.createdAt || new Date().toISOString(),
+            notes: savedJob.notes
+          };
+        } catch (error) {
+          console.error(`Error fetching job ${savedJob.jobId}:`, error);
+          return null;
+        }
+      });
+      
+      const jobDetails = await Promise.all(jobDetailsPromises);
+      const validJobs = jobDetails.filter(job => job !== null);
+      
+      // Sort by savedAt date (newest first)
+      validJobs.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
+      
+      // Pagination
+      const startIndex = (pagination.current - 1) * pagination.pageSize;
+      const endIndex = startIndex + pagination.pageSize;
+      const paginatedJobs = validJobs.slice(startIndex, endIndex);
+      
+      setSavedJobs(paginatedJobs);
+      setPagination({
+        ...pagination,
+        total: validJobs.length
+      });
     } catch (error) {
       console.error('Error fetching saved jobs:', error);
       message.error('Không thể tải danh sách công việc đã lưu');
-      generateMockJobs();
+      setSavedJobs([]);
     } finally {
       setLoading(false);
     }
-  };
-
-  // Tách hàm tạo dữ liệu mẫu ra để code sạch hơn
-  const generateMockJobs = () => {
-    // Mock data
-    const mockJobs = Array(15).fill(null).map((_, index) => ({
-      id: 100 + index,
-      title: `${['Frontend Developer', 'Backend Developer', 'Full Stack Engineer', 'UI/UX Designer', 'DevOps Engineer'][index % 5]} (${index + 1})`,
-      company: {
-        id: index % 10 + 1,
-        name: `${['TechCorp', 'Digital Solutions', 'Web Masters', 'IT Innovations', 'Code Factory'][index % 5]}`,
-        logo: 'https://via.placeholder.com/100'
-      },
-      location: `${['Hà Nội', 'Hồ Chí Minh', 'Đà Nẵng', 'Nha Trang', 'Cần Thơ'][index % 5]}`,
-      jobType: `${['Full-time', 'Part-time', 'Contract', 'Freelance', 'Internship'][index % 5]}`,
-      category: `${['Web Development', 'Mobile Development', 'UI/UX Design', 'DevOps', 'Data Science'][index % 5]}`,
-      experience: `${['0-1 năm', '1-3 năm', '3-5 năm', '5-7 năm', '7+ năm'][index % 5]}`,
-      salary: {
-        min: (index % 10 + 5) * 1000000,
-        max: (index % 10 + 15) * 1000000,
-        currency: 'VND',
-        isDisplayed: true
-      },
-      postedDate: moment().subtract(index % 30, 'days').format(),
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget ultricies aliquam, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nisl.',
-      savedAt: moment().subtract(index % 14, 'days').format()
-    }));
-    
-    // Pagination calculation for mock data
-    const startIndex = (pagination.current - 1) * pagination.pageSize;
-    const endIndex = startIndex + pagination.pageSize;
-    const paginatedJobs = mockJobs.slice(startIndex, endIndex);
-    
-    setSavedJobs(paginatedJobs);
-    setPagination({
-      ...pagination,
-      total: mockJobs.length
-    });
   };
 
   const handlePaginationChange = (page, pageSize) => {
@@ -192,7 +165,7 @@ const SavedJobsPage = () => {
     });
   };
 
-  const handleRemoveSavedJob = async (jobId) => {
+  const handleRemoveSavedJob = async (jobId, savedJobId) => {
     confirm({
       title: 'Bạn có chắc chắn muốn xóa công việc này khỏi danh sách đã lưu?',
       icon: <ExclamationCircleOutlined />,
@@ -202,53 +175,67 @@ const SavedJobsPage = () => {
       cancelText: 'Hủy',
       onOk: async () => {
         try {
-          // Lấy thông tin ứng viên
-          const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
-          if (candidateResponse.data && candidateResponse.data.length > 0) {
-            const candidateId = candidateResponse.data[0].id;
+          // If we have savedJobId directly, use it
+          if (savedJobId) {
+            await axios.delete(`http://localhost:5000/savedJobs/${savedJobId}`);
+            message.success('Đã xóa công việc khỏi danh sách đã lưu');
             
-            // Tìm saved job ID trước khi xóa
-            const savedJobResponse = await axios.get(`http://localhost:5000/savedJobs?candidateId=${candidateId}&jobId=${jobId}`);
-            if (savedJobResponse.data && savedJobResponse.data.length > 0) {
-              const savedJobId = savedJobResponse.data[0].id;
-              
-              // Xóa saved job bằng ID
-              await axios.delete(`http://localhost:5000/savedJobs/${savedJobId}`);
-              message.success('Đã xóa công việc khỏi danh sách đã lưu');
-              
-              // Cập nhật UI
-              setSavedJobs(savedJobs.filter(job => job.id !== jobId));
-              
-              if (savedJobs.length === 1 && pagination.current > 1) {
-                // If this is the last item on the page, go to the previous page
-                setPagination({
-                  ...pagination,
-                  current: pagination.current - 1
-                });
-              } else {
-                // Just refresh the current page
-                fetchSavedJobs();
-              }
+            // Update UI
+            setSavedJobs(savedJobs.filter(job => job.savedJobId !== savedJobId));
+            
+            if (savedJobs.length === 1 && pagination.current > 1) {
+              // If this is the last item on the page, go to the previous page
+              setPagination({
+                ...pagination,
+                current: pagination.current - 1
+              });
             } else {
-              message.error('Không tìm thấy công việc đã lưu');
+              // Just refresh the current page
+              fetchSavedJobs();
+            }
+            return;
+          }
+          
+          // If we don't have savedJobId, look it up
+          // First get candidateId
+          const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
+          
+          if (!candidateResponse.data || candidateResponse.data.length === 0) {
+            message.error('Không tìm thấy thông tin ứng viên');
+            return;
+          }
+          
+          const candidateId = candidateResponse.data[0].id;
+          
+          // Look up saved job
+          const savedJobResponse = await axios.get(`http://localhost:5000/savedJobs?candidateId=${candidateId}&jobId=${jobId}`);
+          
+          if (savedJobResponse.data && savedJobResponse.data.length > 0) {
+            const savedJobId = savedJobResponse.data[0].id;
+            
+            // Delete saved job by ID
+            await axios.delete(`http://localhost:5000/savedJobs/${savedJobId}`);
+            message.success('Đã xóa công việc khỏi danh sách đã lưu');
+            
+            // Update UI
+            setSavedJobs(savedJobs.filter(job => job.id !== jobId));
+            
+            if (savedJobs.length === 1 && pagination.current > 1) {
+              // If this is the last item on the page, go to the previous page
+              setPagination({
+                ...pagination,
+                current: pagination.current - 1
+              });
+            } else {
+              // Just refresh the current page
+              fetchSavedJobs();
             }
           } else {
-            message.error('Không tìm thấy thông tin ứng viên');
+            message.error('Không tìm thấy công việc đã lưu');
           }
         } catch (error) {
           console.error('Error removing saved job:', error);
-          
-          // For development, update UI anyway
-          message.success('Đã xóa công việc khỏi danh sách đã lưu');
-          setSavedJobs(savedJobs.filter(job => job.id !== jobId));
-          
-          if (savedJobs.length === 1 && pagination.current > 1) {
-            // If this is the last item on the page, go to the previous page
-            setPagination({
-              ...pagination,
-              current: pagination.current - 1
-            });
-          }
+          message.error('Có lỗi xảy ra khi xóa công việc đã lưu');
         }
       }
     });
@@ -258,47 +245,48 @@ const SavedJobsPage = () => {
     confirm({
       title: 'Bạn có chắc chắn muốn xóa tất cả công việc đã lưu?',
       icon: <ExclamationCircleOutlined />,
-      content: 'Tất cả công việc sẽ bị xóa khỏi danh sách đã lưu của bạn. Bạn không thể hoàn tác hành động này.',
+      content: 'Thao tác này sẽ xóa tất cả công việc đã lưu của bạn và không thể hoàn tác.',
       okText: 'Xóa tất cả',
       okType: 'danger',
       cancelText: 'Hủy',
       onOk: async () => {
         try {
-          // Lấy thông tin ứng viên
+          // First get candidateId
           const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
-          if (candidateResponse.data && candidateResponse.data.length > 0) {
-            const candidateId = candidateResponse.data[0].id;
-            
-            // Lấy tất cả saved jobs của ứng viên
-            const savedJobsResponse = await axios.get(`http://localhost:5000/savedJobs?candidateId=${candidateId}`);
-            const savedJobsData = savedJobsResponse.data || [];
-            
-            // Xóa từng saved job
-            for (const savedJob of savedJobsData) {
-              await axios.delete(`http://localhost:5000/savedJobs/${savedJob.id}`);
-            }
-            
-            message.success('Đã xóa tất cả công việc khỏi danh sách đã lưu');
-            setSavedJobs([]);
-            setPagination({
-              ...pagination,
-              current: 1,
-              total: 0
-            });
-          } else {
-            message.error('Không tìm thấy thông tin ứng viên');
-          }
-        } catch (error) {
-          console.error('Error removing all saved jobs:', error);
           
-          // For development, update UI anyway
-          message.success('Đã xóa tất cả công việc khỏi danh sách đã lưu');
+          if (!candidateResponse.data || candidateResponse.data.length === 0) {
+            message.error('Không tìm thấy thông tin ứng viên');
+            return;
+          }
+          
+          const candidateId = candidateResponse.data[0].id;
+          
+          // Get all saved jobs for this candidate
+          const savedJobsResponse = await axios.get(`http://localhost:5000/savedJobs?candidateId=${candidateId}`);
+          const savedJobsData = savedJobsResponse.data || [];
+          
+          if (savedJobsData.length === 0) {
+            message.info('Không có công việc đã lưu để xóa');
+            return;
+          }
+          
+          // Delete all saved jobs one by one
+          await Promise.all(
+            savedJobsData.map(job => axios.delete(`http://localhost:5000/savedJobs/${job.id}`))
+          );
+          
+          message.success('Đã xóa tất cả công việc đã lưu');
+          
+          // Update UI
           setSavedJobs([]);
           setPagination({
             ...pagination,
             current: 1,
             total: 0
           });
+        } catch (error) {
+          console.error('Error removing all saved jobs:', error);
+          message.error('Có lỗi xảy ra khi xóa tất cả công việc đã lưu');
         }
       }
     });
@@ -306,59 +294,74 @@ const SavedJobsPage = () => {
 
   const renderJobCard = (job) => {
     return (
-      <Card 
-        key={job.id} 
-        className="job-card mb-3"
-        hoverable
-      >
-        <Row gutter={16} align="middle">
+      <Card key={job.id} className="job-card mb-4" hoverable>
+        <Row gutter={[16, 16]}>
           <Col xs={24} sm={4} className="text-center">
             <img 
               src={job.company.logo} 
               alt={job.company.name} 
-              style={{ width: '80px', height: '80px', objectFit: 'contain' }} 
+              style={{ maxWidth: '100%', maxHeight: 80, objectFit: 'contain' }}
             />
           </Col>
+          
           <Col xs={24} sm={16}>
-            <Link to={`/candidate/jobs/${job.id}`}>
-              <Title level={5} className="mb-1">
-                {job.title}
-              </Title>
+            <Link to={`/jobs/${job.id}`}>
+              <Title level={4} className="job-title mb-1">{job.title}</Title>
             </Link>
-            <div className="company-name mb-2">
-              <Link to={`/companies/${job.company.id}`}>
-                <Text type="secondary">{job.company.name}</Text>
-              </Link>
+            <Text className="company-name d-block mb-2">{job.company.name}</Text>
+            
+            <Space wrap className="mb-2">
+              <Tag icon={<EnvironmentOutlined />}>{job.location}</Tag>
+              <Tag color="blue">{job.jobType}</Tag>
+              {job.category && <Tag>{job.category}</Tag>}
+              {job.experience && <Tag icon={<BookOutlined />}>{job.experience}</Tag>}
+            </Space>
+            
+            <div className="mb-2">
+              {job.salary && !job.salary.isHidden ? (
+                <Text className="salary">
+                  <DollarOutlined /> {job.salary.min?.toLocaleString()} - {job.salary.max?.toLocaleString()} {job.salary.currency}/{job.salary.period}
+                </Text>
+              ) : (
+                <Text className="salary">
+                  <DollarOutlined /> Thương lượng
+                </Text>
+              )}
             </div>
-            <div className="job-meta">
-              <Space wrap>
-                <Text><EnvironmentOutlined /> {job.location}</Text>
-                {job.salary.isDisplayed && (
-                  <Text>
-                    <DollarOutlined /> {(job.salary.min/1000000).toFixed(0)}-{(job.salary.max/1000000).toFixed(0)} triệu
-                  </Text>
-                )}
-                <Text><ClockCircleOutlined /> {job.jobType}</Text>
-                <Text><BookOutlined /> {job.experience}</Text>
-              </Space>
+            
+            <div className="description mb-2">
+              {job.description && job.description.length > 150 
+                ? `${job.description.substring(0, 150)}...`
+                : job.description}
             </div>
-            <div className="saved-date mt-2">
+            
+            <Space className="job-meta">
               <Text type="secondary">
-                Đã lưu: {moment(job.savedAt).format('DD/MM/YYYY')}
+                <ClockCircleOutlined /> Đăng: {moment(job.postedDate).fromNow()}
               </Text>
-            </div>
+              <Text type="secondary">
+                Lưu: {moment(job.savedAt).fromNow()}
+              </Text>
+              {job.applicationDeadline && (
+                <Text type={moment().isAfter(job.applicationDeadline) ? "danger" : "secondary"}>
+                  Hạn nộp: {moment(job.applicationDeadline).format('DD/MM/YYYY')}
+                </Text>
+              )}
+            </Space>
           </Col>
-          <Col xs={24} sm={4} className="text-right">
-            <Space direction="vertical">
-              <Link to={`/candidate/jobs/${job.id}`}>
-                <Button type="primary" icon={<EyeOutlined />}>
+          
+          <Col xs={24} sm={4} className="action-buttons">
+            <Space direction="vertical" style={{ width: '100%' }}>
+              <Link to={`/jobs/${job.id}`}>
+                <Button type="primary" icon={<EyeOutlined />} block>
                   Xem chi tiết
                 </Button>
               </Link>
               <Button 
-                danger
+                danger 
                 icon={<DeleteOutlined />} 
-                onClick={() => handleRemoveSavedJob(job.id)}
+                onClick={() => handleRemoveSavedJob(job.id, job.savedJobId)}
+                block
               >
                 Xóa
               </Button>
@@ -371,49 +374,61 @@ const SavedJobsPage = () => {
 
   return (
     <div className="saved-jobs-page">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <Title level={4}>Công việc đã lưu ({pagination.total})</Title>
-        {pagination.total > 0 && (
-          <Button 
-            type="primary" 
-            danger
-            icon={<DeleteOutlined />}
-            onClick={handleRemoveAllSavedJobs}
-          >
-            Xóa tất cả
-          </Button>
-        )}
+      <div className="page-header">
+        <Row justify="space-between" align="middle" className="mb-4">
+          <Col>
+            <Title level={2}>Công việc đã lưu</Title>
+          </Col>
+          <Col>
+            {savedJobs.length > 0 && (
+              <Button
+                danger
+                icon={<DeleteOutlined />}
+                onClick={handleRemoveAllSavedJobs}
+              >
+                Xóa tất cả
+              </Button>
+            )}
+          </Col>
+        </Row>
       </div>
-      
+
       {loading ? (
         <div className="text-center py-5">
           <Spin size="large" />
         </div>
-      ) : savedJobs.length > 0 ? (
-        <div className="saved-jobs-results">
-          {savedJobs.map(job => renderJobCard(job))}
-          
-          <div className="d-flex justify-content-center mt-4">
-            <Pagination
-              current={pagination.current}
-              pageSize={pagination.pageSize}
-              total={pagination.total}
-              onChange={handlePaginationChange}
-              showSizeChanger
-            />
-          </div>
-        </div>
       ) : (
-        <Card>
-          <Empty
-            description="Bạn chưa lưu công việc nào"
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-          >
-            <Link to="/candidate/jobs">
-              <Button type="primary">Tìm việc ngay</Button>
-            </Link>
-          </Empty>
-        </Card>
+        <>
+          {savedJobs.length > 0 ? (
+            <>
+              <div className="job-cards">
+                {savedJobs.map(job => renderJobCard(job))}
+              </div>
+              
+              <div className="pagination-container text-center mt-4">
+                <Pagination
+                  current={pagination.current}
+                  pageSize={pagination.pageSize}
+                  total={pagination.total}
+                  onChange={handlePaginationChange}
+                  showSizeChanger
+                  showTotal={(total) => `Tổng ${total} công việc đã lưu`}
+                />
+              </div>
+            </>
+          ) : (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={
+                <span>
+                  Bạn chưa lưu công việc nào.
+                  <br />
+                  <Link to="/jobs">Tìm kiếm công việc ngay</Link>
+                </span>
+              }
+            />
+          )}
+        </>
       )}
     </div>
   );

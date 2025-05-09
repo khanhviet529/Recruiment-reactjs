@@ -32,12 +32,66 @@ const CandidateProfilePage = () => {
       setLoading(true);
       setError(null);
 
-      const response = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
+      // First check if we already have candidateProfile in user object from auth
+      if (user?.candidateProfile) {
+        const profile = user.candidateProfile;
+        
+        // If the profile is missing names but we have them in user object, add them
+        if ((!profile.firstName || !profile.lastName) && 
+            (user.firstName || user.lastName || user.name)) {
+          
+          let updatedProfile = { ...profile };
+          
+          // Use firstName/lastName from the user object if available
+          if (!profile.firstName && user.firstName) {
+            updatedProfile.firstName = user.firstName;
+          }
+          if (!profile.lastName && user.lastName) {
+            updatedProfile.lastName = user.lastName;
+          }
+          
+          // If we still don't have names but have full name, try to parse it
+          if ((!updatedProfile.firstName || !updatedProfile.lastName) && user.name) {
+            const names = user.name.split(' ');
+            const lastName = names.pop() || '';
+            const firstName = names.join(' ') || '';
+            
+            if (!updatedProfile.firstName) updatedProfile.firstName = firstName;
+            if (!updatedProfile.lastName) updatedProfile.lastName = lastName;
+          }
+          
+          // If we have a picture in the user object but not in profile
+          if (!updatedProfile.avatar && (user.picture || user.profilePicture)) {
+            updatedProfile.avatar = user.picture || user.profilePicture;
+          }
+          
+          setCandidate(updatedProfile);
+        } else {
+          setCandidate(profile);
+        }
+        
+        setLoading(false);
+        return;
+      }
+
+      // Otherwise fetch from API
+      // For applicants, we need to find the candidate record with matching email
+      const candidateResponse = await axios.get(`http://localhost:5000/candidates?email=${user.email}`);
       
-      if (response.data && response.data.length > 0) {
-        setCandidate(response.data[0]);
+      if (candidateResponse.data && candidateResponse.data.length > 0) {
+        setCandidate(candidateResponse.data[0]);
       } else {
-        setError('Không tìm thấy thông tin hồ sơ');
+        // If not found by email, try finding by userId if it exists
+        if (user.id) {
+          const userIdResponse = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
+          if (userIdResponse.data && userIdResponse.data.length > 0) {
+            setCandidate(userIdResponse.data[0]);
+          } else {
+            setError('Không tìm thấy thông tin hồ sơ');
+          }
+        } else {
+          setError('Không tìm thấy thông tin hồ sơ');
+        }
       }
     } catch (err) {
       console.error('Error fetching candidate data:', err);
@@ -53,8 +107,13 @@ const CandidateProfilePage = () => {
       const formData = new FormData();
       formData.append('avatar', file);
 
-      const response = await axios.post(
-        `http://localhost:5000/candidates/${candidate.id}/avatar`,
+      // Make sure we have the correct candidate ID
+      if (!candidate || !candidate.id) {
+        throw new Error('Không có thông tin ứng viên');
+      }
+
+      const response = await axios.patch(
+        `http://localhost:5000/candidates/${candidate.id}`,
         formData,
         {
           headers: {
@@ -80,6 +139,35 @@ const CandidateProfilePage = () => {
     showUploadList: false,
     beforeUpload: handleUpload,
     accept: 'image/*',
+  };
+
+  // Helper function to get avatar URL from complex structure
+  const getAvatarUrl = (avatar) => {
+    if (!avatar) {
+      // Try to get avatar from user object properties
+      if (user?.picture) {
+        return user.picture;
+      }
+      if (user?.profilePicture) {
+        return user.profilePicture;
+      }
+      return null;
+    }
+
+    // Handle Facebook profile picture format
+    if (avatar.data && avatar.data.url) {
+      return avatar.data.url;
+    }
+    // Handle direct URL string
+    else if (typeof avatar === 'string') {
+      return avatar;
+    }
+    // Handle other object formats that might have url property
+    else if (avatar.url) {
+      return avatar.url;
+    }
+
+    return null;
   };
 
   if (loading) {
@@ -108,6 +196,8 @@ const CandidateProfilePage = () => {
     );
   }
 
+  const avatarUrl = getAvatarUrl(candidate.avatar);
+
   return (
     <div className="candidate-profile-page">
       <div className="profile-header mb-4">
@@ -115,9 +205,9 @@ const CandidateProfilePage = () => {
           <div className="card-body">
             <div className="d-flex flex-column flex-md-row align-items-center">
               <div className="profile-avatar-container me-md-4 mb-3 mb-md-0">
-                {candidate?.avatar ? (
+                {avatarUrl ? (
                   <img 
-                    src={candidate.avatar} 
+                    src={avatarUrl}
                     alt={`${candidate.firstName || ''} ${candidate.lastName || ''}`} 
                     className="profile-avatar rounded-circle"
                     style={{ width: '120px', height: '120px', objectFit: 'cover' }}
@@ -147,7 +237,7 @@ const CandidateProfilePage = () => {
                 <div className="d-flex flex-wrap mb-3">
                   <div className="me-4 mb-2">
                     <i className="bi bi-geo-alt me-2"></i>
-                    {candidate?.location?.address || 'Chưa cập nhật địa chỉ'}
+                    {candidate?.address || candidate?.location?.address || 'Chưa cập nhật địa chỉ'}
                   </div>
                 </div>
                 <p>{candidate?.summary || 'Chưa cập nhật giới thiệu'}</p>

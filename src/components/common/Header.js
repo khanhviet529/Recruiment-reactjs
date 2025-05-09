@@ -210,14 +210,58 @@ const Header = () => {
                 </div>
               ) : (
                 <div className="d-flex align-items-center gap-2">
-                  <Link to="/auth/login" className="btn btn-outline-primary px-4 py-2 rounded-pill fw-medium">
-                    <i className="bi bi-box-arrow-in-right me-2"></i>
-                    Đăng nhập
-                  </Link>
-                  <Link to="/auth/register" className="btn btn-primary px-4 py-2 rounded-pill fw-medium">
-                    <i className="bi bi-person-plus me-2"></i>
-                    Đăng ký
-                  </Link>
+                  <div className="btn-group">
+                    <Link 
+                      to="/candidate/login" 
+                      className="btn btn-outline-primary px-3 py-2 rounded-start-pill fw-medium d-flex align-items-center"
+                      data-role="candidate"
+                      onClick={() => localStorage.setItem('intended_role', 'candidate')}
+                    >
+                      <i className="bi bi-person me-2"></i>
+                      Ứng viên
+                    </Link>
+                    <Link 
+                      to="/employer/login" 
+                      className="btn btn-outline-primary px-3 py-2 rounded-end-pill fw-medium d-flex align-items-center"
+                      data-role="employer"
+                      onClick={() => localStorage.setItem('intended_role', 'employer')}
+                    >
+                      <i className="bi bi-building me-2"></i>
+                      Nhà tuyển dụng
+                    </Link>
+                  </div>
+                  
+                  <div className="dropdown">
+                    <button 
+                      className="btn btn-primary px-4 py-2 rounded-pill fw-medium dropdown-toggle"
+                      type="button"
+                      onClick={() => setShowDropdown(!showDropdown)}
+                    >
+                      <i className="bi bi-person-plus me-2"></i>
+                      Đăng ký
+                    </button>
+                    
+                    {showDropdown && (
+                      <div className="dropdown-menu position-absolute mt-2 show">
+                        <Link 
+                          to="/candidate/register" 
+                          className="dropdown-item"
+                          data-role="candidate"
+                          onClick={() => localStorage.setItem('intended_role', 'candidate')}
+                        >
+                          <i className="bi bi-person me-2"></i> Đăng ký Ứng viên
+                        </Link>
+                        <Link 
+                          to="/employer/register" 
+                          className="dropdown-item"
+                          data-role="employer"
+                          onClick={() => localStorage.setItem('intended_role', 'employer')}
+                        >
+                          <i className="bi bi-building me-2"></i> Đăng ký Nhà tuyển dụng
+                        </Link>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

@@ -10,7 +10,8 @@ import {
   CloseCircleOutlined, 
   ClockCircleOutlined,
   RedoOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
+  FileTextOutlined
 } from '@ant-design/icons';
 
 const { Search } = Input;
@@ -65,6 +66,14 @@ const ApplicationsPage = () => {
       const employerJobIds = employerJobs.map(job => job.id);
       setJobs(employerJobs);
       
+      // If no jobs, return early with empty applications
+      if (employerJobIds.length === 0) {
+        setApplications([]);
+        setFilterSummary({ total: 0 });
+        setLoading(false);
+        return;
+      }
+      
       // Now get applications for these jobs
       const response = await axios.get(`http://localhost:5000/applications`, {
         params: {
@@ -79,16 +88,40 @@ const ApplicationsPage = () => {
 
       const applications = response.data;
       
+      // Return early if no applications found
+      if (!applications || applications.length === 0) {
+        setApplications([]);
+        setFilterSummary({ total: 0 });
+        setLoading(false);
+        return;
+      }
+      
+      // Filter out withdrawn applications
+      const filteredApplications = applications.filter(app => app.status !== 'withdrawn');
+      
       // Get unique candidate IDs
-      const candidateIds = [...new Set(applications.map(app => app.candidateId))];
+      const candidateIds = [...new Set(filteredApplications.map(app => app.candidateId))];
       
       // Fetch candidate info for all applications
       const candidatesData = {};
       await Promise.all(
         candidateIds.map(async (candidateId) => {
           try {
+            // First try to fetch by userId which is the candidateId in applications
             const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${candidateId}`);
-            candidatesData[candidateId] = candidateResponse.data;
+            
+            if (candidateResponse.data && candidateResponse.data.length > 0) {
+              candidatesData[candidateId] = candidateResponse.data[0];
+            } else {
+              // If not found, try to fetch by id
+              const directResponse = await axios.get(`http://localhost:5000/candidates?id=${candidateId}`);
+              if (directResponse.data && directResponse.data.length > 0) {
+                candidatesData[candidateId] = directResponse.data[0];
+              } else {
+                console.warn(`Candidate not found for ID: ${candidateId}`);
+                candidatesData[candidateId] = { firstName: 'Unknown', lastName: 'Candidate' };
+              }
+            }
           } catch (err) {
             console.error(`Error fetching candidate ${candidateId}:`, err);
             candidatesData[candidateId] = { firstName: 'Unknown', lastName: 'Candidate' };
@@ -98,21 +131,21 @@ const ApplicationsPage = () => {
       
       setCandidates(candidatesData);
       
-      // Get status summary
-      const statusCounts = applications.reduce((acc, app) => {
+      // Get status summary, don't count withdrawn applications
+      const statusCounts = filteredApplications.reduce((acc, app) => {
         acc[app.status] = (acc[app.status] || 0) + 1;
         return acc;
       }, {});
       
       setFilterSummary({
-        total: applications.length,
+        total: filteredApplications.length,
         ...statusCounts
       });
       
       // Map applications with candidate names and job titles
-      const mappedApplications = applications.map(app => {
+      const mappedApplications = filteredApplications.map(app => {
         const candidate = candidatesData[app.candidateId] || { firstName: 'Unknown', lastName: 'Candidate' };
-        const job = jobs.find(j => j.id === app.jobId) || { title: `Vị trí #${app.jobId}` };
+        const job = employerJobs.find(j => j.id === app.jobId) || { title: `Vị trí #${app.jobId}` };
         
         return {
           ...app,
@@ -129,6 +162,8 @@ const ApplicationsPage = () => {
     } catch (error) {
       console.error('Error fetching applications:', error);
       message.error('Không thể tải danh sách ứng viên');
+      setApplications([]);
+      setFilterSummary({ total: 0 });
     } finally {
       setLoading(false);
     }
@@ -210,20 +245,45 @@ const ApplicationsPage = () => {
     });
   };
 
+  const handleViewResume = (application, e) => {
+    e.stopPropagation(); // Prevent event bubbling to avoid triggering row click
+    e.preventDefault(); // Prevent default link behavior
+    
+    // Check if application has resume URL
+    if (application?.resume?.url || application?.resumeUrl) {
+      // Open resume URL in a new tab
+      window.open(application?.resume?.url || application?.resumeUrl, '_blank');
+    } else {
+      message.error('Không tìm thấy CV của ứng viên');
+    }
+  };
+
   const columns = [
     {
       title: 'Ứng viên',
       dataIndex: 'candidateName',
       key: 'candidateName',
       render: (text, record) => (
-        <Link to={`/employer/applications/${record.id}`}>
-          {text} 
-          {record.reapplied && (
-            <Tooltip title="Đã nộp lại sau khi rút">
-              <Badge color="blue" style={{ marginLeft: 8 }} />
+        <Space>
+          <Link to={`/employer/applications/${record.id}`}>
+            {text} 
+            {record.reapplied && (
+              <Tooltip title="Đã nộp lại sau khi rút">
+                <Badge color="blue" style={{ marginLeft: 8 }} />
+              </Tooltip>
+            )}
+          </Link>
+          {(record.resume?.url || record.resumeUrl) && (
+            <Tooltip title="Xem CV">
+              <Button 
+                type="link" 
+                size="small" 
+                icon={<FileTextOutlined />} 
+                onClick={(e) => handleViewResume(record, e)}
+              />
             </Tooltip>
           )}
-        </Link>
+        </Space>
       ),
     },
     {
@@ -379,6 +439,9 @@ const ApplicationsPage = () => {
           defaultPageSize: 10,
           showSizeChanger: true,
           showTotal: (total) => `Tổng số ${total} đơn ứng tuyển`
+        }}
+        locale={{
+          emptyText: 'Không có dữ liệu'
         }}
       />
     </div>

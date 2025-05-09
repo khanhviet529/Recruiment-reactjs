@@ -13,7 +13,9 @@ import {
   Divider,
   Typography,
   Space,
-  Alert
+  Alert,
+  Progress,
+  Tooltip
 } from 'antd';
 import {
   UploadOutlined,
@@ -21,9 +23,17 @@ import {
   CheckCircleOutlined,
   UserOutlined,
   FileTextOutlined,
-  SendOutlined
+  SendOutlined,
+  FilePdfOutlined,
+  DeleteOutlined,
+  EyeOutlined,
+  HeartOutlined,
+  HeartFilled
 } from '@ant-design/icons';
 import '../styles/JobDetail.scss';
+import { uploadPDF } from '../services/fileService';
+import { CLOUDINARY_CONFIG } from '../services/configService';
+import CVUploader from '../components/common/CVUploader';
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
@@ -40,6 +50,7 @@ const JobDetail = () => {
   const [error, setError] = useState(null);
   const [applying, setApplying] = useState(false);
   const [candidateInfo, setCandidateInfo] = useState(null);
+  const [isSaved, setIsSaved] = useState(false);
 
   // Application modal state
   const [showApplicationModal, setShowApplicationModal] = useState(false);
@@ -50,6 +61,11 @@ const JobDetail = () => {
   const [applicationError, setApplicationError] = useState(null);
   const [applicationQuestions, setApplicationQuestions] = useState([]);
 
+  // Add these new states for CV upload
+  const [cvUploading, setCvUploading] = useState(false);
+  const [uploadedCvUrl, setUploadedCvUrl] = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -58,7 +74,7 @@ const JobDetail = () => {
         setJob(jobResponse.data);
 
         // Fetch employer details
-        const employerResponse = await axios.get(`http://localhost:5000/employers/${jobResponse.data.employerId}`);
+        const employerResponse = await axios.get(`http://localhost:5000/employers?userId=${jobResponse.data.employerId}`);
         setEmployer(employerResponse.data);
 
         // Use questions from job data if available
@@ -80,6 +96,24 @@ const JobDetail = () => {
           ]);
         }
 
+        // Check if job is saved by user
+        if (isAuthenticated && user) {
+          try {
+            // First get candidateId
+            const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
+
+            if (candidateResponse.data && candidateResponse.data.length > 0) {
+              const candidateId = candidateResponse.data[0].id;
+
+              // Check saved jobs with candidateId
+              const savedJobsResponse = await axios.get(`http://localhost:5000/savedJobs?candidateId=${candidateId}&jobId=${id}`);
+              setIsSaved(savedJobsResponse.data && savedJobsResponse.data.length > 0);
+            }
+          } catch (error) {
+            console.error('Error checking if job is saved:', error);
+          }
+        }
+
         setLoading(false);
       } catch (err) {
         setError('Không thể tải thông tin công việc');
@@ -88,7 +122,7 @@ const JobDetail = () => {
     };
 
     fetchData();
-  }, [id]);
+  }, [id, isAuthenticated, user]);
 
   // Fetch candidate information when user changes
   useEffect(() => {
@@ -132,7 +166,7 @@ const JobDetail = () => {
     try {
       if (!user) return;
 
-      const response = await axios.get(`http://localhost:5000/applications?jobId=${id}&candidateId=${user.id}`);
+      const response = await axios.get(`http://localhost:5000/applications?jobId=${id}&candidateId=${user.id}&status_ne=withdrawn`);
 
       if (response.data && response.data.length > 0) {
         message.info('Bạn đã ứng tuyển vị trí này. Vui lòng kiểm tra trạng thái ứng tuyển trong trang cá nhân.');
@@ -159,10 +193,50 @@ const JobDetail = () => {
     setApplicationError(null);
   };
 
-  const handleFileChange = ({ fileList }) => {
-    // Only keep the last file
-    const latestFile = fileList.length > 0 ? [fileList[fileList.length - 1]] : [];
-    setFileList(latestFile);
+  // Add handler for CV upload success
+  const handleCvUploadSuccess = (result) => {
+    console.log('CV Upload success:', result);
+    if (result && result.url) {
+      setUploadedCvUrl(result.url);
+      // Create a file object that mimics what the Upload component would create
+      const newFile = {
+        uid: '-1',
+        name: result.name || 'CV.pdf',
+        status: 'done',
+        url: result.url,
+        originFileObj: null // Mark this as already uploaded
+      };
+      setFileList([newFile]);
+      message.success('CV tải lên thành công');
+    }
+  };
+
+  // Add handler for CV upload error
+  const handleCvUploadError = (error) => {
+    console.error('CV upload error:', error);
+    message.error(`Không thể tải CV lên: ${error}`);
+    setFileList([]);
+    setUploadedCvUrl('');
+  };
+
+  // Replace the handleFileChange function
+  const handleFileChange = (info) => {
+    if (info.file.status === 'uploading') {
+      setCvUploading(true);
+      return;
+    }
+
+    if (info.file.status === 'done') {
+      setCvUploading(false);
+      // Only keep the latest file
+      setFileList([info.file]);
+    } else if (info.file.status === 'error') {
+      setCvUploading(false);
+      message.error(`${info.file.name} tải lên thất bại.`);
+    } else {
+      // Only keep the latest file
+      setFileList(info.fileList.slice(-1));
+    }
   };
 
   const handleStepChange = (current) => {
@@ -180,7 +254,7 @@ const JobDetail = () => {
         await form.validateFields(['fullName', 'email', 'phone']);
       } else if (applicationStep === 1) {
         // Validate CV upload
-        if (fileList.length === 0) {
+        if (fileList.length === 0 && !uploadedCvUrl) {
           message.error('Vui lòng tải lên CV của bạn');
           return;
         }
@@ -189,10 +263,10 @@ const JobDetail = () => {
         const requiredQuestionIds = applicationQuestions
           .filter(q => q.isRequired)
           .map(q => `question_${q.id}`);
-        
+
         await form.validateFields(requiredQuestionIds);
       }
-      
+
       // If validation passes, go to next step
       setApplicationStep(applicationStep + 1);
     } catch (err) {
@@ -208,38 +282,96 @@ const JobDetail = () => {
   const handleSubmitApplication = async () => {
     try {
       const values = await form.validateFields();
-      
+
       // Don't proceed if no resume uploaded
-      if (fileList.length === 0) {
+      if (fileList.length === 0 && !uploadedCvUrl) {
         message.error('Vui lòng tải lên CV của bạn');
         return;
       }
-      
+
       setApplying(true);
       setApplicationError(null);
-      
+
+      // Check if we already have an uploaded CV URL
+      let resumeUrl = uploadedCvUrl;
+      let resumeFileName = fileList.length > 0 ? fileList[0].name : 'CV.pdf';
+
+      // If we don't have a URL, upload the file
+      if (!resumeUrl && fileList.length > 0 && fileList[0].originFileObj) {
+        try {
+          const file = fileList[0].originFileObj;
+          message.loading('Đang tải CV lên...', 0);
+
+          // Use our uploadPDF service
+          const uploadResponse = await uploadPDF(file, (progress) => {
+            setUploadProgress(progress);
+            console.log(`Upload progress: ${progress}%`);
+          });
+
+          message.destroy();
+
+          if (!uploadResponse.success) {
+            throw new Error(uploadResponse.error || 'Không thể tải CV lên');
+          }
+
+          // Get the secure URL from the response
+          resumeUrl = uploadResponse.data.secure_url;
+          console.log('CV uploaded successfully:', resumeUrl);
+          message.success('Tải CV lên thành công');
+        } catch (uploadErr) {
+          console.error('CV upload error:', uploadErr);
+          message.error('Không thể tải CV lên. Vui lòng thử lại.');
+          setApplying(false);
+          return;
+        }
+      }
+
       // Prepare the answers from the questions
       const answers = applicationQuestions.map(q => ({
         questionId: q.id,
         question: q.question,
         answer: values[`question_${q.id}`] || ''
       }));
+
+      // Log the job ID for debugging
+      console.log('Job ID from URL parameter:', id, 'Type:', typeof id);
       
-      // In a real app, we would upload the file first and get a URL back
-      // Here we'll simulate that
-      const resumeUrl = "https://example.com/resumes/" + fileList[0].name;
+      // Validate job ID
+      if (!id) {
+        throw new Error('Không tìm thấy ID của công việc');
+      }
       
-      // Create the application object
+      // Try to parse the job ID in different ways
+      let jobId;
+      try {
+        jobId = parseInt(id);
+        if (isNaN(jobId)) {
+          jobId = id; // Keep as string if parsing fails
+        }
+      } catch (error) {
+        console.error('Error parsing job ID:', error);
+        jobId = id; // Fallback to original value
+      }
+      
+      if (!jobId) {
+        throw new Error('Không thể xác định ID của công việc');
+      }
+
+      // Create the application object with the real Cloudinary URL
       const application = {
-        jobId: parseInt(id),
+        jobId: jobId,
         candidateId: user.id,
         resume: {
           url: resumeUrl,
-          name: fileList[0].name
+          name: resumeFileName
         },
+        resumeUrl: resumeUrl, // For backward compatibility
         coverLetter: values.coverLetter,
         answers: answers,
         status: "pending",
+        fullName: values.fullName,
+        email: values.email,
+        phone: values.phone,
         currentStage: 1,
         stageHistory: [
           {
@@ -253,18 +385,36 @@ const JobDetail = () => {
         appliedAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
-      
+
+      console.log('Submitting application with job ID:', jobId, 'candidate ID:', user.id);
+
       // Check if user already has a candidate profile
       let candidateProfile = null;
       try {
+        // Validate user ID
+        if (!user || !user.id) {
+          throw new Error('Không thể xác định ID của ứng viên');
+        }
+
         const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
         if (candidateResponse.data && candidateResponse.data.length > 0) {
           candidateProfile = candidateResponse.data[0];
+          
+          // Use the candidate ID from the profile
+          // if (candidateProfile && candidateProfile.id) {
+          //   application.candidateId = candidateProfile.id;
+          //   console.log('Using candidate ID from profile:', candidateProfile.id);
+          // }
         }
       } catch (err) {
         console.error('Error checking candidate profile:', err);
+        if (!application.candidateId) {
+          message.error('Không thể xác định thông tin ứng viên. Vui lòng đăng nhập lại.');
+          setApplying(false);
+          return;
+        }
       }
-      
+
       // If no candidate profile exists, create one
       if (!candidateProfile) {
         try {
@@ -280,12 +430,15 @@ const JobDetail = () => {
             updatedAt: new Date().toISOString()
           };
           
+          console.log('Creating new candidate profile:', newCandidate);
+          
           const candidateResponse = await axios.post('http://localhost:5000/candidates', newCandidate);
           candidateProfile = candidateResponse.data;
           
           // Update application with the new candidate ID if needed
           if (candidateProfile && candidateProfile.id) {
             application.candidateId = candidateProfile.id;
+            console.log('Using newly created candidate ID:', candidateProfile.id);
           }
         } catch (err) {
           console.error('Error creating candidate profile:', err);
@@ -293,9 +446,20 @@ const JobDetail = () => {
         }
       }
       
+      // Final validation before submission
+      if (!application.jobId) {
+        throw new Error('Không thể xác định ID của công việc');
+      }
+      
+      if (!application.candidateId) {
+        throw new Error('Không thể xác định ID của ứng viên');
+      }
+      
+      console.log('Final application data:', application);
+      
       // Post the application to the API
       const response = await axios.post('http://localhost:5000/applications', application);
-      
+
       if (response.status === 201 || response.status === 200) {
         setApplicationSuccess(true);
         // Move to the success step
@@ -320,6 +484,52 @@ const JobDetail = () => {
       return `${candidateInfo.firstName || ''} ${candidateInfo.lastName || ''}`.trim();
     }
     return user?.fullName || '';
+  };
+
+  // Add save job functionality
+  const handleToggleSaveJob = async () => {
+    if (!isAuthenticated) {
+      navigate('/auth/login', {
+        state: { from: `/jobs/${id}`, message: 'Vui lòng đăng nhập để lưu công việc này' }
+      });
+      return;
+    }
+
+    try {
+      // First get the candidate ID for the current user
+      const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
+
+      if (!candidateResponse.data || candidateResponse.data.length === 0) {
+        message.error('Không tìm thấy thông tin ứng viên');
+        return;
+      }
+
+      const candidateId = candidateResponse.data[0].id;
+
+      if (isSaved) {
+        // Find the saved job entry
+        const savedJobResponse = await axios.get(`http://localhost:5000/savedJobs?candidateId=${candidateId}&jobId=${id}`);
+        if (savedJobResponse.data && savedJobResponse.data.length > 0) {
+          // Delete the saved job
+          await axios.delete(`http://localhost:5000/savedJobs/${savedJobResponse.data[0].id}`);
+          message.success('Đã xóa công việc khỏi danh sách đã lưu');
+          setIsSaved(false);
+        }
+      } else {
+        // Save the job
+        await axios.post(`http://localhost:5000/savedJobs`, {
+          candidateId: candidateId,
+          jobId: parseInt(id),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+        message.success('Đã lưu công việc thành công');
+        setIsSaved(true);
+      }
+    } catch (error) {
+      console.error('Error toggling saved job:', error);
+      message.error('Có lỗi xảy ra khi thực hiện thao tác. Vui lòng thử lại sau.');
+    }
   };
 
   const renderApplicationForm = () => {
@@ -394,17 +604,49 @@ const JobDetail = () => {
                 label="CV của bạn"
                 rules={[{ required: true, message: 'Vui lòng tải lên CV của bạn' }]}
               >
-                <Upload
-                  beforeUpload={() => false}
-                  fileList={fileList}
-                  onChange={handleFileChange}
-                  maxCount={1}
-                >
-                  <Button icon={<UploadOutlined />}>Tải lên CV</Button>
-                  <Text type="secondary" className="ml-3">
-                    Hỗ trợ PDF, DOCX (tối đa 5MB)
-                  </Text>
-                </Upload>
+                {/* Use CVUploader component instead of basic Upload */}
+                {fileList.length === 0 ? (
+                  <CVUploader
+                    onUploadSuccess={handleCvUploadSuccess}
+                    onUploadError={handleCvUploadError}
+                    uploadPreset={CLOUDINARY_CONFIG.uploadPresets.pdf}
+                    maxSize={10}
+                    disabled={applying}
+                  />
+                ) : (
+                  <div className="uploaded-cv">
+                    <Space direction="vertical" style={{ width: '100%' }}>
+                      <div className="file-preview">
+                        <Space>
+                          <FilePdfOutlined style={{ fontSize: 24, color: '#52c41a' }} />
+                          <Text strong>{fileList[0].name}</Text>
+                          <Text type="success">Đã tải lên thành công</Text>
+                        </Space>
+                      </div>
+
+                      <Space>
+                        {fileList[0].url && (
+                          <Button
+                            icon={<EyeOutlined />}
+                            onClick={() => window.open(fileList[0].url, '_blank')}
+                          >
+                            Xem CV
+                          </Button>
+                        )}
+                        <Button
+                          danger
+                          icon={<DeleteOutlined />}
+                          onClick={() => {
+                            setFileList([]);
+                            setUploadedCvUrl('');
+                          }}
+                        >
+                          Xóa và tải lại
+                        </Button>
+                      </Space>
+                    </Space>
+                  </div>
+                )}
               </Form.Item>
 
               <Form.Item
@@ -488,10 +730,10 @@ const JobDetail = () => {
               <CheckCircleOutlined style={{ fontSize: 60, color: '#52c41a' }} />
               <Title level={3} className="mt-3">Đã ứng tuyển thành công!</Title>
               <Text className="d-block mb-4">
-                Chúc mừng! Đơn ứng tuyển của bạn đã được gửi đến nhà tuyển dụng. 
+                Chúc mừng! Đơn ứng tuyển của bạn đã được gửi đến nhà tuyển dụng.
                 Bạn có thể theo dõi trạng thái ứng tuyển của mình trong trang cá nhân.
               </Text>
-              
+
               <Space>
                 <Button type="primary" onClick={handleApplicationCancel}>
                   Đóng
@@ -570,6 +812,19 @@ const JobDetail = () => {
                   </div>
                 </div>
 
+                {/* Add Save Job Button */}
+                <div className="d-flex justify-content-end mb-3">
+                  <Tooltip title={isSaved ? "Bỏ lưu công việc" : "Lưu công việc này"}>
+                    <Button
+                      icon={isSaved ? <HeartFilled style={{ color: '#ff4d4f' }} /> : <HeartOutlined />}
+                      onClick={handleToggleSaveJob}
+                      type={isSaved ? "default" : "text"}
+                    >
+                      {isSaved ? "Đã lưu" : "Lưu tin"}
+                    </Button>
+                  </Tooltip>
+                </div>
+
                 <div className="mb-4">
                   <h5 className="mb-3">Mô tả công việc</h5>
                   <p>{job.description}</p>
@@ -644,20 +899,29 @@ const JobDetail = () => {
                     <span>{job.applications} người</span>
                   </div>
                 </div>
-                <button
-                  className="btn btn-primary w-100"
-                  onClick={handleApply}
-                  disabled={applying}
-                >
-                  {applying ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Đang gửi...
-                    </>
-                  ) : (
-                    'Ứng tuyển ngay'
-                  )}
-                </button>
+                <div className="d-flex gap-2 mb-2">
+                  <button
+                    className="btn btn-primary flex-grow-1"
+                    onClick={handleApply}
+                    disabled={applying}
+                  >
+                    {applying ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        Đang gửi...
+                      </>
+                    ) : (
+                      'Ứng tuyển ngay'
+                    )}
+                  </button>
+
+                  <button
+                    className={`btn ${isSaved ? 'btn-outline-danger' : 'btn-outline-secondary'}`}
+                    onClick={handleToggleSaveJob}
+                  >
+                    {isSaved ? <HeartFilled /> : <HeartOutlined />}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -702,69 +966,75 @@ const JobDetail = () => {
                     <div className="d-flex align-items-center mb-2">
                       <i className="bi bi-geo-alt me-2"></i>
                       <span className="small text-muted">
-                        {employer.location.address}, {employer.location.city}, {employer.location.country}
+                        {employer?.location?.address || 'Địa chỉ không có sẵn'}, {employer?.location?.city || 'Thành phố không có sẵn'}, {employer?.location?.country || 'Quốc gia không có sẵn'}
                       </span>
                     </div>
                     <div className="d-flex align-items-center mb-2">
                       <i className="bi bi-people me-2"></i>
-                      <span className="small text-muted">Quy mô: {employer.companySize} nhân viên</span>
+                      <span className="small text-muted">Quy mô: {employer?.companySize || 'Thông tin không có sẵn'} nhân viên</span>
                     </div>
                     <div className="d-flex align-items-center mb-2">
                       <i className="bi bi-calendar me-2"></i>
-                      <span className="small text-muted">Thành lập: {employer.foundedYear}</span>
+                      <span className="small text-muted">Thành lập: {employer?.foundedYear || 'Thông tin không có sẵn'}</span>
                     </div>
                     <div className="d-flex align-items-center mb-2">
                       <i className="bi bi-envelope me-2"></i>
-                      <span className="small text-muted">{employer.contactEmail}</span>
+                      <span className="small text-muted">{employer?.contactEmail || 'Email không có sẵn'}</span>
                     </div>
                     <div className="d-flex align-items-center mb-2">
                       <i className="bi bi-telephone me-2"></i>
-                      <span className="small text-muted">{employer.contactPhone}</span>
+                      <span className="small text-muted">{employer?.contactPhone || 'Số điện thoại không có sẵn'}</span>
                     </div>
                   </div>
+
 
                   {/* Company Culture */}
                   <div className="mb-3">
                     <h6 className="small mb-2">Văn hóa công ty</h6>
-                    <p className="small text-muted">{employer.culture}</p>
+                    <p className="small text-muted">{employer?.culture || 'Thông tin không có sẵn'}</p>
                   </div>
 
                   {/* Company Benefits */}
                   <div className="mb-3">
                     <h6 className="small mb-2">Quyền lợi</h6>
                     <ul className="list-unstyled small text-muted">
-                      {employer.benefits.map((benefit, index) => (
-                        <li key={index} className="mb-1">
-                          <i className="bi bi-check-circle-fill text-success me-2"></i>
-                          {benefit}
-                        </li>
-                      ))}
+                      {employer?.benefits?.length > 0 ? (
+                        employer.benefits.map((benefit, index) => (
+                          <li key={index} className="mb-1">
+                            <i className="bi bi-check-circle-fill text-success me-2"></i>
+                            {benefit}
+                          </li>
+                        ))
+                      ) : (
+                        <li className="mb-1">Không có quyền lợi</li>
+                      )}
                     </ul>
                   </div>
 
                   {/* Social Links */}
                   <div className="d-flex gap-2">
-                    {employer.socialLinks.linkedin && (
+                    {employer?.socialLinks?.linkedin && (
                       <a href={employer.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-muted">
                         <i className="bi bi-linkedin fs-5"></i>
                       </a>
                     )}
-                    {employer.socialLinks.facebook && (
+                    {employer?.socialLinks?.facebook && (
                       <a href={employer.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-muted">
                         <i className="bi bi-facebook fs-5"></i>
                       </a>
                     )}
-                    {employer.socialLinks.twitter && (
+                    {employer?.socialLinks?.twitter && (
                       <a href={employer.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-muted">
                         <i className="bi bi-twitter fs-5"></i>
                       </a>
                     )}
-                    {employer.website && (
+                    {employer?.website && (
                       <a href={employer.website} target="_blank" rel="noopener noreferrer" className="text-muted">
                         <i className="bi bi-globe fs-5"></i>
                       </a>
                     )}
                   </div>
+
                 </div>
               </div>
             )}
@@ -777,8 +1047,8 @@ const JobDetail = () => {
         title={
           <div>
             <div className="mb-3">Ứng tuyển vị trí: {job?.title}</div>
-            <Steps 
-              current={applicationStep} 
+            <Steps
+              current={applicationStep}
               onChange={handleStepChange}
               items={[
                 { title: 'Thông tin', icon: <UserOutlined />, disabled: false },

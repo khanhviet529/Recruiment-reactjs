@@ -1,16 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { register, reset } from '../../redux/slices/authSlice';
+import { register, reset, loginWithGoogle } from '../../redux/slices/authSlice';
 import { ClipLoader } from 'react-spinners';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+// import jwt_decode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
+
 import '../../assets/scss/main.scss';
 
 const RegisterPage = () => {
-  const [activeTab, setActiveTab] = useState('candidate');
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Determine registration type based on URL path
+  const isEmployerRegister = location.pathname.includes('/employer/register');
+  const isCandidateRegister = location.pathname.includes('/candidate/register') || location.pathname === '/auth/register' || location.pathname === '/register';
+  
+  // Set active tab based on URL path
+  const [activeTab, setActiveTab] = useState(isEmployerRegister ? 'employer' : 'candidate');
 
   const { user, isAuthenticated, loading, error, success } = useSelector(
     (state) => state.auth
@@ -70,15 +81,45 @@ const RegisterPage = () => {
     industry: Yup.string().required('Ngành nghề là bắt buộc'),
   });
 
+  // Get page title based on registration type
+  const getPageTitle = () => {
+    if (isEmployerRegister) return 'Đăng ký tài khoản Nhà tuyển dụng';
+    return 'Đăng ký tài khoản Ứng viên';
+  };
+
+  // Get login link based on registration type
+  const getLoginLink = () => {
+    if (isEmployerRegister) return '/employer/login';
+    return '/candidate/login';
+  };
+
   // Handle form submission
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
     const { confirmPassword, ...userData } = values;
 
-    // Add role based on active tab
+    // Set role based on active tab or URL path
     userData.role = activeTab === 'candidate' ? 'applicant' : 'employer';
 
     dispatch(register(userData));
     setSubmitting(false);
+  };
+
+  // Handle Google login/register
+  const handleGoogleLogin = (credentialResponse) => {
+    const decoded = jwtDecode(credentialResponse.credential);
+    console.log('Google login successful:', decoded);
+    
+    const googleData = {
+      ...decoded,
+      isAdmin: false, // Register is never for admin
+      role: activeTab === 'candidate' ? 'applicant' : 'employer'
+    };
+    
+    dispatch(loginWithGoogle(googleData));
+  };
+
+  const handleGoogleError = () => {
+    console.error('Google login failed');
   };
 
   return (
@@ -88,7 +129,7 @@ const RegisterPage = () => {
           <div className="col-md-8 col-lg-6">
             <div className="card shadow-sm">
               <div className="card-body p-4">
-                <h2 className="text-center mb-4">Đăng ký tài khoản</h2>
+                <h2 className="text-center mb-4">{getPageTitle()}</h2>
 
                 {error && (
                   <div className="alert alert-danger" role="alert">
@@ -102,28 +143,65 @@ const RegisterPage = () => {
                   </div>
                 )}
 
-                {/* Registration Type Tabs */}
-                <ul className="nav nav-tabs mb-4">
-                  <li className="nav-item">
-                    <button
-                      className={`nav-link ${activeTab === 'candidate' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('candidate')}
-                    >
-                      Ứng viên
-                    </button>
-                  </li>
-                  <li className="nav-item">
-                    <button
-                      className={`nav-link ${activeTab === 'employer' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('employer')}
-                    >
-                      Nhà tuyển dụng
-                    </button>
-                  </li>
-                </ul>
+                {/* Registration Type Tabs - only show when not on a specific registration page */}
+                {!isEmployerRegister && !isCandidateRegister && (
+                  <ul className="nav nav-tabs mb-4">
+                    <li className="nav-item">
+                      <button
+                        className={`nav-link ${activeTab === 'candidate' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('candidate')}
+                      >
+                        Ứng viên
+                      </button>
+                    </li>
+                    <li className="nav-item">
+                      <button
+                        className={`nav-link ${activeTab === 'employer' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('employer')}
+                      >
+                        Nhà tuyển dụng
+                      </button>
+                    </li>
+                  </ul>
+                )}
+
+                {/* Quick register with social - only for candidate */}
+                {(activeTab === 'candidate' || isCandidateRegister) && (
+                  <div className="mb-4">
+                    <div className="d-flex align-items-center justify-content-center my-3">
+                      <hr className="flex-grow-1" />
+                      <span className="mx-2">Đăng ký nhanh với</span>
+                      <hr className="flex-grow-1" />
+                    </div>
+
+                    <div className="d-grid gap-2 mb-3">
+                      {/* Google Registration Button */}
+                      <GoogleOAuthProvider clientId="633476591135-4b3l5g4uelc0q2adcphtokvd3vv0m7hf.apps.googleusercontent.com">
+                        <div className="d-grid gap-2">
+                          <GoogleLogin
+                            onSuccess={handleGoogleLogin}
+                            onError={handleGoogleError}
+                            size="large"
+                            width="100%"
+                            text="signup_with"
+                            shape="rectangular"
+                            locale="vi"
+                            useOneTap={false}
+                          />
+                        </div>
+                      </GoogleOAuthProvider>
+                    </div>
+
+                    <div className="d-flex align-items-center justify-content-center my-3">
+                      <hr className="flex-grow-1" />
+                      <span className="mx-2">Hoặc đăng ký với thông tin chi tiết</span>
+                      <hr className="flex-grow-1" />
+                    </div>
+                  </div>
+                )}
 
                 {/* Candidate Registration Form */}
-                {activeTab === 'candidate' && (
+                {(activeTab === 'candidate' || isCandidateRegister) && !isEmployerRegister && (
                   <Formik
                     initialValues={{
                       firstName: '',
@@ -237,7 +315,7 @@ const RegisterPage = () => {
                 )}
 
                 {/* Employer Registration Form */}
-                {activeTab === 'employer' && (
+                {(activeTab === 'employer' || isEmployerRegister) && !isCandidateRegister && (
                   <Formik
                     initialValues={{
                       name: '',
@@ -393,7 +471,7 @@ const RegisterPage = () => {
                 <div className="mt-3 text-center">
                   <p>
                     Đã có tài khoản?{' '}
-                    <Link to="/auth/login" className="text-primary">
+                    <Link to={getLoginLink()} className="text-primary">
                       Đăng nhập
                     </Link>
                   </p>

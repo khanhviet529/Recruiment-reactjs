@@ -1,249 +1,247 @@
-import React, { useState, useRef } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import { Upload, Button, message, Progress, Modal } from 'antd';
+import { UploadOutlined, FileOutlined, PaperClipOutlined, FilePdfOutlined } from '@ant-design/icons';
+import { 
+  uploadToCloudinary, 
+  uploadPDF, 
+  uploadImage 
+} from '../../services/fileService';
+import { 
+  CLOUDINARY_CONFIG, 
+  getUploadPresetForFileType, 
+  getResourceTypeForFileType 
+} from '../../services/configService';
 
+/**
+ * A reusable file upload component for Cloudinary
+ */
 const FileUpload = ({
-  label,
-  accept = '',
-  multiple = false,
-  maxSize = 5242880, // 5MB
-  onChange,
-  onError,
-  className = '',
-  buttonText = 'Choose File',
-  dragDropText = 'or drop files here',
-  showPreview = true,
-  disabled = false,
-  name,
-  id,
-  required = false,
-  error,
-  helpText,
-  allowedFileTypes = [],
-  ...rest
+  accept = '*', // File types to accept (.pdf, .jpg, etc.)
+  maxSize = 5, // Maximum file size in MB
+  multiple = false, // Allow multiple file uploads
+  buttonText = 'Upload File', // Text to display on the button
+  uploadPreset, // Cloudinary upload preset (optional, auto-detected if not provided)
+  resourceType, // Cloudinary resource type (optional, auto-detected if not provided)
+  onUploadSuccess = () => {}, // Callback when upload is successful
+  onUploadError = () => {}, // Callback when upload fails
+  fileIcon = <FileOutlined />, // Icon to display for the file type
+  disabled = false, // Whether the upload button is disabled
+  showProgressBar = true, // Whether to show the progress bar
+  showPreviewIcon = true, // Whether to show the preview icon
+  showRemoveIcon = true, // Whether to show the remove icon
+  cloudName = CLOUDINARY_CONFIG.cloudName // Cloudinary cloud name
 }) => {
-  const [files, setFiles] = useState([]);
-  const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef(null);
+  const [fileList, setFileList] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewFile, setPreviewFile] = useState(null);
 
-  // Generate container classes
-  const containerClasses = [
-    'file-upload-container mb-3',
-    className
-  ]
-    .filter(Boolean)
-    .join(' ');
-
-  // Generate drop area classes
-  const dropAreaClasses = [
-    'file-upload-drop-area p-4 rounded text-center border',
-    isDragging ? 'border-primary bg-light' : 'border-dashed',
-    error ? 'border-danger' : 'border-secondary',
-    disabled ? 'opacity-50' : ''
-  ]
-    .filter(Boolean)
-    .join(' ');
-
-  // Handle file selection
-  const handleFileChange = (event) => {
-    const selectedFiles = Array.from(event.target.files || []);
-    processFiles(selectedFiles);
+  const handlePreview = file => {
+    setPreviewFile(file);
+    setPreviewVisible(true);
   };
 
-  // Handle files dropped into drop area
-  const handleDrop = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    
-    if (disabled) return;
-    
-    setIsDragging(false);
-    
-    const droppedFiles = Array.from(event.dataTransfer.files || []);
-    processFiles(droppedFiles);
+  const closePreview = () => {
+    setPreviewVisible(false);
+    setPreviewFile(null);
   };
 
-  // Process files, validate and trigger callbacks
-  const processFiles = (selectedFiles) => {
-    const validFiles = [];
-    const errors = [];
+  // Handle progress updates
+  const handleProgress = (percentCompleted) => {
+    if (showProgressBar) {
+      setProgress(percentCompleted);
+    }
+  };
 
-    selectedFiles.forEach(file => {
+  // Custom upload with progress indicator
+  const customUpload = async ({ file, onSuccess, onError, onProgress }) => {
+    setUploading(true);
+    setProgress(0);
+    
+    try {
       // Check file size
-      if (file.size > maxSize) {
-        errors.push(`File "${file.name}" exceeds the maximum size of ${formatFileSize(maxSize)}.`);
+      if (file.size > maxSize * 1024 * 1024) {
+        message.error(`Kích thước file vượt quá ${maxSize}MB`);
+        onError(new Error(`Kích thước file vượt quá ${maxSize}MB`));
+        setUploading(false);
+        setProgress(0);
         return;
       }
 
-      // Check file type if specified
-      if (allowedFileTypes.length > 0) {
-        const fileExtension = file.name.split('.').pop().toLowerCase();
-        if (!allowedFileTypes.includes(fileExtension)) {
-          errors.push(`File "${file.name}" has an invalid type. Allowed types: ${allowedFileTypes.join(', ')}.`);
-          return;
-        }
+      // Determine the best upload function based on file type
+      let result;
+      if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+        result = await uploadPDF(file, handleProgress);
+      } else if (file.type.startsWith('image/')) {
+        result = await uploadImage(file, handleProgress);
+      } else {
+        // For other file types, use the provided preset or detect automatically
+        const finalUploadPreset = uploadPreset || getUploadPresetForFileType(file.type || file.name);
+        const finalResourceType = resourceType || getResourceTypeForFileType(file.type || file.name);
+        result = await uploadToCloudinary(file, finalUploadPreset, finalResourceType, handleProgress);
       }
-
-      validFiles.push(file);
-    });
-
-    // Set valid files
-    const newFiles = multiple ? [...files, ...validFiles] : validFiles.slice(0, 1);
-    setFiles(newFiles);
-
-    // Call onChange with the valid files
-    if (onChange && validFiles.length > 0) {
-      onChange(multiple ? newFiles : newFiles[0]);
-    }
-
-    // Call onError if there were any errors
-    if (onError && errors.length > 0) {
-      onError(errors);
-    }
-  };
-
-  // Handle drag events
-  const handleDragEnter = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (!disabled) {
-      setIsDragging(true);
-    }
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (!disabled) {
-      setIsDragging(true);
-    }
-  };
-
-  const handleDragLeave = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragging(false);
-  };
-
-  // Trigger file browser
-  const handleBrowseClick = () => {
-    if (!disabled && fileInputRef.current) {
-      fileInputRef.current.click();
+      
+      if (result.success) {
+        setProgress(100);
+        console.log('Cloudinary upload result:', result);
+        
+        // Add file with URL to the file list
+        const newFile = {
+          uid: file.uid,
+          name: file.name,
+          status: 'done',
+          url: result.data.url || result.url,
+          thumbUrl: result.data.resource_type === 'image' ? (result.data.url || result.url) : null,
+          response: result,
+          publicId: result.data.public_id
+        };
+        
+        // Update file list
+        setFileList(prev => {
+          if (!multiple) {
+            return [newFile];
+          }
+          return [...prev, newFile];
+        });
+        
+        onSuccess(result, file);
+        onUploadSuccess(result, file);
+        message.success(`${file.name} đã tải lên thành công`);
+      } else {
+        onError(new Error(result.error));
+        onUploadError(result.error, file);
+        message.error(`${file.name} tải lên thất bại: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      onError(error);
+      onUploadError(error.message, file);
+      message.error(`${file.name} tải lên thất bại: ${error.message}`);
+    } finally {
+      setUploading(false);
+      // Reset progress after a delay to show 100% completion
+      if (progress === 100) {
+        setTimeout(() => setProgress(0), 1000);
+      }
     }
   };
 
-  // Remove a file from the selection
-  const handleRemoveFile = (index) => {
-    const newFiles = [...files];
-    newFiles.splice(index, 1);
-    setFiles(newFiles);
+  // Handle file list changes
+  const handleChange = info => {
+    let newFileList = [...info.fileList];
     
-    if (onChange) {
-      onChange(multiple ? newFiles : newFiles[0] || null);
+    // Limit to the most recent file if not multiple
+    if (!multiple) {
+      newFileList = newFileList.slice(-1);
     }
+    
+    // Update file list status
+    setFileList(newFileList);
   };
 
-  // Format file size for display
-  const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  // Check if file type is valid
+  const beforeUpload = file => {
+    // If accept is set, check file type matches
+    if (accept !== '*') {
+      const acceptTypes = accept.split(',').map(type => type.trim());
+      const isValid = acceptTypes.some(type => {
+        if (type.startsWith('.')) {
+          // Check file extension
+          const extension = file.name.toLowerCase().slice(file.name.lastIndexOf('.'));
+          return extension === type.toLowerCase();
+        } else {
+          // Check MIME type
+          return file.type.match(type);
+        }
+      });
+
+      if (!isValid) {
+        message.error(`${file.name} không phải là định dạng file hợp lệ`);
+        return Upload.LIST_IGNORE;
+      }
+    }
+    return true;
+  };
+
+  // Get appropriate icon based on file type
+  const getFileIcon = (file) => {
+    if (file.type === 'application/pdf' || (file.name && file.name.toLowerCase().endsWith('.pdf'))) {
+      return <FilePdfOutlined />;
+    }
+    return fileIcon;
   };
 
   return (
-    <div className={containerClasses} {...rest}>
-      {label && (
-        <label htmlFor={id || name} className="form-label">
-          {label}
-          {required && <span className="text-danger ms-1">*</span>}
-        </label>
+    <div className="file-upload-component">
+      <Upload
+        fileList={fileList}
+        customRequest={customUpload}
+        onChange={handleChange}
+        beforeUpload={beforeUpload}
+        accept={accept}
+        multiple={multiple}
+        disabled={disabled || uploading}
+        showUploadList={{
+          showDownloadIcon: true,
+          showPreviewIcon: showPreviewIcon,
+          showRemoveIcon: showRemoveIcon,
+        }}
+        onPreview={handlePreview}
+        iconRender={getFileIcon}
+      >
+        <Button 
+          icon={<UploadOutlined />} 
+          loading={uploading}
+          disabled={disabled || (fileList.length > 0 && !multiple)}
+        >
+          {buttonText}
+        </Button>
+      </Upload>
+      
+      {showProgressBar && progress > 0 && (
+        <Progress 
+          percent={progress} 
+          size="small" 
+          status={progress === 100 ? "success" : "active"} 
+          style={{ marginTop: 8 }}
+        />
       )}
       
-      <div
-        className={dropAreaClasses}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-      >
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept={accept}
-          multiple={multiple}
-          onChange={handleFileChange}
-          className="d-none"
-          disabled={disabled}
-          name={name}
-          id={id || name}
-          required={required}
-        />
-        
-        <div className="mb-3">
-          <i className="fas fa-cloud-upload-alt fa-2x text-secondary mb-2"></i>
-          <p className="mb-1">{dragDropText}</p>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleBrowseClick}
-            disabled={disabled}
-          >
-            {buttonText}
-          </button>
-        </div>
-        
-        {helpText && <div className="text-muted small mb-2">{helpText}</div>}
-        
-        {error && <div className="text-danger small">{error}</div>}
-      </div>
-      
-      {/* File Preview */}
-      {showPreview && files.length > 0 && (
-        <div className="file-preview mt-3">
-          <h6>Selected Files ({files.length})</h6>
-          <ul className="list-group">
-            {files.map((file, index) => (
-              <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                  <span className="file-name">{file.name}</span>
-                  <span className="file-size text-muted ms-2 small">({formatFileSize(file.size)})</span>
-                </div>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-danger"
-                  onClick={() => handleRemoveFile(index)}
-                  disabled={disabled}
-                >
-                  <i className="fas fa-times"></i>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+      {previewFile && (
+        <Modal
+          visible={previewVisible}
+          title={previewFile.name}
+          footer={null}
+          onCancel={closePreview}
+        >
+          {previewFile.type === 'application/pdf' || (previewFile.name && previewFile.name.toLowerCase().endsWith('.pdf')) ? (
+            <div style={{ height: '500px' }}>
+              <iframe 
+                src={previewFile.url} 
+                style={{ width: '100%', height: '100%' }} 
+                title="PDF Preview"
+              />
+            </div>
+          ) : previewFile.type && previewFile.type.startsWith('image/') ? (
+            <img 
+              alt="preview" 
+              style={{ width: '100%' }} 
+              src={previewFile.url} 
+            />
+          ) : (
+            <div style={{ textAlign: 'center', padding: '20px' }}>
+              <p><FileOutlined style={{ fontSize: '48px' }} /></p>
+              <p>Không thể xem trước file trên trình duyệt</p>
+              <Button type="primary" href={previewFile.url} target="_blank">
+                Tải xuống để xem
+              </Button>
+            </div>
+          )}
+        </Modal>
       )}
     </div>
   );
-};
-
-FileUpload.propTypes = {
-  label: PropTypes.node,
-  accept: PropTypes.string,
-  multiple: PropTypes.bool,
-  maxSize: PropTypes.number,
-  onChange: PropTypes.func,
-  onError: PropTypes.func,
-  className: PropTypes.string,
-  buttonText: PropTypes.string,
-  dragDropText: PropTypes.string,
-  showPreview: PropTypes.bool,
-  disabled: PropTypes.bool,
-  name: PropTypes.string,
-  id: PropTypes.string,
-  required: PropTypes.bool,
-  error: PropTypes.string,
-  helpText: PropTypes.node,
-  allowedFileTypes: PropTypes.arrayOf(PropTypes.string)
 };
 
 export default FileUpload;

@@ -62,7 +62,7 @@ const ApplicationsPage = () => {
             const jobResponse = await axios.get(`http://localhost:5000/jobs/${jobId}`);
             if (jobResponse.data) {
               // Also fetch employer info
-              const employerResponse = await axios.get(`http://localhost:5000/employers/${jobResponse.data.employerId}`);
+              const employerResponse = await axios.get(`http://localhost:5000/employers?userId=${jobResponse.data.employerId}`);
               
               jobsData[jobId] = {
                 ...jobResponse.data,
