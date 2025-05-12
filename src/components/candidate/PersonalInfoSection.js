@@ -28,6 +28,8 @@ const PersonalInfoSection = ({ candidate, setCandidate }) => {
   const initialValues = {
     firstName: candidate?.firstName || '',
     lastName: candidate?.lastName || '',
+    headline: candidate?.headline || '',
+    summary: candidate?.summary || '',
     gender: candidate?.gender || 'male',
     dateOfBirth: candidate?.dateOfBirth ? moment(candidate.dateOfBirth) : null,
     nationality: candidate?.nationality || '',
@@ -47,6 +49,8 @@ const PersonalInfoSection = ({ candidate, setCandidate }) => {
   const validationSchema = Yup.object().shape({
     firstName: Yup.string().required('Vui lòng nhập họ'),
     lastName: Yup.string().required('Vui lòng nhập tên'),
+    headline: Yup.string().required('Vui lòng nhập tiêu đề hồ sơ'),
+    summary: Yup.string().required('Vui lòng nhập tóm tắt bản thân'),
     gender: Yup.string().required('Vui lòng chọn giới tính'),
     dateOfBirth: Yup.mixed().required('Vui lòng chọn ngày sinh'),
     nationality: Yup.string().required('Vui lòng nhập quốc tịch'),
@@ -71,6 +75,8 @@ const PersonalInfoSection = ({ candidate, setCandidate }) => {
         ...candidate,
         firstName: values.firstName,
         lastName: values.lastName,
+        headline: values.headline,
+        summary: values.summary,
         gender: values.gender,
         dateOfBirth: values.dateOfBirth ? values.dateOfBirth.format('YYYY-MM-DD') : null,
         nationality: values.nationality,
@@ -120,6 +126,38 @@ const PersonalInfoSection = ({ candidate, setCandidate }) => {
                   help={touched.lastName && errors.lastName}
                 >
                   <Field name="lastName" as={Input} />
+                </AntForm.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={16}>
+              <Col span={24}>
+                <AntForm.Item
+                  label="Tiêu đề hồ sơ"
+                  validateStatus={touched.headline && errors.headline ? 'error' : ''}
+                  help={touched.headline && errors.headline}
+                >
+                  <Field name="headline" as={Input} placeholder="VD: Frontend Developer với 5 năm kinh nghiệm" />
+                </AntForm.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={16}>
+              <Col span={24}>
+                <AntForm.Item
+                  label="Tóm tắt bản thân"
+                  validateStatus={touched.summary && errors.summary ? 'error' : ''}
+                  help={touched.summary && errors.summary}
+                >
+                  <Field name="summary">
+                    {({ field }) => (
+                      <TextArea 
+                        {...field} 
+                        rows={4} 
+                        placeholder="Mô tả ngắn gọn về bản thân, kinh nghiệm và mục tiêu nghề nghiệp của bạn"
+                      />
+                    )}
+                  </Field>
                 </AntForm.Item>
               </Col>
             </Row>

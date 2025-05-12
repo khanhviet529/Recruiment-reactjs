@@ -61,6 +61,13 @@ const AdminDashboardPage = () => {
     messages: {
       total: 0,
       unread: 0
+    },
+    meetings: {
+      total: 0,
+      upcoming: 0,
+      ongoing: 0,
+      completed: 0,
+      growthRate: 0
     }
   });
   
@@ -85,12 +92,14 @@ const AdminDashboardPage = () => {
         usersResponse, 
         jobsResponse, 
         applicationsResponse, 
-        messagesResponse
+        messagesResponse,
+        meetingsResponse
       ] = await Promise.all([
         axios.get('http://localhost:5000/users'),
         axios.get('http://localhost:5000/jobs'),
         axios.get('http://localhost:5000/applications'),
-        axios.get('http://localhost:5000/messages')
+        axios.get('http://localhost:5000/messages'),
+        axios.get('http://localhost:5000/meetings')
       ]);
       
       // Process users data - loại bỏ admin
@@ -121,6 +130,16 @@ const AdminDashboardPage = () => {
       const messages = messagesResponse.data || [];
       const unreadMessages = messages.filter(msg => !msg.read).length;
       
+      // Process meetings data
+      const meetings = meetingsResponse.data || [];
+      const now = new Date().toISOString();
+      const upcomingMeetings = meetings.filter(meeting => meeting.startTime > now).length;
+      const ongoingMeetings = meetings.filter(meeting => {
+        return meeting.startTime <= now && meeting.endTime >= now;
+      }).length;
+      const completedMeetings = meetings.filter(meeting => meeting.endTime < now).length;
+      const meetingGrowthRate = calculateGrowthRate(meetings, 'startTime');
+      
       // Set statistics
       setStats({
         users: {
@@ -143,6 +162,13 @@ const AdminDashboardPage = () => {
         messages: {
           total: messages.length,
           unread: unreadMessages
+        },
+        meetings: {
+          total: meetings.length,
+          upcoming: upcomingMeetings,
+          ongoing: ongoingMeetings,
+          completed: completedMeetings,
+          growthRate: meetingGrowthRate
         }
       });
       
@@ -483,6 +509,29 @@ const AdminDashboardPage = () => {
             </Col>
           </Row>
           
+          <Row gutter={16} style={{ marginBottom: 24 }}>
+            <Col span={6}>
+              <Card>
+                <Statistic
+                  title="Cuộc họp"
+                  value={stats.meetings.total}
+                  prefix={<TeamOutlined />}
+                  valueStyle={{ color: '#1890ff' }}
+                  suffix={
+                    <Text type="secondary" style={{ fontSize: '0.8em' }}>
+                      <span style={{ color: getGrowthColor(stats.meetings.growthRate) }}>
+                        {getGrowthIcon(stats.meetings.growthRate)} {stats.meetings.growthRate}%
+                      </span>
+                    </Text>
+                  }
+                />
+                <Text type="secondary">
+                  {stats.meetings.upcoming} sắp tới, {stats.meetings.ongoing} đang diễn ra
+                </Text>
+              </Card>
+            </Col>
+          </Row>
+          
           <Row gutter={16}>
             {/* Recent Activities */}
             <Col span={16}>
@@ -634,6 +683,7 @@ const AdminDashboardPage = () => {
                   dataSource={[
                     { icon: <UserOutlined />, text: 'Quản lý người dùng', link: '/admin/users' },
                     { icon: <FileTextOutlined />, text: 'Quản lý tin tuyển dụng', link: '/admin/jobs' },
+                    { icon: <TeamOutlined />, text: 'Quản lý cuộc họp', link: '/admin/meetings' },
                     { icon: <MessageOutlined />, text: 'Xem tin nhắn hỗ trợ', link: '/admin/messages' },
                     { icon: <CheckCircleOutlined />, text: 'Duyệt tin tuyển dụng mới', link: '/admin/jobs' },
                   ]}

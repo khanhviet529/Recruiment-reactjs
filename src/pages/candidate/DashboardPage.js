@@ -9,7 +9,8 @@ import {
   ClockCircleOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
-  EyeOutlined
+  EyeOutlined,
+  VideoCameraOutlined
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 
@@ -20,7 +21,8 @@ const CandidateDashboardPage = () => {
     pendingApplications: 0,
     interviewApplications: 0,
     acceptedApplications: 0,
-    rejectedApplications: 0
+    rejectedApplications: 0,
+    upcomingMeetings: 0
   });
   const [recentApplications, setRecentApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,109 +35,110 @@ const CandidateDashboardPage = () => {
     try {
       setLoading(true);
       
-      // Mock data for demonstration in case the API endpoints don't exist yet
-      const mockStats = {
-        totalApplications: 8,
-        pendingApplications: 3,
-        interviewApplications: 2,
-        acceptedApplications: 1,
-        rejectedApplications: 2
-      };
-      
-      const mockApplications = [
-        {
-          id: 1,
-          jobId: 101,
-          jobTitle: 'Frontend Developer',
-          companyName: 'Tech Solutions Inc.',
-          appliedDate: '2023-06-10T00:00:00.000Z',
-          status: 'pending'
-        },
-        {
-          id: 2,
-          jobId: 102,
-          jobTitle: 'UI/UX Designer',
-          companyName: 'Creative Agency',
-          appliedDate: '2023-06-15T00:00:00.000Z',
-          status: 'interviewing'
-        },
-        {
-          id: 3,
-          jobId: 103,
-          jobTitle: 'React Developer',
-          companyName: 'Web Masters',
-          appliedDate: '2023-06-20T00:00:00.000Z',
-          status: 'rejected'
-        }
-      ];
-      
-      try {
-        // Sửa API endpoint phù hợp với cấu trúc JSON Server hiện tại
-        // Thay vì gọi API chuyên biệt, chúng ta sẽ lấy applications từ API có sẵn và tính toán thống kê
-        let applications = [];
+      // Lấy thông tin ứng viên trước để biết candidateId
+      const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
+      if (candidateResponse.data && candidateResponse.data.length > 0) {
+        const candidateId = candidateResponse.data[0].id;
         
-        // Lấy thông tin ứng viên trước để biết candidateId
-        const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
-        if (candidateResponse.data && candidateResponse.data.length > 0) {
-          const candidateId = candidateResponse.data[0].id;
-          
-          // Lấy danh sách đơn ứng tuyển của ứng viên
-          const applicationsResponse = await axios.get(`http://localhost:5000/applications?candidateId=${candidateId}`);
-          applications = applicationsResponse.data || [];
-          
-          // Lấy thông tin chi tiết của mỗi công việc đã ứng tuyển để hiển thị
-          const processedApplications = await Promise.all(applications.slice(0, 5).map(async (app) => {
-            try {
-              const jobResponse = await axios.get(`http://localhost:5000/jobs/${app.jobId}`);
-              const job = jobResponse.data;
-              
-              // Lấy thông tin công ty
-              const employerResponse = await axios.get(`http://localhost:5000/employers/${job.employerId}`);
-              const employer = employerResponse.data;
-              
-              return {
-                id: app.id,
-                jobId: app.jobId,
-                jobTitle: job.title,
-                companyName: employer.companyName,
-                appliedDate: app.appliedAt,
-                status: app.status
-              };
-            } catch (error) {
-              console.error('Error fetching job details:', error);
-              return {
-                id: app.id,
-                jobId: app.jobId,
-                jobTitle: 'Unknown Job',
-                companyName: 'Unknown Company',
-                appliedDate: app.appliedAt,
-                status: app.status
-              };
-            }
-          }));
-          
-          // Tính toán thống kê từ danh sách đơn ứng tuyển
-          const stats = {
-            totalApplications: applications.length,
-            pendingApplications: applications.filter(app => app.status === 'pending').length,
-            interviewApplications: applications.filter(app => app.status === 'interviewing').length,
-            acceptedApplications: applications.filter(app => ['hired', 'offered'].includes(app.status)).length,
-            rejectedApplications: applications.filter(app => app.status === 'rejected').length
-          };
-          
-          setStats(stats);
-          setRecentApplications(processedApplications);
-        } else {
-          // Không tìm thấy thông tin ứng viên, sử dụng dữ liệu giả
-          console.warn('No candidate information found, using mock data');
-          setStats(mockStats);
-          setRecentApplications(mockApplications);
-        }
-      } catch (apiError) {
-        console.warn('Using mock data due to API error:', apiError);
-        // Use mock data if API fails
-        setStats(mockStats);
-        setRecentApplications(mockApplications);
+        // Lấy danh sách đơn ứng tuyển của ứng viên
+        const applicationsResponse = await axios.get(`http://localhost:5000/applications?candidateId=${candidateId}`);
+        const applications = applicationsResponse.data || [];
+        
+        // Lấy thông tin cuộc họp sắp tới
+        const now = new Date().toISOString();
+        const meetingsResponse = await axios.get(`http://localhost:5000/meetings`);
+        const allMeetings = meetingsResponse.data || [];
+        
+        // Lọc cuộc họp liên quan đến ứng viên này
+        const candidateMeetings = allMeetings.filter(meeting => 
+          meeting.participants.some(p => p.userId === user.id && p.userType === 'candidate')
+        );
+        
+        // Đếm số cuộc họp sắp tới
+        const upcomingMeetings = candidateMeetings.filter(meeting => 
+          meeting.startTime > now
+        ).length;
+        
+        // Lấy thông tin chi tiết của mỗi công việc đã ứng tuyển để hiển thị
+        const processedApplications = await Promise.all(applications.slice(0, 5).map(async (app) => {
+          try {
+            const jobResponse = await axios.get(`http://localhost:5000/jobs/${app.jobId}`);
+            const job = jobResponse.data;
+            
+            // Lấy thông tin công ty
+            const employerResponse = await axios.get(`http://localhost:5000/employers/${job.employerId}`);
+            const employer = employerResponse.data;
+            
+            return {
+              id: app.id,
+              jobId: app.jobId,
+              jobTitle: job.title,
+              companyName: employer.companyName,
+              appliedDate: app.appliedAt,
+              status: app.status
+            };
+          } catch (error) {
+            console.error('Error fetching job details:', error);
+            return {
+              id: app.id,
+              jobId: app.jobId,
+              jobTitle: 'Unknown Job',
+              companyName: 'Unknown Company',
+              appliedDate: app.appliedAt,
+              status: app.status
+            };
+          }
+        }));
+        
+        // Tính toán thống kê từ danh sách đơn ứng tuyển
+        const stats = {
+          totalApplications: applications.length,
+          pendingApplications: applications.filter(app => app.status === 'pending').length,
+          interviewApplications: applications.filter(app => app.status === 'interviewing').length,
+          acceptedApplications: applications.filter(app => ['hired', 'offered'].includes(app.status)).length,
+          rejectedApplications: applications.filter(app => app.status === 'rejected').length,
+          upcomingMeetings: upcomingMeetings
+        };
+        
+        setStats(stats);
+        setRecentApplications(processedApplications);
+      } else {
+        // Không tìm thấy thông tin ứng viên, sử dụng dữ liệu giả
+        console.warn('No candidate information found, using mock data');
+        setStats({
+          totalApplications: 8,
+          pendingApplications: 3,
+          interviewApplications: 2,
+          acceptedApplications: 1,
+          rejectedApplications: 2,
+          upcomingMeetings: 1
+        });
+        setRecentApplications([
+          {
+            id: 1,
+            jobId: 101,
+            jobTitle: 'Frontend Developer',
+            companyName: 'Tech Solutions Inc.',
+            appliedDate: '2023-06-10T00:00:00.000Z',
+            status: 'pending'
+          },
+          {
+            id: 2,
+            jobId: 102,
+            jobTitle: 'UI/UX Designer',
+            companyName: 'Creative Agency',
+            appliedDate: '2023-06-15T00:00:00.000Z',
+            status: 'interviewing'
+          },
+          {
+            id: 3,
+            jobId: 103,
+            jobTitle: 'React Developer',
+            companyName: 'Web Masters',
+            appliedDate: '2023-06-20T00:00:00.000Z',
+            status: 'rejected'
+          }
+        ]);
       }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
@@ -145,7 +148,8 @@ const CandidateDashboardPage = () => {
         pendingApplications: 3,
         interviewApplications: 2,
         acceptedApplications: 1,
-        rejectedApplications: 2
+        rejectedApplications: 2,
+        upcomingMeetings: 1
       });
       
       setRecentApplications([
@@ -265,6 +269,26 @@ const CandidateDashboardPage = () => {
               prefix={<CheckCircleOutlined />}
               valueStyle={{ color: '#3f8600' }}
             />
+          </Card>
+        </Col>
+      </Row>
+      
+      <Row gutter={[16, 16]} className="mb-4">
+        <Col xs={24} sm={12}>
+          <Card>
+            <Statistic
+              title="Cuộc họp phỏng vấn sắp tới"
+              value={stats.upcomingMeetings}
+              prefix={<VideoCameraOutlined />}
+              valueStyle={{ color: '#722ed1' }}
+            />
+            <div style={{ marginTop: '10px' }}>
+              <Link to="/candidate/meetings">
+                <Button type="primary" icon={<VideoCameraOutlined />} size="small">
+                  Xem lịch phỏng vấn
+                </Button>
+              </Link>
+            </div>
           </Card>
         </Col>
       </Row>

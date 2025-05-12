@@ -57,6 +57,15 @@ const CandidateLayout = () => {
                 </li>
                 <li className="nav-item">
                   <Link 
+                    className={`nav-link ${isActive('/candidate/meetings') ? 'active' : ''}`}
+                    to="/candidate/meetings"
+                  >
+                    <i className="bi bi-camera-video me-2"></i>
+                    Lịch phỏng vấn
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link 
                     className={`nav-link ${isActive('/candidate/saved-jobs') ? 'active' : ''}`}
                     to="/candidate/saved-jobs"
                   >

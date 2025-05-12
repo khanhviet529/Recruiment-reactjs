@@ -1,0 +1,368 @@
+.candidate-meetings-page {
+  padding: 2rem 0;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 70px);
+
+  .page-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    h2 {
+      margin: 0;
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .meeting-card {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    
+    &:hover {
+      transform: translateY(-5px);
+    }
+    
+    .card-title {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .company-logo {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    
+    .company-name, .job-title {
+      display: flex;
+      align-items: center;
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 2px;
+      
+      .icon {
+        margin-right: 5px;
+        color: #777;
+      }
+    }
+    
+    .meeting-description {
+      color: #666;
+      font-size: 0.95rem;
+      border-left: 3px solid #ddd;
+      padding-left: 10px;
+    }
+    
+    .meeting-details {
+      margin-top: 15px;
+      
+      .detail-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        
+        .icon {
+          min-width: 20px;
+          margin-right: 8px;
+          color: #6c757d;
+        }
+        
+        &.highlight {
+          font-weight: 600;
+          color: #0d6efd;
+          
+          .icon {
+            color: #0d6efd;
+          }
+        }
+      }
+    }
+    
+    .candidate-info {
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+      
+      h6 {
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 8px;
+      }
+      
+      .candidate-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      
+      .candidate-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+    }
+    
+    .card-footer {
+      background-color: rgba(0, 0, 0, 0.02);
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  .company-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #f0f0f0;
+  }
+
+  .company-name {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-top: 0.2rem;
+
+    .icon {
+      margin-right: 0.3rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  .meeting-details {
+    margin-top: 1rem;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .icon {
+        margin-right: 0.5rem;
+        color: #6c757d;
+        min-width: 16px;
+      }
+
+      &.highlight {
+        font-weight: 600;
+        color: #0d6efd;
+        
+        .icon {
+          color: #0d6efd;
+        }
+      }
+    }
+  }
+
+  .meeting-description {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+  }
+
+  .meetings-tips {
+    background-color: #e9f2fe;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+
+    h5 {
+      color: #0d6efd;
+      font-size: 1.1rem;
+      margin-bottom: 0.8rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-bottom: 0;
+
+      li {
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  .nav-tabs {
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 1.5rem;
+
+    .nav-link {
+      color: #495057;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      padding: 0.5rem 1rem;
+
+      &:hover {
+        border-color: transparent transparent #dee2e6 transparent;
+      }
+
+      &.active {
+        color: #0d6efd;
+        border-color: transparent transparent #0d6efd transparent;
+      }
+    }
+  }
+
+  .alert {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Meeting Detail Page Styles */
+.meeting-detail-card {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  
+  .card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  color: #666;
+  text-decoration: none;
+  margin-bottom: 20px;
+  
+  &:hover {
+    color: #0d6efd;
+  }
+}
+
+.company-logo {
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.meeting-header {
+  h4 {
+    margin-bottom: 0.25rem;
+  }
+  
+  .company-name, .job-position {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    color: #555;
+    margin-top: 5px;
+  }
+}
+
+.participants-card {
+  .participant-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .avatar-placeholder {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #e9ecef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+      color: #6c757d;
+    }
+    
+    .participant-info {
+      .participant-name {
+        font-weight: 500;
+      }
+      
+      .participant-role {
+        font-size: 0.85rem;
+        color: #6c757d;
+      }
+    }
+  }
+}
+
+.candidate-avatar-lg {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #e9ecef;
+}
+
+.candidate-contact-info {
+  margin-top: 1rem;
+  
+  .contact-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    
+    .icon {
+      margin-right: 0.5rem;
+      color: #6c757d;
+    }
+  }
+}
+
+.detail-item.highlight {
+  color: #0d6efd;
+  font-weight: 500;
+}
+
+.log-details {
+  font-size: 0.8rem;
+  background-color: #f8f9fa;
+  padding: 8px;
+  border-radius: 4px;
+  max-height: 100px;
+  overflow-y: auto;
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .meeting-card {
+    .company-logo {
+      width: 40px;
+      height: 40px;
+    }
+  }
+  
+  .meeting-detail-page {
+    .meeting-header {
+      flex-direction: column;
+      
+      .company-logo {
+        margin-bottom: 15px;
+      }
+    }
+  }
+} 

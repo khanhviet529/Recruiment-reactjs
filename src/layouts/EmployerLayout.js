@@ -57,6 +57,15 @@ const EmployerLayout = () => {
                 </li>
                 <li className="nav-item">
                   <Link 
+                    className={`nav-link ${isActive('/employer/meetings') ? 'active' : ''}`}
+                    to="/employer/meetings"
+                  >
+                    <i className="bi bi-camera-video me-2"></i>
+                    Cuộc họp phỏng vấn
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link 
                     className={`nav-link ${isActive('/employer/recruitment-process') ? 'active' : ''}`}
                     to="/employer/recruitment-process"
                   >

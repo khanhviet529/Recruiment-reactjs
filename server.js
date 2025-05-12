@@ -93,6 +93,166 @@ server.post('/auth/reset-password', (req, res) => {
   res.status(200).json({ message: 'Mật khẩu đã được đặt lại thành công' });
 });
 
+// Add Agora token generation endpoint for video calls
+server.post('/generate-token', (req, res) => {
+  const { channelName, uid, role } = req.body;
+  
+  // In a real application, this would generate a proper Agora token
+  // For mock purposes, return a dummy token
+  console.log('Token requested for:', { channelName, uid, role });
+  
+  // Create a dummy token based on the provided values
+  const dummyToken = `agora-token-${channelName}-${uid}-${Date.now()}`;
+  
+  // Simulate slight delay for a real token service
+  setTimeout(() => {
+    res.json({ 
+      token: dummyToken,
+      channelName,
+      uid,
+      expiresAt: new Date(Date.now() + 3600 * 1000).toISOString() // Expires in 1 hour
+    });
+  }, 200);
+});
+
+// Meeting join/leave endpoints to track participants
+server.post('/meetings/:id/join', (req, res) => {
+  const meetingId = req.params.id;
+  const { userId, deviceInfo } = req.body;
+  
+  console.log(`User ${userId} joined meeting ${meetingId} from ${deviceInfo}`);
+  
+  // Get the meeting
+  const db = router.db;
+  const meeting = db.get('meetings').find({ id: meetingId }).value();
+  
+  if (!meeting) {
+    return res.status(404).json({ message: 'Meeting not found' });
+  }
+  
+  // Update meeting status to ongoing if it was scheduled
+  if (meeting.status === 'scheduled') {
+    db.get('meetings')
+      .find({ id: meetingId })
+      .assign({ 
+        status: 'ongoing',
+        updatedAt: new Date().toISOString() 
+      })
+      .write();
+  }
+  
+  // Record the join event
+  const joinEvent = {
+    id: Date.now().toString(),
+    meetingId,
+    userId,
+    action: 'join',
+    deviceInfo,
+    timestamp: new Date().toISOString()
+  };
+  
+  db.get('meetingEvents').push(joinEvent).write();
+  
+  res.status(200).json({ success: true });
+});
+
+server.post('/meetings/:id/leave', (req, res) => {
+  const meetingId = req.params.id;
+  const { userId, reason } = req.body;
+  
+  console.log(`User ${userId} left meeting ${meetingId}, reason: ${reason}`);
+  
+  // Record the leave event
+  const db = router.db;
+  const leaveEvent = {
+    id: Date.now().toString(),
+    meetingId,
+    userId,
+    action: 'leave',
+    reason,
+    timestamp: new Date().toISOString()
+  };
+  
+  db.get('meetingEvents').push(leaveEvent).write();
+  
+  // Check if all participants have left
+  const joinEvents = db.get('meetingEvents')
+    .filter({ meetingId, action: 'join' })
+    .value();
+  
+  const leaveEvents = db.get('meetingEvents')
+    .filter({ meetingId, action: 'leave' })
+    .value();
+    
+  // If everyone has left, mark the meeting as completed
+  if (joinEvents.length > 0 && joinEvents.length === leaveEvents.length) {
+    db.get('meetings')
+      .find({ id: meetingId })
+      .assign({ 
+        status: 'completed',
+        updatedAt: new Date().toISOString() 
+      })
+      .write();
+  }
+  
+  res.status(200).json({ success: true });
+});
+
+// Meeting details endpoint
+server.get('/meetings/:id/details', (req, res) => {
+  const meetingId = req.params.id;
+  const db = router.db;
+  
+  const meeting = db.get('meetings').find({ id: meetingId }).value();
+  
+  if (!meeting) {
+    return res.status(404).json({ message: 'Meeting not found' });
+  }
+  
+  // Get meeting participants
+  const participants = meeting.participants || [];
+  
+  // Check meeting status based on time if not explicitly set
+  const now = new Date();
+  const startTime = new Date(meeting.startTime);
+  const endTime = new Date(meeting.endTime);
+  
+  let status = meeting.status;
+  
+  // Always respect time-based logic for meeting status
+  // Future meetings should always be scheduled
+  if (now < startTime) {
+    status = 'scheduled';
+  } 
+  // Current meetings should be ongoing
+  else if (now >= startTime && now <= endTime) {
+    status = meeting.status === 'cancelled' ? 'cancelled' : 'ongoing';
+  } 
+  // Past meetings are completed unless cancelled
+  else if (now > endTime) {
+    status = meeting.status === 'cancelled' ? 'cancelled' : 'completed';
+  }
+  
+  // Update meeting status if changed
+  if (status !== meeting.status) {
+    db.get('meetings')
+      .find({ id: meetingId })
+      .assign({ 
+        status,
+        updatedAt: new Date().toISOString() 
+      })
+      .write();
+    
+    // Update the local meeting object
+    meeting.status = status;
+  }
+  
+  res.json({ 
+    meeting,
+    participants
+  });
+});
+
 // Custom routes as per rule.md
 // Employer routes
 server.get('/employers/:id/jobs', (req, res) => {

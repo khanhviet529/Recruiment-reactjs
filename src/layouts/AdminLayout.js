@@ -12,7 +12,8 @@ import {
   BellOutlined,
   SettingOutlined,
   LogoutOutlined,
-  TeamOutlined
+  TeamOutlined,
+  VideoCameraOutlined
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../redux/slices/authSlice';
@@ -158,6 +159,11 @@ const AdminLayout = () => {
               key: '/admin/jobs',
               icon: <FileTextOutlined />,
               label: <Link to="/admin/jobs">Quản lý tin tuyển dụng</Link>,
+            },
+            {
+              key: '/admin/meetings',
+              icon: <VideoCameraOutlined />,
+              label: <Link to="/admin/meetings">Quản lý cuộc họp</Link>,
             },
             {
               key: '/admin/messages',

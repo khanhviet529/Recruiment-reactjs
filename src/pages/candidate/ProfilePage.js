@@ -122,8 +122,13 @@ const CandidateProfilePage = () => {
         }
       );
 
+      // Update candidate state with the new avatar URL
+      if (response.data && response.data.avatar) {
       setCandidate(prev => ({ ...prev, avatar: response.data.avatar }));
       message.success('Cập nhật ảnh đại diện thành công');
+      } else {
+        throw new Error('Không nhận được URL ảnh từ server');
+      }
     } catch (error) {
       console.error('Error uploading avatar:', error);
       message.error('Có lỗi xảy ra khi cập nhật ảnh đại diện');
@@ -139,6 +144,12 @@ const CandidateProfilePage = () => {
     showUploadList: false,
     beforeUpload: handleUpload,
     accept: 'image/*',
+    customRequest: ({ file, onSuccess }) => {
+      // This prevents default Upload behavior
+      setTimeout(() => {
+        onSuccess("ok");
+      }, 0);
+    }
   };
 
   // Helper function to get avatar URL from complex structure
