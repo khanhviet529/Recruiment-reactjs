@@ -198,7 +198,7 @@ const UserTrendsChart = ({
                         {userGrowthRatesData.map(([period, rate], idx) => (
                           <li key={idx} style={{ marginBottom: 5, listStyleType: 'none', padding: '3px 0' }}>
                             <Text>{period}: </Text>
-                            <Text type={rate >= 0 ? 'success' : 'danger'}>
+                            <Text type={ rate >= 0 ? 'success' : 'danger' }>
                               {rate >= 0 ? '+' : ''}{rate}%
                               {Math.abs(rate) > 10 && (
                                 <Tooltip title={rate > 0 ? 'Tăng trưởng đáng kể' : 'Sụt giảm đáng kể'}>
@@ -236,7 +236,7 @@ const UserTrendsChart = ({
                         {employerGrowthRatesData.map(([period, rate], idx) => (
                           <li key={idx} style={{ marginBottom: 5, listStyleType: 'none', padding: '3px 0' }}>
                             <Text>{period}: </Text>
-                            <Text type={rate >= 0 ? 'success' : 'danger'}>
+                            <Text type={ rate >= 0 ? 'success' : 'danger' }>
                               {rate >= 0 ? '+' : ''}{rate}%
                               {Math.abs(rate) > 15 && (
                                 <Tooltip title={rate > 0 ? 'Tăng trưởng đáng kể' : 'Sụt giảm đáng kể'}>
@@ -282,7 +282,7 @@ const UserTrendsChart = ({
                     
                     <Paragraph>
                       <Text strong>Tỷ lệ tăng trưởng 30 ngày: </Text>
-                      <Text type={statsData.users.growth >= 0 ? 'success' : 'danger'}>
+                      <Text style={{ color: statsData.users.growth >= 0 ? '#ffffff' : '#ff4d4f' }}>
                         {statsData.users.growth >= 0 ? '+' : ''}{statsData.users.growth}%
                       </Text>
                     </Paragraph>
@@ -290,9 +290,9 @@ const UserTrendsChart = ({
                     <Paragraph>
                       <Text strong>Đánh giá: </Text>
                       {statsData.users.growth > 15 ? (
-                        <Text type="success">Tăng trưởng mạnh mẽ.</Text>
+                        <Text style={{ color: '#ffffff' }}>Tăng trưởng mạnh mẽ.</Text>
                       ) : statsData.users.growth > 5 ? (
-                        <Text type="success">Tăng trưởng ổn định.</Text>
+                        <Text style={{ color: '#ffffff' }}>Tăng trưởng ổn định.</Text>
                       ) : statsData.users.growth > 0 ? (
                         <Text>Tăng trưởng nhẹ, cần thêm chiến lược thu hút người dùng.</Text>
                       ) : (

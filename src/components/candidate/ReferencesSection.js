@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -16,14 +16,36 @@ const ReferencesSection = ({ candidate, setCandidate }) => {
   const [editMode, setEditMode] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
 
-  const handleReferenceSubmit = async (values) => {
+  // Debug effect to track candidate prop changes
+  useEffect(() => {
+    console.log('🔍 ReferencesSection - Candidate prop:', candidate);
+    if (candidate && candidate.referencess) {
+      console.log('🔍 ReferencesSection - Data:', candidate.referencess);
+      console.log('🔍 ReferencesSection - Count:', candidate.referencess?.length || 0);
+    }
+  }, [candidate]);
+
+
+const handleReferenceSubmit = async (values) => {
     try {
+      console.log('🔄 Updating section data...');
+      
+      // SAFETY CHECK: Get current candidate data first to preserve all fields
+      let currentCandidateData = {};
+      try {
+        const currentResponse = await axios.get(`http://localhost:5000/candidates/${candidate.id}`);
+        currentCandidateData = currentResponse.data;
+        console.log('📦 Current candidate data:', currentCandidateData);
+      } catch (error) {
+        console.warn('⚠️ Could not fetch current candidate data, using props:', error);
+        currentCandidateData = candidate;
+      }
       const updatedReferences = editingItem
         ? candidate.references.map(ref => ref.id === editingItem.id ? values : ref)
         : [...(candidate.references || []), { ...values, id: Date.now().toString() }];
 
       const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, {
-        ...candidate,
+        ...currentCandidateData, // Keep all existing data
         references: updatedReferences,
       });
 
@@ -37,9 +59,21 @@ const ReferencesSection = ({ candidate, setCandidate }) => {
 
   const handleReferenceDelete = async (id) => {
     try {
+      console.log('🔄 Updating section data...');
+      
+      // SAFETY CHECK: Get current candidate data first to preserve all fields
+      let currentCandidateData = {};
+      try {
+        const currentResponse = await axios.get(`http://localhost:5000/candidates/${candidate.id}`);
+        currentCandidateData = currentResponse.data;
+        console.log('📦 Current candidate data:', currentCandidateData);
+      } catch (error) {
+        console.warn('⚠️ Could not fetch current candidate data, using props:', error);
+        currentCandidateData = candidate;
+      }
       const updatedReferences = candidate.references.filter(ref => ref.id !== id);
       const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, {
-        ...candidate,
+        ...currentCandidateData, // Keep all existing data
         references: updatedReferences,
       });
       setCandidate(response.data);

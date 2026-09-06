@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Container, Card, Row, Col, Button, Badge, Alert, Table, Tabs, Tab, ListGroup, Modal, Form } from 'react-bootstrap';
-import { FaVideo, FaCalendarAlt, FaClock, FaUser, FaArrowLeft, FaEdit, FaTrash, FaUserTie, FaEnvelope, FaUsers } from 'react-icons/fa';
-import axios from 'axios';
+import { Container, Card, Row, Col, Button, Badge, Alert, Table, Tabs, Tab, ListGroup, Modal, Form, Spinner } from 'react-bootstrap';
+import { FaVideo, FaCalendarAlt, FaClock, FaUser, FaArrowLeft, FaEdit, FaTrash, FaUserTie, FaEnvelope, FaUsers, FaBuilding, FaMapMarkerAlt, FaBriefcase } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { selectAuth } from '../../redux/slices/authSlice';
 import './MeetingsPage.scss';
@@ -10,9 +9,21 @@ import { formatDateTime, formatTimeRemaining } from '../../utils/meetingUtils';
 import Select from 'react-select';
 import TokenModal from '../../components/meeting/TokenModal';
 import { getAgoraToken, hasValidAgoraToken } from '../../utils/tokenStorage';
+import { useAgora, useMeetings } from '../../hooks/useAgora';
+import axios from 'axios';
+import WaitingCandidatesPanel from '../../components/employer/WaitingCandidatesPanel';
+import { getCandidateAvatar } from '../../utils/avatarUtils';
 
-// API URL
-const API_URL = 'http://localhost:5000';
+const DATABASE_API_BASE = 'http://localhost:5000';
+
+// Helper functions to handle different time field names in database
+const getStartTime = (meetingData) => {
+  return meetingData.startTime || meetingData.scheduledAt || '';
+};
+
+const getEndTime = (meetingData) => {
+  return meetingData.endTime || meetingData.endedAt || '';
+};
 
 const EmployerMeetingDetailPage = () => {
   const { meetingId } = useParams();
@@ -26,27 +37,27 @@ const EmployerMeetingDetailPage = () => {
   const [candidates, setCandidates] = useState([]);
   const [showTokenModal, setShowTokenModal] = useState(false);
 
+  const { 
+    generateMeetingToken, 
+    agoraConfig, 
+    loading: agoraLoading, 
+    error: agoraError 
+  } = useAgora();
+
   useEffect(() => {
     const fetchMeetingData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Fetch meeting data
-        const meetingResponse = await axios.get(`${API_URL}/meetings/${meetingId}`);
-        const meetingData = meetingResponse.data;
-        
+        const response = await axios.get(`${DATABASE_API_BASE}/meetings/${meetingId}`);
+        const meetingData = response.data;
+
         if (!meetingData) {
           throw new Error('Không tìm thấy cuộc họp');
         }
 
-        // Fetch participants for this meeting
-        const participantsResponse = await axios.get(`${API_URL}/meetingParticipants`);
-        const meetingParticipants = participantsResponse.data.filter(p => p.meetingId === meetingId);
-
-        // Fetch logs for this meeting
-        const logsResponse = await axios.get(`${API_URL}/meetingLogs`);
-        const meetingLogs = logsResponse.data.filter(log => log.meetingId === meetingId);
+        setMeeting(meetingData);
 
         // Extract candidate participants from meeting data
         const candidateParticipants = meetingData.participants ? 
@@ -56,63 +67,52 @@ const EmployerMeetingDetailPage = () => {
         const candidateIds = [...new Set(candidateParticipants.map(p => p.userId))];
         
         // Fetch all candidates to get their details
-        const allCandidatesResponse = await axios.get(`${API_URL}/candidates`);
-        const allCandidates = allCandidatesResponse.data;
-        
-        // Match candidate participants with their full details
-        const candidatesWithDetails = [];
-        for (const candidateId of candidateIds) {
-          // Find candidate in all candidates
-          const candidateDetails = allCandidates.find(
-            c => c.id === candidateId || c.userId === candidateId
-          );
+        try {
+          const allCandidatesResponse = await axios.get(`${DATABASE_API_BASE}/candidates`);
+          const allCandidates = allCandidatesResponse.data || [];
           
-          if (candidateDetails) {
-            // Find participant info
-            const participantInfo = candidateParticipants.find(p => p.userId === candidateId);
-            
-            // Merge data
-            candidatesWithDetails.push({
-              ...candidateDetails,
-              participantInfo
-            });
-          } else {
-            // If candidate details not found, use participant info only
-            const participantInfo = candidateParticipants.find(p => p.userId === candidateId);
-            candidatesWithDetails.push({
-              id: candidateId,
-              userId: candidateId,
-              firstName: participantInfo?.name?.split(' ').slice(-1)[0] || '',
-              lastName: participantInfo?.name?.split(' ').slice(0, -1).join(' ') || 'Ứng viên',
-              email: participantInfo?.email || 'candidate@example.com',
-              avatar: participantInfo?.avatar || 'https://via.placeholder.com/70',
-              participantInfo
-            });
-          }
-        }
-        
-        setCandidates(candidatesWithDetails);
-        
-        // If we have a job ID, fetch applications for this job
-        if (meetingData.jobId) {
-          try {
-            const applicationsResponse = await axios.get(`${API_URL}/applications`);
-            // Filter applications for this job
-            const jobApps = applicationsResponse.data.filter(app => 
-              app.jobId == meetingData.jobId || app.jobId === meetingData.jobId.toString()
+          // Match candidate participants with their full details
+          const candidatesWithDetails = [];
+          for (const candidateId of candidateIds) {
+            // Find candidate in all candidates
+            const candidateDetails = allCandidates.find(
+              c => c.id === candidateId || c.userId === candidateId
             );
-          } catch (err) {
-            console.error('Error fetching job applications:', err);
+            
+            if (candidateDetails) {
+              // Find participant info
+              const participantInfo = candidateParticipants.find(p => p.userId === candidateId);
+              
+              // Merge data with proper avatar handling
+              candidatesWithDetails.push({
+                ...candidateDetails,
+                avatar: getCandidateAvatar(candidateDetails),
+                participantInfo
+              });
+            } else {
+              // If candidate details not found, use participant info only
+              const participantInfo = candidateParticipants.find(p => p.userId === candidateId);
+              candidatesWithDetails.push({
+                id: candidateId,
+                userId: candidateId,
+                firstName: participantInfo?.name?.split(' ').slice(-1)[0] || '',
+                lastName: participantInfo?.name?.split(' ').slice(0, -1).join(' ') || 'Ứng viên',
+                email: participantInfo?.email || 'candidate@example.com',
+                avatar: participantInfo?.avatar || 'https://via.placeholder.com/70',
+                participantInfo
+              });
+            }
           }
+          
+          setCandidates(candidatesWithDetails);
+        } catch (candidatesError) {
+          console.error('Error fetching candidates:', candidatesError);
         }
 
-        setMeeting(meetingData);
-        setParticipants(meetingParticipants);
-        setLogs(meetingLogs);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching meeting data:', error);
-        setError(error.message || 'Không thể tải dữ liệu cuộc họp');
-      } finally {
+        setError('Không thể tải dữ liệu cuộc họp. Vui lòng thử lại sau.');
         setLoading(false);
       }
     };
@@ -124,8 +124,8 @@ const EmployerMeetingDetailPage = () => {
 
   const renderStatusBadge = (status) => {
     const now = new Date();
-    const startTime = meeting ? new Date(meeting.startTime) : null;
-    const endTime = meeting ? new Date(meeting.endTime) : null;
+    const startTime = meeting ? new Date(getStartTime(meeting)) : null;
+    const endTime = meeting ? new Date(getEndTime(meeting)) : null;
     
     // Determine the effective status based on time
     let effectiveStatus = status;
@@ -183,13 +183,44 @@ const EmployerMeetingDetailPage = () => {
   };
 
   // Xử lý khi người dùng nhấn nút tham gia cuộc họp
-  const handleJoinMeeting = () => {
-    // Kiểm tra xem đã có token hợp lệ chưa
-    if (hasValidAgoraToken()) {
-      // Nếu có token, chuyển hướng đến trang cuộc họp
-      navigate(`/meeting/${meetingId}`);
-    } else {
-      // Nếu chưa có token, hiển thị modal nhập token
+  const handleJoinMeeting = async () => {
+    if (!meeting || !user) {
+      console.error('Cannot join meeting: missing meeting or user data');
+      return;
+    }
+
+    try {
+      const uid = user.agoraUid || Date.now().toString();
+      
+      console.log('Generating meeting token for:', {
+        meetingId: meeting._id || meeting.id,
+        uid
+      });
+
+      const tokenData = await generateMeetingToken(meeting._id || meeting.id, uid);
+      
+      if (tokenData && tokenData.token) {
+        console.log('Token generated successfully:', {
+          channelName: tokenData.channelName,
+          uid: tokenData.uid,
+          appID: tokenData.appID
+        });
+
+        const meetingParams = new URLSearchParams({
+          channelName: tokenData.channelName,
+          token: tokenData.token,
+          uid: tokenData.uid.toString(),
+          appID: tokenData.appID,
+          meetingTitle: meeting.title
+        });
+
+        navigate(`/meeting/${meeting._id || meeting.id}?${meetingParams}`);
+      } else {
+        throw new Error('Không nhận được token hợp lệ');
+      }
+    } catch (error) {
+      console.error('Error joining meeting:', error);
+      // Fallback to token modal
       setShowTokenModal(true);
     }
   };
@@ -245,8 +276,8 @@ const EmployerMeetingDetailPage = () => {
   }
 
   const now = new Date();
-  const startTime = new Date(meeting.startTime);
-  const endTime = new Date(meeting.endTime);
+  const startTime = new Date(getStartTime(meeting));
+  const endTime = new Date(getEndTime(meeting));
   
   const isUpcoming = startTime > now && meeting.status !== 'cancelled';
   const isOngoing = now >= startTime && now <= endTime && meeting.status !== 'cancelled';
@@ -296,20 +327,20 @@ const EmployerMeetingDetailPage = () => {
               <div className="meeting-details mt-4">
                 <div className="detail-item">
                   <FaCalendarAlt className="icon" />
-                  <span>Thời gian bắt đầu: {formatDateTime(meeting.startTime)}</span>
+                  <span>Thời gian bắt đầu: {formatDateTime(getStartTime(meeting))}</span>
                 </div>
                 <div className="detail-item">
                   <FaCalendarAlt className="icon" />
-                  <span>Thời gian kết thúc: {formatDateTime(meeting.endTime)}</span>
+                  <span>Thời gian kết thúc: {formatDateTime(getEndTime(meeting))}</span>
                 </div>
                 <div className="detail-item">
                   <FaClock className="icon" />
-                  <span>Thời lượng: {formatDuration(meeting.startTime, meeting.endTime)}</span>
+                  <span>Thời lượng: {formatDuration(getStartTime(meeting), getEndTime(meeting))}</span>
                 </div>
                 {isUpcoming && (
                   <div className="detail-item highlight">
                     <FaClock className="icon" />
-                    <span>{formatTimeRemaining(meeting.startTime)}</span>
+                    <span>{formatTimeRemaining(getStartTime(meeting))}</span>
                   </div>
                 )}
                 {meeting.channelName && (
@@ -338,14 +369,14 @@ const EmployerMeetingDetailPage = () => {
               {isUpcoming && (
                 <Alert variant="info" className="mt-4">
                   <FaCalendarAlt className="me-2" />
-                  Cuộc họp sẽ diễn ra vào {formatDateTime(meeting.startTime)}
+                  Cuộc họp sẽ diễn ra vào {formatDateTime(getStartTime(meeting))}
                 </Alert>
               )}
 
               {isPast && (
                 <Alert variant="secondary" className="mt-4">
                   <FaCalendarAlt className="me-2" />
-                  Cuộc họp đã kết thúc vào {formatDateTime(meeting.endTime)}
+                  Cuộc họp đã kết thúc vào {formatDateTime(getEndTime(meeting))}
                 </Alert>
               )}
 
@@ -356,17 +387,6 @@ const EmployerMeetingDetailPage = () => {
                       <FaUsers className="me-2" />
                       Danh sách ứng viên tham gia ({candidates.length})
                     </h5>
-                    {/* {isUpcoming && meeting.jobId && (
-                      <Link to={`/employer/meetings/edit/${meetingId}`}>
-                        <Button 
-                          variant="outline-primary" 
-                          size="sm"
-                        >
-                          <FaEdit className="me-2" />
-                          Chỉnh sửa ứng viên
-                        </Button>
-                      </Link>
-                    )} */}
                   </div>
                 </Card.Header>
                 <Card.Body>
@@ -376,11 +396,13 @@ const EmployerMeetingDetailPage = () => {
                         <ListGroup.Item key={candidate.id || candidate.userId} className="p-3">
                           <div className="d-flex align-items-center">
                             <div className="me-3">
-                              <img 
-                                src={candidate.avatar || candidate.participantInfo?.avatar || 'https://via.placeholder.com/70'} 
-                                alt={`${candidate.firstName || ''} ${candidate.lastName || ''}`}
+                              <img
+                                src={getCandidateAvatar(candidate)}
+                                alt={candidate.firstName && candidate.lastName 
+                                  ? `${candidate.firstName} ${candidate.lastName}`
+                                  : candidate.participantInfo?.name || 'Ứng viên'}
                                 className="rounded-circle"
-                                style={{ width: '70px', height: '70px', objectFit: 'cover' }}
+                                style={{ width: '70px', height: '70px', objectFit: 'cover', border: '2px solid #f8f9fa' }}
                                 onError={(e) => {
                                   e.target.onerror = null;
                                   e.target.src = 'https://via.placeholder.com/70';
@@ -445,10 +467,11 @@ const EmployerMeetingDetailPage = () => {
                   </Card.Header>
                   <Card.Body>
                     <div className="text-center mb-3">
-                      <img 
-                        src={meeting.candidateInfo.avatar} 
+                      <img
+                        src={getCandidateAvatar(meeting.candidateInfo)}
                         alt={meeting.candidateInfo.name}
-                        className="candidate-avatar-lg"
+                        className="rounded-circle"
+                        style={{ width: '70px', height: '70px', objectFit: 'cover', border: '2px solid #f8f9fa' }}
                         onError={(e) => {
                           e.target.onerror = null;
                           e.target.src = 'https://via.placeholder.com/70';
@@ -472,13 +495,21 @@ const EmployerMeetingDetailPage = () => {
                     </div>
                     
                     <div className="d-grid gap-2 mt-3">
-                      <Button variant="outline-primary" size="sm">
+                      {/* <Button variant="outline-primary" size="sm">
                         Xem hồ sơ chi tiết
-                      </Button>
+                      </Button> */}
                     </div>
                   </Card.Body>
                 </Card>
               )}
+              
+              {/* Waiting Candidates Panel */}
+              <WaitingCandidatesPanel 
+                meetingId={meetingId}
+                onCandidateUpdate={(action, candidateId) => {
+                  console.log(`Candidate ${candidateId} ${action}`);
+                }}
+              />
               
               <Card className="meeting-actions-card">
                 <Card.Header>
@@ -487,12 +518,10 @@ const EmployerMeetingDetailPage = () => {
                 <Card.Body>
                   <div className="d-grid gap-2">
                     {isOngoing && (
-                      <Link to={`/meeting/${meeting.id}`}>
-                        <Button variant="success" className="w-100">
-                          <FaVideo className="me-2" />
-                          Tham gia cuộc họp
-                        </Button>
-                      </Link>
+                      <Button variant="success" className="w-100" onClick={handleJoinMeeting}>
+                        <FaVideo className="me-2" />
+                        Tham gia cuộc họp
+                      </Button>
                     )}
                     {isUpcoming && (
                       <>

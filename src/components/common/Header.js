@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../redux/slices/authSlice';
+import { fetchUserAvatar } from '../../utils/avatarUtils';
 
 const Header = () => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -10,6 +11,8 @@ const Header = () => {
   const location = useLocation();
   const [showDropdown, setShowDropdown] = useState(false);
   const [navbarCollapsed, setNavbarCollapsed] = useState(true);
+  const [userAvatar, setUserAvatar] = useState(null);
+  const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
   const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -30,6 +33,28 @@ const Header = () => {
   useEffect(() => {
     setNavbarCollapsed(true);
   }, [location.pathname]);
+
+  // Fetch user avatar based on role
+  useEffect(() => {
+    if (user && user.id) {
+      loadUserAvatar();
+    }
+  }, [user]);
+
+  const loadUserAvatar = async () => {
+    if (!user || !user.id) return;
+    
+    setIsLoadingAvatar(true);
+    try {
+      const avatarUrl = await fetchUserAvatar(user);
+      setUserAvatar(avatarUrl);
+    } catch (error) {
+      console.error('Error loading user avatar:', error);
+      setUserAvatar(null);
+    } finally {
+      setIsLoadingAvatar(false);
+    }
+  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -60,11 +85,19 @@ const Header = () => {
 
   return (
     <header className="main-header">
-      <nav className="navbar navbar-expand-lg navbar-light bg-white">
+      <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div className="container">
           {/* Logo */}
           <Link to="/" className="navbar-brand">
-            <span className="text-primary fw-bold">JobConnect</span>
+            <span style={{
+              background: 'linear-gradient(135deg, var(--primary-500), var(--secondary-500))',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              fontWeight: 700,
+              fontSize: '1.5rem'
+            }}>
+              🚀 JobConnect
+            </span>
           </Link>
 
           {/* Mobile toggle */}
@@ -84,27 +117,27 @@ const Header = () => {
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
                 <Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`}>
-                  Home
+                  Trang chủ
                 </Link>
               </li>
               <li className="nav-item">
                 <Link to="/jobs" className={`nav-link ${isActive('/jobs') ? 'active' : ''}`}>
-                  Find Jobs
+                  Tìm kiếm việc làm 
                 </Link>
               </li>
               <li className="nav-item">
                 <Link to="/companies" className={`nav-link ${isActive('/companies') ? 'active' : ''}`}>
-                  Companies
+                  Công ty
                 </Link>
               </li>
               <li className="nav-item">
                 <Link to="/about" className={`nav-link ${isActive('/about') ? 'active' : ''}`}>
-                  About
+                  Về chúng tôi
                 </Link>
               </li>
               <li className="nav-item">
                 <Link to="/contact" className={`nav-link ${isActive('/contact') ? 'active' : ''}`}>
-                  Contact
+                  Liên hệ
                 </Link>
               </li>
             </ul>
@@ -127,13 +160,25 @@ const Header = () => {
                       className="d-flex align-items-center cursor-pointer" 
                       onClick={() => setShowDropdown(!showDropdown)}
                     >
-                      {user?.avatar ? (
+                      {isLoadingAvatar ? (
+                        <div className="user-avatar bg-secondary text-white me-2">
+                          <i className="bi bi-hourglass-split"></i>
+                        </div>
+                      ) : userAvatar ? (
                         <Link to={getProfileRoute()}>
                           <img 
-                            src={user.avatar} 
-                            alt={user.name} 
+                            src={userAvatar} 
+                            alt={user?.name} 
                             className="user-avatar avatar-image me-2"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                            }}
                           />
+                          <div className="user-avatar bg-primary text-white me-2" style={{ display: 'none' }}>
+                            {user?.name?.charAt(0).toUpperCase() || 'U'}
+                          </div>
                         </Link>
                       ) : (
                         <Link to={getProfileRoute()}>
@@ -151,7 +196,7 @@ const Header = () => {
                         {/* Admin */}
                         {user?.role === 'admin' && (
                           <Link to="/admin/dashboard" className="dropdown-item">
-                            <i className="bi bi-speedometer2 me-2"></i> Admin Dashboard
+                            <i className="bi bi-speedometer2 me-2"></i> Bảng điều khiển
                           </Link>
                         )}
 
@@ -159,13 +204,13 @@ const Header = () => {
                         {user?.role === 'employer' && (
                           <>
                             <Link to="/employer/dashboard" className="dropdown-item">
-                              <i className="bi bi-speedometer2 me-2"></i> Dashboard
+                              <i className="bi bi-speedometer2 me-2"></i> Bảng điều khiển
                             </Link>
                             <Link to="/employer/jobs" className="dropdown-item">
-                              <i className="bi bi-briefcase me-2"></i> Manage Jobs
+                              <i className="bi bi-briefcase me-2"></i> Quản lý tin tuyển dụng
                             </Link>
                             <Link to="/employer/applications" className="dropdown-item">
-                              <i className="bi bi-people me-2"></i> Applications
+                              <i className="bi bi-people me-2"></i> Quản lý đơn ứng tuyển
                             </Link>
                           </>
                         )}
@@ -174,16 +219,16 @@ const Header = () => {
                         {user?.role === 'applicant' && (
                           <>
                             <Link to="/candidate/dashboard" className="dropdown-item">
-                              <i className="bi bi-speedometer2 me-2"></i> Dashboard
+                              <i className="bi bi-speedometer2 me-2"></i> Bảng điều khiển
                             </Link>
                             <Link to="/candidate/applications" className="dropdown-item">
-                              <i className="bi bi-file-earmark-text me-2"></i> My Applications
+                              <i className="bi bi-file-earmark-text me-2"></i> Dơn ứng tuyển
                             </Link>
-                            <Link to="/candidate/jobs" className="dropdown-item">
+                            {/* <Link to="/candidate/jobs" className="dropdown-item">
                               <i className="bi bi-search me-2"></i> Find Jobs
-                            </Link>
+                            </Link> */}
                             <Link to="/candidate/saved-jobs" className="dropdown-item">
-                              <i className="bi bi-bookmark me-2"></i> Saved Jobs
+                              <i className="bi bi-bookmark me-2"></i> Công việc đã lưu
                             </Link>
                             <Link to="/candidate/cv-templates" className="dropdown-item">
                               <i className="bi bi-file-earmark-text me-2"></i> Mẫu CV
@@ -194,11 +239,11 @@ const Header = () => {
                         {/* Common items */}
                         <div className="dropdown-divider"></div>
                         <Link to={getProfileRoute()} className="dropdown-item">
-                          <i className="bi bi-person me-2"></i> My Profile
+                          <i className="bi bi-person me-2"></i> Thông tin cá nhân
                         </Link>
-                        <Link to="/settings" className="dropdown-item">
+                        {/* <Link to="/settings" className="dropdown-item">
                           <i className="bi bi-gear me-2"></i> Settings
-                        </Link>
+                        </Link> */}
                         <div className="dropdown-divider"></div>
                         <button onClick={handleLogout} className="dropdown-item text-danger d-flex align-items-center">
                           <i className="bi bi-box-arrow-right me-2"></i>

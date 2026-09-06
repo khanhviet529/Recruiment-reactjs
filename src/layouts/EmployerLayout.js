@@ -18,14 +18,14 @@ const EmployerLayout = () => {
           {/* Sidebar */}
           <div className="col-md-3 col-lg-2 sidebar">
             <div className="sidebar-sticky pt-3">
-              <ul className="nav flex-column">
+              <ul className="nav">
                 <li className="nav-item">
                   <Link 
                     className={`nav-link ${isActive('/employer/dashboard') ? 'active' : ''}`}
                     to="/employer/dashboard"
                   >
                     <i className="bi bi-speedometer2 me-2"></i>
-                    Dashboard
+                    Bảng điều khiển
                   </Link>
                 </li>
                 <li className="nav-item">

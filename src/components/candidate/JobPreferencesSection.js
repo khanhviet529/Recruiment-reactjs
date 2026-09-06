@@ -2,363 +2,310 @@ import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import { Select, Input, Switch, Button, Row, Col, Divider, Typography } from 'antd';
+import { Card, Button, Row, Col, Form as AntForm, Select, Input, Switch, Slider } from 'antd';
+import { message } from 'antd';
 
 const { Option } = Select;
-const { Text } = Typography;
 
 const jobPreferencesSchema = Yup.object({
-  jobTypes: Yup.array().of(Yup.string()),
-  locations: Yup.array().of(Yup.string()),
-  industries: Yup.array().of(Yup.string()),
+  jobTypes: Yup.array().min(1, 'Vui lòng chọn ít nhất một loại công việc'),
+  locations: Yup.array().min(1, 'Vui lòng chọn ít nhất một địa điểm'),
+  industries: Yup.array().min(1, 'Vui lòng chọn ít nhất một ngành nghề'),
   expectedSalary: Yup.object({
-    min: Yup.number().min(0),
-    max: Yup.number().min(0),
-    currency: Yup.string(),
+    min: Yup.number().min(0, 'Lương tối thiểu phải lớn hơn 0'),
+    max: Yup.number().min(Yup.ref('min'), 'Lương tối đa phải lớn hơn lương tối thiểu'),
+    currency: Yup.string().required('Vui lòng chọn đơn vị tiền tệ')
   }),
   openToRelocate: Yup.boolean(),
-  openToRemote: Yup.boolean(),
+  openToRemote: Yup.boolean()
 });
 
 const JobPreferencesSection = ({ candidate, setCandidate }) => {
-  const [editMode, setEditMode] = useState(null);
-  const [jobTypes, setJobTypes] = useState([]);
-  const [locations, setLocations] = useState([]);
-  const [industries, setIndustries] = useState([]);
-  const [loading, setLoading] = useState(true);
 
+  // Track candidate prop changes for proper data display
   useEffect(() => {
-    const fetchJobPreferencesData = async () => {
-      try {
-        setLoading(true);
-        // Define mock data in case the API fails
-        const mockJobTypes = [
-          { id: '1', name: 'Toàn thời gian' },
-          { id: '2', name: 'Bán thời gian' },
-          { id: '3', name: 'Thực tập' },
-          { id: '4', name: 'Freelance' },
-          { id: '5', name: 'Hợp đồng' }
-        ];
-        
-        const mockLocations = [
-          { id: '1', name: 'Hà Nội' },
-          { id: '2', name: 'TP. Hồ Chí Minh' },
-          { id: '3', name: 'Đà Nẵng' },
-          { id: '4', name: 'Hải Phòng' },
-          { id: '5', name: 'Cần Thơ' }
-        ];
-        
-        const mockIndustries = [
-          { id: '1', name: 'Công nghệ thông tin' },
-          { id: '2', name: 'Tài chính - Ngân hàng' },
-          { id: '3', name: 'Marketing' },
-          { id: '4', name: 'Giáo dục' },
-          { id: '5', name: 'Y tế' }
-        ];
+    console.log('🔍 JobPreferencesSection - Candidate prop:', candidate);
+    if (candidate) {
+      console.log('Data count:', candidate.jobPreferences?.length || 0);
+    }
+  }, [candidate]);  const [editMode, setEditMode] = useState(false);
 
-        try {
-          // Lấy dữ liệu từ API /jobFilters
-          const response = await axios.get('http://localhost:5000/jobFilters');
-          const responseLocation = await axios.get('http://localhost:5000/locations');
-          if (response.data) {
-            // Cập nhật state với dữ liệu từ API
-            if (response.data.jobTypes) {
-              setJobTypes(response.data.jobTypes);
-            }
-            
-            if (response.data.industries) {
-              setIndustries(response.data.industries);
-            }
-            
-          } else {
-            setJobTypes(mockJobTypes);
-            setIndustries(mockIndustries);
-          }
 
-          if(responseLocation.data){
-            setLocations(responseLocation.data);
-          }
-          else{
-            setLocations(mockLocations);
-          }
-        } catch (apiError) {
-          console.warn('Using mock data for job preferences due to API error:', apiError);
-          // Sử dụng dữ liệu mẫu nếu API lỗi
-          setJobTypes(mockJobTypes);
-          setLocations(mockLocations);
-          setIndustries(mockIndustries);
-        }
-      } catch (error) {
-        console.error('Error fetching job preferences data:', error);
-        // Fallback to empty arrays if everything fails
-        setJobTypes([]);
-        setLocations([]);
-        setIndustries([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+const initialValues = {
+    jobTypes: candidate?.jobPreferences?.jobTypes || [],
+    locations: candidate?.jobPreferences?.locations || [],
+    industries: candidate?.jobPreferences?.industries || [],
+    expectedSalary: {
+      min: candidate?.jobPreferences?.expectedSalary?.min || 0,
+      max: candidate?.jobPreferences?.expectedSalary?.max || 0,
+      currency: candidate?.jobPreferences?.expectedSalary?.currency || 'VND'
+    },
+    openToRelocate: candidate?.jobPreferences?.openToRelocate || false,
+    openToRemote: candidate?.jobPreferences?.openToRemote || false
+  };
 
-    fetchJobPreferencesData();
-  }, []);
+  const jobTypeOptions = [
+    { value: 'fulltime', label: 'Toàn thời gian' },
+    { value: 'parttime', label: 'Bán thời gian' },
+    { value: 'contract', label: 'Hợp đồng' },
+    { value: 'freelance', label: 'Tự do' },
+    { value: 'internship', label: 'Thực tập' }
+  ];
 
-  const handleUpdateJobPreferences = async (values) => {
+  const locationOptions = [
+    { value: 'hanoi', label: 'Hà Nội' },
+    { value: 'hochiminh', label: 'TP. Hồ Chí Minh' },
+    { value: 'danang', label: 'Đà Nẵng' },
+    { value: 'haiphong', label: 'Hải Phòng' },
+    { value: 'cantho', label: 'Cần Thơ' },
+    { value: 'remote', label: 'Làm việc từ xa' }
+  ];
+
+  const industryOptions = [
+    { value: 'technology', label: 'Công nghệ thông tin' },
+    { value: 'finance', label: 'Tài chính - Ngân hàng' },
+    { value: 'healthcare', label: 'Y tế - Sức khỏe' },
+    { value: 'education', label: 'Giáo dục - Đào tạo' },
+    { value: 'marketing', label: 'Marketing - Quảng cáo' },
+    { value: 'sales', label: 'Kinh doanh - Bán hàng' },
+    { value: 'manufacturing', label: 'Sản xuất - Chế tạo' },
+    { value: 'retail', label: 'Bán lẻ - Thương mại' }
+  ];
+
+  const currencyOptions = [
+    { value: 'VND', label: 'VND' },
+    { value: 'USD', label: 'USD' }
+  ];
+
+  const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, {
-        ...candidate,
-        jobPreferences: values,
-      });
+      console.log('🔄 Updating section data...');
+      
+      // SAFETY CHECK: Get current candidate data first to preserve all fields
+      let currentCandidateData = {};
+      try {
+        const currentResponse = await axios.get(`http://localhost:5000/candidates/${candidate.id}`);
+        currentCandidateData = currentResponse.data;
+        console.log('📦 Current candidate data:', currentCandidateData);
+      } catch (error) {
+        console.warn('⚠️ Could not fetch current candidate data, using props:', error);
+        currentCandidateData = candidate;
+      }
+      const updatedCandidate = {
+        ...currentCandidateData, // Keep all existing data
+        jobPreferences: values
+      };
+
+      const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, updatedCandidate);
       setCandidate(response.data);
-      setEditMode(null);
+      setEditMode(false);
+      message.success('Cập nhật sở thích công việc thành công');
     } catch (error) {
       console.error('Error updating job preferences:', error);
+      message.error('Có lỗi xảy ra khi cập nhật sở thích công việc');
+    } finally {
+      setSubmitting(false);
     }
   };
 
+  if (!editMode) {
+    return (
+      <Card title="Sở thích công việc" className="mb-4">
+        <div className="job-preferences-display">
+          <Row gutter={16}>
+            <Col span={12}>
+              <p><strong>Loại công việc:</strong></p>
+              <ul>
+                {candidate?.jobPreferences?.jobTypes?.map(type => (
+                  <li key={type}>{jobTypeOptions.find(opt => opt.value === type)?.label || type}</li>
+                )) || <li>Chưa cập nhật</li>}
+              </ul>
+            </Col>
+            <Col span={12}>
+              <p><strong>Địa điểm:</strong></p>
+              <ul>
+                {candidate?.jobPreferences?.locations?.map(location => (
+                  <li key={location}>{locationOptions.find(opt => opt.value === location)?.label || location}</li>
+                )) || <li>Chưa cập nhật</li>}
+              </ul>
+            </Col>
+          </Row>
+          
+          <Row gutter={16}>
+            <Col span={12}>
+              <p><strong>Ngành nghề:</strong></p>
+              <ul>
+                {candidate?.jobPreferences?.industries?.map(industry => (
+                  <li key={industry}>{industryOptions.find(opt => opt.value === industry)?.label || industry}</li>
+                )) || <li>Chưa cập nhật</li>}
+              </ul>
+            </Col>
+            <Col span={12}>
+              <p><strong>Mức lương mong muốn:</strong></p>
+              <p>
+                {candidate?.jobPreferences?.expectedSalary?.min || 0} - {candidate?.jobPreferences?.expectedSalary?.max || 0} {candidate?.jobPreferences?.expectedSalary?.currency || 'VND'}
+              </p>
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <p><strong>Sẵn sàng chuyển chỗ ở:</strong> {candidate?.jobPreferences?.openToRelocate ? 'Có' : 'Không'}</p>
+            </Col>
+            <Col span={12}>
+              <p><strong>Sẵn sàng làm việc từ xa:</strong> {candidate?.jobPreferences?.openToRemote ? 'Có' : 'Không'}</p>
+            </Col>
+          </Row>
+        </div>
+
+        <Button type="primary" onClick={() => setEditMode(true)}>
+          Chỉnh sửa sở thích
+        </Button>
+      </Card>
+    );
+  }
+
   return (
-    <div className="card">
-      <div className="card-header d-flex justify-content-between align-items-center">
-        <h5 className="mb-0">Sở thích công việc</h5>
-        <button 
-          className="btn btn-sm btn-primary"
-          onClick={() => setEditMode('preferences')}
-        >
-          <i className="bi bi-pencil me-1"></i> Chỉnh sửa
-        </button>
-      </div>
-      <div className="card-body">
-        {editMode === 'preferences' ? (
-          <Formik
-            initialValues={candidate?.jobPreferences || {
-              jobTypes: [],
-              locations: [],
-              industries: [],
-              expectedSalary: {
-                min: 0,
-                max: 0,
-                currency: 'USD'
-              },
-              openToRelocate: false,
-              openToRemote: false
-            }}
-            validationSchema={jobPreferencesSchema}
-            onSubmit={handleUpdateJobPreferences}
-          >
-            {({ isSubmitting, values, setFieldValue }) => (
-              <Form>
-                <Row gutter={[16, 16]}>
-                  <Col xs={24} md={12}>
-                    <div className="mb-3">
-                      <label className="form-label">Loại công việc</label>
-                      <Select
-                        mode="multiple"
-                        style={{ width: '100%' }}
-                        placeholder="Chọn loại công việc"
-                        value={values.jobTypes}
-                        onChange={(value) => setFieldValue('jobTypes', value)}
-                        loading={loading}
-                        optionFilterProp="children"
-                        showSearch
-                        maxTagCount={3}
-                        maxTagTextLength={10}
-                      >
-                        {jobTypes.map(type => (
-                          <Option key={type.id} value={type.id}>
-                            {type.name}
-                          </Option>
-                        ))}
-                      </Select>
-                    </div>
-                  </Col>
-                  <Col xs={24} md={12}>
-                    <div className="mb-3">
-                      <label className="form-label">Địa điểm làm việc</label>
-                      <Select
-                        mode="multiple"
-                        style={{ width: '100%' }}
-                        placeholder="Chọn địa điểm làm việc"
-                        value={values.locations}
-                        onChange={(value) => setFieldValue('locations', value)}
-                        loading={loading}
-                        optionFilterProp="children"
-                        showSearch
-                        maxTagCount={3}
-                        maxTagTextLength={10}
-                      >
-                        {locations.map(location => (
-                          <Option key={location.id} value={location.id}>
-                            {location.name}
-                          </Option>
-                        ))}
-                      </Select>
-                    </div>
-                  </Col>
-                </Row>
-                
-                <Row gutter={[16, 16]}>
-                  <Col xs={24} md={12}>
-                    <div className="mb-3">
-                      <label className="form-label">Ngành nghề</label>
-                      <Select
-                        mode="multiple"
-                        style={{ width: '100%' }}
-                        placeholder="Chọn ngành nghề"
-                        value={values.industries}
-                        onChange={(value) => setFieldValue('industries', value)}
-                        loading={loading}
-                        optionFilterProp="children"
-                        showSearch
-                        maxTagCount={3}
-                        maxTagTextLength={10}
-                      >
-                        {industries.map(industry => (
-                          <Option key={industry.id} value={industry.id}>
-                            {industry.name}
-                          </Option>
-                        ))}
-                      </Select>
-                    </div>
-                  </Col>
-                  <Col xs={24} md={12}>
-                    <div className="mb-3">
-                      <label className="form-label">Mức lương mong muốn</label>
-                      <div className="d-flex align-items-center gap-2">
-                        <div style={{ flex: 1 }}>
-                          <Input
-                            type="number"
-                            placeholder="Tối thiểu"
-                            value={values.expectedSalary.min}
-                            onChange={(e) => {
-                              setFieldValue('expectedSalary.min', Number(e.target.value));
-                            }}
-                          />
-                        </div>
-                        <div style={{ flex: 0 }}>-</div>
-                        <div style={{ flex: 1 }}>
-                          <Input
-                            type="number"
-                            placeholder="Tối đa"
-                            value={values.expectedSalary.max}
-                            onChange={(e) => {
-                              setFieldValue('expectedSalary.max', Number(e.target.value));
-                            }}
-                          />
-                        </div>
-                        <div style={{ flex: 0.5 }}>
-                          <Select
-                            style={{ width: '100%' }}
-                            value={values.expectedSalary.currency}
-                            onChange={(value) => setFieldValue('expectedSalary.currency', value)}
-                          >
-                            <Option value="USD">USD</Option>
-                            <Option value="VND">VND</Option>
-                          </Select>
-                        </div>
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-                
-                <Row gutter={[16, 16]}>
-                  <Col xs={24} md={12}>
-                    <div className="mb-3">
-                      <Switch
-                        checked={values.openToRelocate}
-                        onChange={(checked) => setFieldValue('openToRelocate', checked)}
-                      /> <span className="ms-2">Sẵn sàng chuyển địa điểm làm việc</span>
-                    </div>
-                  </Col>
-                  <Col xs={24} md={12}>
-                    <div className="mb-3">
-                      <Switch
-                        checked={values.openToRemote}
-                        onChange={(checked) => setFieldValue('openToRemote', checked)}
-                      /> <span className="ms-2">Sẵn sàng làm việc từ xa</span>
-                    </div>
-                  </Col>
-                </Row>
-                
-                <Divider />
-                
-                <div className="d-flex justify-content-end">
-                  <Button 
-                    className="me-2" 
-                    onClick={() => setEditMode(null)}
+    <Card title="Chỉnh sửa sở thích công việc" className="mb-4">
+      <Formik
+        initialValues={initialValues}
+        validationSchema={jobPreferencesSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ isSubmitting, values, setFieldValue }) => (
+          <Form>
+            <Row gutter={16}>
+              <Col span={12}>
+                <AntForm.Item label="Loại công việc">
+                  <Select
+                    mode="multiple"
+                    placeholder="Chọn loại công việc"
+                    value={values.jobTypes}
+                    onChange={(value) => setFieldValue('jobTypes', value)}
+                    style={{ width: '100%' }}
                   >
-                    Hủy
-                  </Button>
-                  <Button 
-                    type="primary" 
-                    htmlType="submit" 
-                    loading={isSubmitting}
+                    {jobTypeOptions.map(option => (
+                      <Option key={option.value} value={option.value}>
+                        {option.label}
+                      </Option>
+                    ))}
+                  </Select>
+                  <ErrorMessage name="jobTypes" component="div" className="text-danger" />
+                </AntForm.Item>
+              </Col>
+              <Col span={12}>
+                <AntForm.Item label="Địa điểm làm việc">
+                  <Select
+                    mode="multiple"
+                    placeholder="Chọn địa điểm"
+                    value={values.locations}
+                    onChange={(value) => setFieldValue('locations', value)}
+                    style={{ width: '100%' }}
                   >
-                    Lưu thay đổi
-                  </Button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        ) : (
-          <div>
-            <Row gutter={[16, 16]} className="mb-3">
-              <Col xs={24} md={12}>
-                <h6>Loại công việc</h6>
-                <p>
-                  {candidate?.jobPreferences?.jobTypes?.length > 0
-                    ? candidate.jobPreferences.jobTypes
-                        .map(id => jobTypes.find(type => type.id === id)?.name)
-                        .filter(Boolean)
-                        .join(', ')
-                    : 'Chưa cập nhật'}
-                </p>
-              </Col>
-              <Col xs={24} md={12}>
-                <h6>Địa điểm làm việc</h6>
-                <p>
-                  {candidate?.jobPreferences?.locations?.length > 0
-                    ? candidate.jobPreferences.locations
-                        .map(id => locations.find(loc => loc.id === id)?.name)
-                        .filter(Boolean)
-                        .join(', ')
-                    : 'Chưa cập nhật'}
-                </p>
+                    {locationOptions.map(option => (
+                      <Option key={option.value} value={option.value}>
+                        {option.label}
+                      </Option>
+                    ))}
+                  </Select>
+                  <ErrorMessage name="locations" component="div" className="text-danger" />
+                </AntForm.Item>
               </Col>
             </Row>
-            <Row gutter={[16, 16]} className="mb-3">
-              <Col xs={24} md={12}>
-                <h6>Ngành nghề</h6>
-                <p>
-                  {candidate?.jobPreferences?.industries?.length > 0
-                    ? candidate.jobPreferences.industries
-                        .map(id => industries.find(ind => ind.id === id)?.name)
-                        .filter(Boolean)
-                        .join(', ')
-                    : 'Chưa cập nhật'}
-                </p>
-              </Col>
-              <Col xs={24} md={12}>
-                <h6>Mức lương mong muốn</h6>
-                <p>
-                  {candidate?.jobPreferences?.expectedSalary ? 
-                    `${candidate.jobPreferences.expectedSalary.min} - ${candidate.jobPreferences.expectedSalary.max} ${candidate.jobPreferences.expectedSalary.currency}` : 
-                    'Chưa cập nhật'}
-                </p>
-              </Col>
-            </Row>
-            <Row gutter={[16, 16]}>
-              <Col xs={24} md={12}>
-                <h6>Sẵn sàng chuyển địa điểm</h6>
-                <p>{candidate?.jobPreferences?.openToRelocate ? 'Có' : 'Không'}</p>
-              </Col>
-              <Col xs={24} md={12}>
-                <h6>Sẵn sàng làm việc từ xa</h6>
-                <p>{candidate?.jobPreferences?.openToRemote ? 'Có' : 'Không'}</p>
+
+            <Row gutter={16}>
+              <Col span={24}>
+                <AntForm.Item label="Ngành nghề quan tâm">
+                  <Select
+                    mode="multiple"
+                    placeholder="Chọn ngành nghề"
+                    value={values.industries}
+                    onChange={(value) => setFieldValue('industries', value)}
+                    style={{ width: '100%' }}
+                  >
+                    {industryOptions.map(option => (
+                      <Option key={option.value} value={option.value}>
+                        {option.label}
+                      </Option>
+                    ))}
+                  </Select>
+                  <ErrorMessage name="industries" component="div" className="text-danger" />
+                </AntForm.Item>
               </Col>
             </Row>
-          </div>
+
+            <Row gutter={16}>
+              <Col span={8}>
+                <AntForm.Item label="Lương tối thiểu">
+                  <Input
+                    type="number"
+                    placeholder="Lương tối thiểu"
+                    value={values.expectedSalary.min}
+                    onChange={(e) => setFieldValue('expectedSalary.min', Number(e.target.value))}
+                  />
+                  <ErrorMessage name="expectedSalary.min" component="div" className="text-danger" />
+                </AntForm.Item>
+              </Col>
+              <Col span={8}>
+                <AntForm.Item label="Lương tối đa">
+                  <Input
+                    type="number"
+                    placeholder="Lương tối đa"
+                    value={values.expectedSalary.max}
+                    onChange={(e) => setFieldValue('expectedSalary.max', Number(e.target.value))}
+                  />
+                  <ErrorMessage name="expectedSalary.max" component="div" className="text-danger" />
+                </AntForm.Item>
+              </Col>
+              <Col span={8}>
+                <AntForm.Item label="Đơn vị tiền tệ">
+                  <Select
+                    value={values.expectedSalary.currency}
+                    onChange={(value) => setFieldValue('expectedSalary.currency', value)}
+                    style={{ width: '100%' }}
+                  >
+                    {currencyOptions.map(option => (
+                      <Option key={option.value} value={option.value}>
+                        {option.label}
+                      </Option>
+                    ))}
+                  </Select>
+                  <ErrorMessage name="expectedSalary.currency" component="div" className="text-danger" />
+                </AntForm.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={16}>
+              <Col span={12}>
+                <AntForm.Item label="Sẵn sàng chuyển chỗ ở">
+                  <Switch
+                    checked={values.openToRelocate}
+                    onChange={(checked) => setFieldValue('openToRelocate', checked)}
+                  />
+                </AntForm.Item>
+              </Col>
+              <Col span={12}>
+                <AntForm.Item label="Sẵn sàng làm việc từ xa">
+                  <Switch
+                    checked={values.openToRemote}
+                    onChange={(checked) => setFieldValue('openToRemote', checked)}
+                  />
+                </AntForm.Item>
+              </Col>
+            </Row>
+
+            <AntForm.Item>
+              <Button type="primary" htmlType="submit" loading={isSubmitting}>
+                Lưu thay đổi
+              </Button>
+              <Button style={{ marginLeft: 8 }} onClick={() => setEditMode(false)}>
+                Hủy
+              </Button>
+            </AntForm.Item>
+          </Form>
         )}
-      </div>
-    </div>
+      </Formik>
+    </Card>
   );
 };
 

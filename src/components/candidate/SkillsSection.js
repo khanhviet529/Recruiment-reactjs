@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -16,14 +16,36 @@ const SkillsSection = ({ candidate, setCandidate }) => {
   const [editMode, setEditMode] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
 
-  const handleSkillSubmit = async (values) => {
+  // Debug effect to track candidate prop changes
+  useEffect(() => {
+    console.log('🔍 SkillsSection - Candidate prop:', candidate);
+    if (candidate && candidate.skillss) {
+      console.log('🔍 SkillsSection - Data:', candidate.skillss);
+      console.log('🔍 SkillsSection - Count:', candidate.skillss?.length || 0);
+    }
+  }, [candidate]);
+
+
+const handleSkillSubmit = async (values) => {
     try {
+      console.log('🔄 Updating section data...');
+      
+      // SAFETY CHECK: Get current candidate data first to preserve all fields
+      let currentCandidateData = {};
+      try {
+        const currentResponse = await axios.get(`http://localhost:5000/candidates/${candidate.id}`);
+        currentCandidateData = currentResponse.data;
+        console.log('📦 Current candidate data:', currentCandidateData);
+      } catch (error) {
+        console.warn('⚠️ Could not fetch current candidate data, using props:', error);
+        currentCandidateData = candidate;
+      }
       const updatedSkills = editingItem
         ? candidate.skills.map(skill => skill.id === editingItem.id ? values : skill)
         : [...(candidate.skills || []), { ...values, id: Date.now().toString() }];
 
       const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, {
-        ...candidate,
+        ...currentCandidateData, // Keep all existing data
         skills: updatedSkills,
       });
 
@@ -37,9 +59,21 @@ const SkillsSection = ({ candidate, setCandidate }) => {
 
   const handleSkillDelete = async (id) => {
     try {
+      console.log('🔄 Updating section data...');
+      
+      // SAFETY CHECK: Get current candidate data first to preserve all fields
+      let currentCandidateData = {};
+      try {
+        const currentResponse = await axios.get(`http://localhost:5000/candidates/${candidate.id}`);
+        currentCandidateData = currentResponse.data;
+        console.log('📦 Current candidate data:', currentCandidateData);
+      } catch (error) {
+        console.warn('⚠️ Could not fetch current candidate data, using props:', error);
+        currentCandidateData = candidate;
+      }
       const updatedSkills = candidate.skills.filter(skill => skill.id !== id);
       const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, {
-        ...candidate,
+        ...currentCandidateData, // Keep all existing data
         skills: updatedSkills,
       });
       setCandidate(response.data);

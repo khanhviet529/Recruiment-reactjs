@@ -125,7 +125,7 @@ const EditMeetingPage = () => {
       <Header />
       <Container className="mt-4 mb-4">
         <div className="mb-4">
-          <Link to={`/admin/meetings/${meetingId}`}>← Quay lại chi tiết cuộc họp</Link>
+          <Link to={`/admin/meetings/${meetingId}`}>← Quay lại</Link>
         </div>
         
         <Card>

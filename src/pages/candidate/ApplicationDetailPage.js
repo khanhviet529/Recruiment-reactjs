@@ -86,7 +86,7 @@ const ApplicationDetailPage = () => {
       setError(null);
       
       // Get application details
-      const applicationResponse = await axios.get(`http://localhost:5000/applications/${id}`);
+            const applicationResponse = await axios.get(`http://localhost:5000/applications/${id}`);
       
       if (!applicationResponse.data) {
         setError('Không tìm thấy thông tin ứng tuyển');
@@ -117,11 +117,17 @@ const ApplicationDetailPage = () => {
       setJob(jobData);
       
       // Get employer details
-      const employerResponse = await axios.get(`http://localhost:5000/employers?userId=${jobData.employerId}`);
-      if (!employerResponse.data) {
-        console.warn(`Employer not found for ID: ${jobData.employerId}`);
-      } else {
-        setEmployer(employerResponse.data);
+      try {
+        const employerResponse = await axios.get(`http://localhost:5000/employers?userId=${jobData.employerId}`);
+        if (employerResponse.data && employerResponse.data.length > 0) {
+          setEmployer(employerResponse.data[0]);
+        } else {
+          console.warn(`Employer not found for ID: ${jobData.employerId}`);
+          setEmployer(null);
+        }
+      } catch (err) {
+        console.error('Error fetching employer:', err);
+        setEmployer(null);
       }
       
       // Check for similar jobs
@@ -641,18 +647,22 @@ const ApplicationDetailPage = () => {
             <div className="mb-4">
               <Title level={5}>Yêu cầu</Title>
               <ul>
-                {job.requirements?.map((req, index) => (
+                {Array.isArray(job.requirements) ? job.requirements.map((req, index) => (
                   <li key={index}>{req}</li>
-                ))}
+                )) : (
+                  <li>Không có thông tin yêu cầu</li>
+                )}
               </ul>
             </div>
             
             <div>
               <Title level={5}>Quyền lợi</Title>
               <ul>
-                {job.benefits?.map((benefit, index) => (
+                {Array.isArray(job.benefits) ? job.benefits.map((benefit, index) => (
                   <li key={index}>{benefit}</li>
-                ))}
+                )) : (
+                  <li>Không có thông tin quyền lợi</li>
+                )}
               </ul>
             </div>
             
@@ -787,11 +797,11 @@ const ApplicationDetailPage = () => {
               )}
             </div>
             
-            <div className="text-center mt-3">
+            {/* <div className="text-center mt-3">
               <Link to="/candidate/jobs">
                 <Button type="primary">Xem thêm công việc</Button>
               </Link>
-            </div>
+            </div> */}
           </Card>
         </Col>
       </Row>

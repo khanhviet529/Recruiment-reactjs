@@ -1,7 +1,61 @@
-.candidate-meetings-page {
+.meetings-page {
   padding: 2rem 0;
   background-color: #f8f9fa;
   min-height: calc(100vh - 70px);
+
+  .page-header {
+    h1 {
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+      color: #2c3e50;
+      
+      .text-primary {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  .meetings-tabs-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    
+    .custom-nav-pills {
+      .nav-item {
+        margin-right: 0.5rem;
+        
+        .nav-link {
+          border-radius: 15px;
+          font-weight: 500;
+          color: #6c757d;
+          background-color: transparent;
+          border: 2px solid transparent;
+          transition: all 0.3s ease;
+          text-decoration: none;
+          
+          &:hover {
+            background-color: #f8f9fa;
+            color: #495057;
+            text-decoration: none;
+          }
+          
+          &.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+            text-decoration: none;
+          }
+        }
+      }
+    }
+  }
+
+  .meetings-content {
+    margin-top: 1.5rem;
+  }
 
   .page-title {
     display: flex;
@@ -17,99 +71,104 @@
   }
 
   .meeting-card {
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.06);
     
     &:hover {
-      transform: translateY(-5px);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
     
-    .card-title {
-      font-weight: 600;
-      margin-bottom: 5px;
-    }
-    
-    .company-logo {
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-    
-    .company-name, .job-title {
-      display: flex;
-      align-items: center;
-      font-size: 0.9rem;
-      color: #555;
-      margin-bottom: 2px;
+    .meeting-header {
+      .meeting-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2c3e50;
+        line-height: 1.3;
+      }
       
-      .icon {
-        margin-right: 5px;
-        color: #777;
+      .company-info {
+        .company-name {
+          color: #6c757d;
+          font-size: 0.95rem;
+        }
+      }
+    }
+    
+    .meeting-status {
+      .badge {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
       }
     }
     
     .meeting-description {
-      color: #666;
-      font-size: 0.95rem;
-      border-left: 3px solid #ddd;
-      padding-left: 10px;
+      p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
     }
     
-    .meeting-details {
-      margin-top: 15px;
-      
-      .detail-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 8px;
-        font-size: 0.9rem;
+    .meeting-details-grid {
+      .detail-row {
+        margin-bottom: 0.75rem;
         
-        .icon {
-          min-width: 20px;
-          margin-right: 8px;
-          color: #6c757d;
+        &:last-child {
+          margin-bottom: 0;
         }
         
-        &.highlight {
-          font-weight: 600;
-          color: #0d6efd;
+        .detail-item {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
           
-          .icon {
-            color: #0d6efd;
+          .detail-icon {
+            color: #6c757d;
+            font-size: 0.9rem;
+            min-width: 16px;
+          }
+          
+          .detail-label {
+            font-weight: 500;
+            color: #495057;
+            font-size: 0.9rem;
+            min-width: 80px;
+          }
+          
+          .detail-value {
+            color: #2c3e50;
+            font-size: 0.9rem;
+            font-weight: 400;
           }
         }
       }
     }
     
-    .candidate-info {
-      padding-top: 10px;
-      border-top: 1px solid #eee;
+    .meeting-actions {
+      padding-top: 1rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
       
-      h6 {
+      .btn {
+        font-weight: 500;
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
         font-size: 0.9rem;
-        color: #555;
-        margin-bottom: 8px;
+        
+        &.btn-outline-primary {
+          border-width: 2px;
+          
+          &:hover {
+            transform: translateY(-1px);
+          }
+        }
+        
+        &.btn-success {
+          &:hover {
+            transform: translateY(-1px);
+          }
+        }
       }
-      
-      .candidate-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-      }
-      
-      .candidate-name {
-        font-size: 0.9rem;
-        font-weight: 600;
-      }
-    }
-    
-    .card-footer {
-      background-color: rgba(0, 0, 0, 0.02);
-      border-top: 1px solid rgba(0, 0, 0, 0.08);
     }
   }
 

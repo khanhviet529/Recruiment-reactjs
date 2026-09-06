@@ -39,7 +39,7 @@ import {
 } from '@ant-design/icons';
 import moment from 'moment';
 import parse from 'html-react-parser';
-import ApplicationForm from '../../components/candidate/Applications/ApplicationForm';
+import SimpleApplicationForm from '../../components/candidate/Applications/SimpleApplicationForm';
 import CVUploader from '../../components/common/CVUploader';
 import { CLOUDINARY_CONFIG } from '../../services/configService';
 
@@ -126,7 +126,11 @@ const JobDetailPage = () => {
           
           // Fetch employer details
           const employerResponse = await axios.get(`http://localhost:5000/employers?userId=${jobResponse.data.employerId}`);
-          setEmployer(employerResponse.data);
+          if (employerResponse.data && employerResponse.data.length > 0) {
+            setEmployer(employerResponse.data[0]);
+          } else {
+            setEmployer(null);
+          }
           
           // Check if the user has saved this job
           if (user && user.id) {
@@ -216,23 +220,33 @@ const JobDetailPage = () => {
   
   // Handle apply button click
   const handleApplyClick = async () => {
+    console.log('=== APPLY BUTTON CLICKED ===');
+    console.log('User object:', user);
+    console.log('Job ID:', id);
+    console.log('Current applyDrawerVisible state:', applyDrawerVisible);
+    
     if (!user) {
+      console.log('User not logged in, showing login modal');
       setLoginModalVisible(true);
       return;
     }
     
-    console.log('Apply button clicked, checking application status...');
+    console.log('User is logged in, user ID:', user.id);
+    console.log('Checking application status...');
     
     // Kiểm tra lại trạng thái ứng tuyển
     try {
       const applicationsResponse = await axios.get(`http://localhost:5000/applications?candidateId=${user.id}&jobId=${id}`);
+      console.log('Applications API response:', applicationsResponse);
       const applications = applicationsResponse.data || [];
       console.log('All applications for this job:', applications);
       
       // Nếu không có đơn nào, cho phép ứng tuyển
       if (applications.length === 0) {
         console.log('No existing applications, opening application form');
+        console.log('Setting applyDrawerVisible to true...');
         setApplyDrawerVisible(true);
+        console.log('ApplyDrawerVisible should now be true');
         return;
       }
       
@@ -260,15 +274,31 @@ const JobDetailPage = () => {
       } else {
         // Chỉ có đơn đã rút hồ sơ, cho phép ứng tuyển lại
         console.log('Only withdrawn applications found, opening application form');
+        console.log('Setting applyDrawerVisible to true...');
         setApplyDrawerVisible(true);
+        console.log('ApplyDrawerVisible should now be true');
       }
     } catch (error) {
       console.error('Error checking application status:', error);
-      message.error('Có lỗi xảy ra khi kiểm tra trạng thái ứng tuyển. Vui lòng thử lại sau.');
+      console.log('Error details:', error.response || error.message || error);
+      
+      // If there's an error checking applications, still allow applying
+      console.log('Due to error, allowing application anyway');
+      setApplyDrawerVisible(true);
+      
+      message.warning('Không thể kiểm tra trạng thái ứng tuyển. Bạn vẫn có thể ứng tuyển.');
     }
   };
   
-  // Handle application success
+
+  // Simple fallback apply function
+  const handleSimpleApply = () => {
+    console.log('=== SIMPLE APPLY CLICKED ===');
+    console.log('Forcing drawer to open...');
+    setApplyDrawerVisible(true);
+  };
+
+    // Handle application success
   const handleApplicationSuccess = () => {
     setApplyDrawerVisible(false);
     setApplicationSuccessVisible(true);
@@ -357,6 +387,25 @@ const JobDetailPage = () => {
   if (loading) {
     return (
       <div className="job-detail-page">
+      {/* Debug State Display */}
+      <div style={{ 
+        position: 'fixed', 
+        top: 10, 
+        right: 10, 
+        background: 'rgba(0,0,0,0.8)', 
+        color: 'white', 
+        padding: 10, 
+        borderRadius: 5,
+        fontSize: 12,
+        zIndex: 9999
+      }}>
+        <div>User: {user ? user.name : 'Not logged in'}</div>
+        <div>Job ID: {id}</div>
+        <div>Apply Drawer: {applyDrawerVisible ? 'OPEN' : 'CLOSED'}</div>
+        <div>Has Applied: {hasApplied ? 'YES' : 'NO'}</div>
+        <div>Loading: {loading ? 'YES' : 'NO'}</div>
+      </div>
+
         <Card>
           <Skeleton active paragraph={{ rows: 6 }} />
         </Card>
@@ -387,6 +436,25 @@ const JobDetailPage = () => {
   
   return (
     <div className="job-detail-page">
+      {/* Debug State Display */}
+      <div style={{ 
+        position: 'fixed', 
+        top: 10, 
+        right: 10, 
+        background: 'rgba(0,0,0,0.8)', 
+        color: 'white', 
+        padding: 10, 
+        borderRadius: 5,
+        fontSize: 12,
+        zIndex: 9999
+      }}>
+        <div>User: {user ? user.name : 'Not logged in'}</div>
+        <div>Job ID: {id}</div>
+        <div>Apply Drawer: {applyDrawerVisible ? 'OPEN' : 'CLOSED'}</div>
+        <div>Has Applied: {hasApplied ? 'YES' : 'NO'}</div>
+        <div>Loading: {loading ? 'YES' : 'NO'}</div>
+      </div>
+
       {/* Job Header Card */}
       <Card className="mb-4">
         <Row gutter={24} align="middle">
@@ -437,11 +505,31 @@ const JobDetailPage = () => {
                   type="primary" 
                   size="large" 
                   icon={<SendOutlined />} 
-                  onClick={handleApplyClick}
+                  onClick={() => {
+                    console.log('BUTTON CLICKED!');
+                    console.log('User:', user);
+                    console.log('hasApplied:', hasApplied);
+                    console.log('disabled conditions:', {
+                      hasApplied,
+                      isAfterDeadline: moment().isAfter(job.applicationDeadline),
+                      isPaused: job.status === 'paused'
+                    });
+                    handleApplyClick();
+                  }}
                   disabled={hasApplied || moment().isAfter(job.applicationDeadline) || job.status === 'paused'}
                   style={{ flexGrow: 1 }}
                 >
                   {hasApplied ? 'Đã ứng tuyển' : job.status === 'paused' ? 'Tạm dừng tuyển dụng' : 'Ứng tuyển ngay'}
+                </Button>
+                
+                {/* Backup Apply Button for debugging */}
+                <Button 
+                  type="default" 
+                  size="small" 
+                  onClick={handleSimpleApply}
+                  style={{ marginLeft: 8 }}
+                >
+                  Force Apply
                 </Button>
                 
                 <Tooltip title="Làm mới trạng thái ứng tuyển">
@@ -512,25 +600,16 @@ const JobDetailPage = () => {
       <Row gutter={24}>
         <Col xs={24} lg={16}>
           {/* Job Description */}
-          <Card title="Mô tả công việc" className="mb-4">
-            <div className="rich-text-content">
-              {job.description && parse(job.description)}
-            </div>
-          </Card>
-          
-          {/* Responsibilities */}
-          <Card title="Trách nhiệm" className="mb-4">
-            <div className="rich-text-content">
-              {job.responsibilities && parse(job.responsibilities)}
-            </div>
-          </Card>
+          <div className="job-description mb-4">
+            <h4>Mô tả công việc</h4>
+            {job.description && parse(job.description)}
+          </div>
           
           {/* Requirements */}
-          <Card title="Yêu cầu" className="mb-4">
-            <div className="rich-text-content">
-              {job.requirements && parse(job.requirements)}
-            </div>
-          </Card>
+          <div className="job-requirements mb-4">
+            <h4>Yêu cầu công việc</h4>
+            {job.requirements && parse(job.requirements)}
+          </div>
           
           {/* Benefits */}
           <Card title="Quyền lợi" className="mb-4">
@@ -638,11 +717,11 @@ const JobDetailPage = () => {
         open={applyDrawerVisible}
         bodyStyle={{ paddingBottom: 80 }}
       >
-        <ApplicationForm 
+        {console.log('Drawer render - applyDrawerVisible:', applyDrawerVisible)}
+        <SimpleApplicationForm 
           jobId={id}
           jobTitle={job.title}
           companyName={employer?.companyName}
-          questions={job.questions || []}
           onSuccess={handleApplicationSuccess}
           onCancel={() => setApplyDrawerVisible(false)}
         />

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Nav, Badge, Alert, Tabs, Tab } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Nav, Badge, Alert } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import { FaVideo, FaCalendarAlt, FaClock, FaBuilding, FaMapMarkerAlt, FaBriefcase, FaUser } from 'react-icons/fa';
-import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { selectAuth } from '../../redux/slices/authSlice';
 import './MeetingsPage.scss';
@@ -13,105 +12,99 @@ import {
   calculateDuration,
   filterMeetingsByUser
 } from '../../utils/meetingUtils';
+import axios from 'axios';
 
-// API URL
-const API_URL = 'http://localhost:5000';
+const DATABASE_API_BASE = 'http://localhost:5000';
 
 const MeetingsPage = () => {
-  const [meetings, setMeetings] = useState([]);
   const [categorizedMeetings, setCategorizedMeetings] = useState({ upcoming: [], ongoing: [], past: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('all');
   const { user } = useSelector(selectAuth);
   const location = useLocation();
   
-  // Determine which category to show based on the URL path
-  const getActiveCategory = () => {
-    if (location.pathname.includes('/upcoming')) return 'upcoming';
-    if (location.pathname.includes('/ongoing')) return 'ongoing';
-    if (location.pathname.includes('/past')) return 'past';
-    return 'all'; // Default to show all
-  };
-  
-  const activeCategory = getActiveCategory();
+  useEffect(() => {
+    if (location.pathname.includes('/upcoming')) setActiveTab('upcoming');
+    else if (location.pathname.includes('/ongoing')) setActiveTab('ongoing');
+    else if (location.pathname.includes('/past')) setActiveTab('past');
+    else setActiveTab('all');
+  }, [location.pathname]);
 
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
         setLoading(true);
         setError(null);
-        
-        // Fetch meetings
-        const response = await axios.get(`${API_URL}/meetings`);
-        const meetingsData = response.data;
-        
-        // Process the data to handle both data formats
-        const processedMeetings = meetingsData.map(meeting => {
-          // Get company info
-          const company = meeting.company || {
-            id: 'company1',
-            name: meeting.title.split(' - ')[0] || 'Unknown Company',
-            logo: 'https://randomuser.me/api/portraits/men/40.jpg',
-            location: 'Hồ Chí Minh'
-          };
-          
-          // Get employer info (the host)
-          const employer = meeting.participants ? 
-            meeting.participants.find(p => p.role === 'host' || p.isHost || p.userType === 'employer') : null;
+
+        const response = await axios.get(`${DATABASE_API_BASE}/meetings`);
+        const meetings = response.data || [];
+
+        if (meetings.length > 0) {
+          const processedMeetings = meetings.map(meeting => {
+            const company = meeting.company || {
+              id: 'company1',
+              name: meeting.title?.split(' - ')[0] || 'Unknown Company',
+              logo: 'https://randomuser.me/api/portraits/men/40.jpg',
+              location: 'Hồ Chí Minh'
+            };
             
-          return {
-            ...meeting,
-            company,
-            employer: employer ? {
-              id: employer.userId,
-              name: employer.name || 'Nhà tuyển dụng',
-              avatar: employer.avatar || 'https://randomuser.me/api/portraits/men/41.jpg'
-            } : null,
-            jobPosition: meeting.jobTitle || (meeting.title ? meeting.title.split(' - ')[1] : 'Unknown Position')
-          };
-        });
-        
-        // Filter meetings for this candidate
-        const filteredMeetings = filterMeetingsByUser(processedMeetings, user);
-        
-        setMeetings(filteredMeetings);
-        setCategorizedMeetings(categorizeMeetings(filteredMeetings));
-        setLoading(false);
+            const employer = meeting.participants ? 
+              meeting.participants.find(p => p.role === 'host' || p.isHost || p.userType === 'employer') : null;
+                
+            return {
+              ...meeting,
+              company,
+              employer: employer ? {
+                id: employer.userId,
+                name: employer.name || 'Nhà tuyển dụng',
+                avatar: employer.avatar || 'https://randomuser.me/api/portraits/men/41.jpg'
+              } : null,
+              jobPosition: meeting.jobTitle || (meeting.title ? meeting.title.split(' - ')[1] : 'Unknown Position'),
+              startTime: meeting.scheduledAt || meeting.startTime,
+              endTime: meeting.endedAt || meeting.endTime
+            };
+          });
+          
+          const filteredMeetings = filterMeetingsByUser(processedMeetings, user);
+          setCategorizedMeetings(categorizeMeetings(filteredMeetings));
+        } else {
+          setCategorizedMeetings({ upcoming: [], ongoing: [], past: [] });
+        }
       } catch (error) {
-        console.error('Error fetching meetings:', error);
-        setError('Không thể tải dữ liệu cuộc họp.');
+        console.error('Failed to fetch meetings:', error);
+        setError('Không thể tải dữ liệu cuộc họp');
+      } finally {
         setLoading(false);
       }
     };
 
-    if (user && user.id) {
-    fetchMeetings();
+    if (user) {
+      fetchMeetings();
     }
   }, [user]);
 
   const renderStatusBadge = (status, startTime, endTime) => {
-    // Get the current time
     const now = new Date();
     const meetingStartTime = new Date(startTime);
     const meetingEndTime = new Date(endTime);
     
-    // Determine the effective status based on time
     let effectiveStatus = status;
     
-    // Override status based on time if necessary
     if (meetingStartTime > now && status !== 'cancelled') {
       effectiveStatus = 'scheduled';
     } else if (now >= meetingStartTime && now <= meetingEndTime && status !== 'cancelled') {
-      effectiveStatus = 'ongoing';
+      effectiveStatus = 'active';
     } else if (meetingEndTime < now && status !== 'cancelled') {
-      effectiveStatus = 'completed';
+      effectiveStatus = 'ended';
     }
     
     switch (effectiveStatus) {
       case 'scheduled':
         return <Badge bg="primary">Sắp diễn ra</Badge>;
-      case 'ongoing':
+      case 'active':
         return <Badge bg="success">Đang diễn ra</Badge>;
+      case 'ended':
       case 'completed':
         return <Badge bg="secondary">Đã kết thúc</Badge>;
       case 'cancelled':
@@ -137,6 +130,11 @@ const MeetingsPage = () => {
       return (
         <Alert variant="danger" className="my-3">
           {error}
+          <div className="mt-2">
+            <Button variant="outline-danger" size="sm" onClick={() => window.location.reload()}>
+              Thử lại
+            </Button>
+          </div>
         </Alert>
       );
     }
@@ -152,7 +150,6 @@ const MeetingsPage = () => {
     return (
       <Row>
         {meetingsList.map(meeting => {
-          // Determine meeting status
           const now = new Date();
           const meetingStartTime = new Date(meeting.startTime);
           const meetingEndTime = new Date(meeting.endTime);
@@ -162,119 +159,98 @@ const MeetingsPage = () => {
           const isPast = meetingEndTime < now || meeting.status === 'completed' || meeting.status === 'cancelled';
           
           return (
-            <Col lg={6} key={meeting.id} className="mb-4">
-              <Card className="meeting-card h-100">
-                <Card.Body>
+            <Col lg={6} key={meeting._id || meeting.id} className="mb-4">
+              <Card className="meeting-card h-100 border-0 shadow-sm">
+                <Card.Body className="p-4">
                   <div className="d-flex justify-content-between align-items-start mb-3">
-                    <div className="d-flex align-items-center">
-                      <img 
-                        src={meeting.company.logo} 
-                        alt={meeting.company.name}
-                        className="company-logo"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = 'https://via.placeholder.com/40';
-                        }}
-                      />
-                      <div className="ms-3">
-                        <Card.Title>{meeting.title}</Card.Title>
-                        <div className="company-name">
-                          <FaBuilding className="icon" />
-                          <span>{meeting.company.name}</span>
-                        </div>
-                      </div>
+                    <div className="meeting-header text-center flex-fill">
+                      <Card.Title className="meeting-title mb-0">{meeting.title}</Card.Title>
                     </div>
-                    {renderStatusBadge(meeting.status, meeting.startTime, meeting.endTime)}
+                    <div className="meeting-status">
+                      {renderStatusBadge(meeting.status, meeting.startTime, meeting.endTime)}
+                    </div>
                   </div>
 
                   {meeting.description && (
-                    <div className="meeting-description mt-2 mb-3">
-                      <p>{meeting.description}</p>
+                    <div className="meeting-description mb-3">
+                      <p className="text-muted mb-0">{meeting.description}</p>
                     </div>
                   )}
 
-                  <div className="meeting-details">
-                    <div className="detail-item">
-                      <FaBriefcase className="icon" />
-                      <span>Vị trí: {meeting.jobPosition}</span>
-                    </div>
-                    {meeting.employer && (
+                  <div className="meeting-details-grid">
+                    <div className="detail-row">
                       <div className="detail-item">
-                        <FaUser className="icon" />
-                        <span>Người phỏng vấn: {meeting.employer.name}</span>
+                        <FaBuilding className="detail-icon" />
+                        <span >Công ty:</span>
+                        <span className="detail-value">{meeting.company.name}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="detail-row">
+                      <div className="detail-item">
+                        <FaBriefcase className="detail-icon" />
+                        <span >Vị trí:</span>
+                        <span className="detail-value">{meeting.jobPosition}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="detail-row">
+                      <div className="detail-item">
+                        <FaCalendarAlt className="detail-icon" />
+                        <span >Thời gian:</span>
+                        <span className="detail-value">{formatDateTime(meeting.startTime)}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="detail-row">
+                      <div className="detail-item">
+                        <FaClock className="detail-icon" />
+                        <span >Thời lượng:</span>
+                        <span className="detail-value">{calculateDuration(meeting.startTime, meeting.endTime)}</span>
+                      </div>
+                    </div>
+                    
+                    {meeting.company.location && (
+                      <div className="detail-row">
+                        <div className="detail-item">
+                          <FaMapMarkerAlt className="detail-icon" />
+                          <span >Địa điểm:</span>
+                          <span className="detail-value">{meeting.company.location}</span>
+                        </div>
                       </div>
                     )}
-                    <div className="detail-item">
-                      <FaMapMarkerAlt className="icon" />
-                      <span>Địa điểm: {meeting.company.location || 'Online'}</span>
-                    </div>
-                    <div className="detail-item">
-                      <FaCalendarAlt className="icon" />
-                      <span>{formatDateTime(meeting.startTime)}</span>
-                    </div>
-                    <div className="detail-item highlight">
-                      <FaClock className="icon" />
-                      <span>
-                        {isUpcoming 
-                          ? formatTimeRemaining(meeting.startTime) 
-                          : isOngoing ? 'Đang diễn ra' : 'Đã kết thúc'}
-                      </span>
-                    </div>
+                    
+                    {meeting.employer && (
+                      <div className="detail-row">
+                        <div className="detail-item">
+                          <FaUser className="detail-icon" />
+                          <span >Người phỏng vấn:</span>
+                          <span className="detail-value">{meeting.employer.name}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  {isOngoing && (
-                    <Alert variant="success" className="mt-3 mb-0">
+                  <div className="meeting-actions mt-4 d-flex gap-2">
+                    <Link 
+                      to={`/candidate/meetings/${meeting._id || meeting.id}`}
+                      className="btn btn-outline-primary flex-fill"
+                    >
                       <FaVideo className="me-2" />
-                      Cuộc họp đang diễn ra. Bạn có thể tham gia ngay bây giờ!
-                    </Alert>
-                  )}
-
-                  {isUpcoming && meetingStartTime - now < 3600000 && (
-                    <Alert variant="info" className="mt-3 mb-0">
-                      <FaClock className="me-2" />
-                      Cuộc họp sắp bắt đầu. Hãy chuẩn bị sẵn sàng!
-                    </Alert>
-                  )}
-                </Card.Body>
-                <Card.Footer>
-                  <div className="d-flex justify-content-between align-items-center">
-                    {meeting.jobId ? (
-                      <Link to={`/candidate/jobs/${meeting.jobId}`}>
-                        <Button variant="outline-primary" size="sm">
-                          Xem thông tin công việc
-                        </Button>
-                      </Link>
-                    ) : (
-                      <span></span>
-                    )}
-
+                      Chi tiết
+                    </Link>
+                    
                     {isOngoing && (
-                      <div className="d-flex gap-2">
-                        <Link to={`/meeting/${meeting.id}`}>
-                          <Button variant="success" className="join-button">
-                            <FaVideo className="me-2" />
-                            Tham gia ngay
-                          </Button>
-                        </Link>
-                        <Link to={`/candidate/meetings/${meeting.id}`}>
-                          <Button variant="outline-primary">Chi tiết</Button>
-                        </Link>
-                      </div>
-                    )}
-                    
-                    {isUpcoming && (
-                      <Link to={`/candidate/meetings/${meeting.id}`}>
-                        <Button variant="outline-primary">Chi tiết</Button>
-                      </Link>
-                    )}
-                    
-                    {isPast && (
-                      <Link to={`/candidate/meetings/${meeting.id}`}>
-                        <Button variant="outline-secondary">Kết quả</Button>
+                      <Link 
+                        to={`/candidate/meetings/${meeting._id || meeting.id}`}
+                        className="btn btn-success flex-fill"
+                      >
+                        <FaVideo className="me-2" />
+                        Tham gia ngay
                       </Link>
                     )}
                   </div>
-                </Card.Footer>
+                </Card.Body>
               </Card>
             </Col>
           );
@@ -283,9 +259,8 @@ const MeetingsPage = () => {
     );
   };
 
-  // Determine which meetings to display based on active category
   const getMeetingsToDisplay = () => {
-    switch (activeCategory) {
+    switch (activeTab) {
       case 'upcoming':
         return categorizedMeetings.upcoming;
       case 'ongoing':
@@ -293,23 +268,18 @@ const MeetingsPage = () => {
       case 'past':
         return categorizedMeetings.past;
       default:
-        return meetings;
+        return [...categorizedMeetings.upcoming, ...categorizedMeetings.ongoing, ...categorizedMeetings.past];
     }
   };
 
   return (
-    <>
-      {meetings.length === 0 && !loading && !error ? (
-        <div className="text-center py-5">
-          <h4>Bạn chưa có cuộc họp nào</h4>
-          <p className="text-muted mt-3">
-            Các cuộc phỏng vấn sẽ xuất hiện ở đây khi nhà tuyển dụng mời bạn tham gia
-          </p>
-          </div>
-      ) : (
-        renderMeetingCards(getMeetingsToDisplay())
-      )}
-    </>
+    <Container fluid className="meetings-page">
+      
+
+      <div className="meetings-content">
+        {renderMeetingCards(getMeetingsToDisplay())}
+      </div>
+    </Container>
   );
 };
 

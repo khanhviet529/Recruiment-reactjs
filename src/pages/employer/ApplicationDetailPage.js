@@ -729,11 +729,11 @@ const ApplicationDetailPage = () => {
                     {application?.resume?.name || 'Xem CV ứng viên'}
                   </Button>
                 )}
-                {candidate.id && (
+                {/* {candidate.id && (
                   <Link to={`/employer/candidates/${candidate.id}`}>
                     <Button block>Xem hồ sơ chi tiết</Button>
                   </Link>
-                )}
+                )} */}
               </div>
             </div>
           </Card>

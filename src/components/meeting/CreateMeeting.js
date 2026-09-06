@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Card, Row, Col, Alert } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Container, Card, Form, Button, Row, Col, Alert, Badge, ListGroup } from 'react-bootstrap';
+import { useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectAuth } from '../../redux/slices/authSlice';
 import DatePicker from 'react-datepicker';
 import Select from 'react-select';
 import axios from 'axios';
-import { FaVideo, FaCalendarAlt, FaExclamationTriangle } from 'react-icons/fa';
+import { FaVideo, FaCalendarAlt, FaExclamationTriangle, FaClock, FaSave, FaUserPlus, FaUser, FaTimes, FaArrowLeft } from 'react-icons/fa';
 import { registerLocale } from 'react-datepicker';
 import vi from 'date-fns/locale/vi';
 import "react-datepicker/dist/react-datepicker.css";
 import './CreateMeeting.scss';
+import { getCandidateAvatar } from '../../utils/avatarUtils';
 
 // API URL
 const API_URL = 'http://localhost:5000';
@@ -47,6 +48,18 @@ const CreateMeeting = () => {
   const endTime = new Date(startTime);
   endTime.setMinutes(endTime.getMinutes() + parseInt(duration));
 
+  // Format date for form display
+  const formatDateForForm = (date) => {
+    if (!date) return '';
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
   // Fetch jobs on component mount
   useEffect(() => {
     const fetchJobs = async () => {
@@ -65,7 +78,7 @@ const CreateMeeting = () => {
           data: job
         })));
         setJobsLoading(false);
-            } catch (error) {
+      } catch (error) {
         console.error('Error fetching jobs:', error);
         setJobsLoading(false);
       }
@@ -79,7 +92,10 @@ const CreateMeeting = () => {
         setCandidates(candidatesResponse.data.map(candidate => ({
           value: candidate.id || candidate.userId,
           label: `${candidate.firstName || ''} ${candidate.lastName || ''}`.trim() || candidate.email,
-          data: candidate
+          data: {
+            ...candidate,
+            avatar: getCandidateAvatar(candidate)
+          }
         })));
         
         setCandidatesLoading(false);
@@ -163,7 +179,7 @@ const CreateMeeting = () => {
 
   if (!canCreateMeeting) {
     return (
-      <div className="create-meeting-container">
+      <Container className="mt-4 mb-4">
         <Card className="permission-denied-card">
           <Card.Body className="text-center">
             <FaExclamationTriangle size={50} className="mb-3 text-warning" />
@@ -174,7 +190,7 @@ const CreateMeeting = () => {
             </Button>
           </Card.Body>
         </Card>
-      </div>
+      </Container>
     );
   }
 
@@ -256,7 +272,7 @@ const CreateMeeting = () => {
         userId: user.id,
         name: user.name,
         email: user.email || '',
-        avatar: user.avatar || '',
+        avatar: user.avatar || user.profilePicture || '',
         userType: 'employer',
         role: 'host',
         isHost: true
@@ -329,6 +345,17 @@ const CreateMeeting = () => {
     }
   };
 
+  const handleAddCandidates = () => {
+    if (!selectedCandidates || selectedCandidates.length === 0) return;
+    
+    // Add new candidates to the main list
+    setSelectedCandidates(prev => [...prev, ...selectedCandidates]);
+  };
+
+  const handleRemoveCandidate = (candidateId) => {
+    setSelectedCandidates(prev => prev.filter(c => c.value !== candidateId));
+  };
+
   // Custom option component for candidate selection
   const CustomOption = ({ innerProps, label, data }) => (
     <div {...innerProps} className="d-flex align-items-center p-2">
@@ -351,192 +378,215 @@ const CreateMeeting = () => {
     </div>
   );
 
-  // Custom single value component
-  const CustomSingleValue = ({ data }) => (
-    <div className="d-flex align-items-center">
-      <img 
-        src={data.data.avatar || 'https://via.placeholder.com/40'} 
-        alt={data.label}
-        className="rounded-circle me-2"
-        style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = 'https://via.placeholder.com/40';
-        }}
-      />
-      <div>
-        <div className="fw-bold">{data.label}</div>
-        {data.data.email && (
-          <div className="small text-muted">{data.data.email}</div>
-        )}
-      </div>
-    </div>
-  );
-
   return (
-    <div className="create-meeting-container">
-      <Card className="create-meeting-card">
-        <Card.Header className="bg-primary text-white">
-          <h4 className="mb-0">
-            <FaVideo className="me-2" />
-            Tạo cuộc họp phỏng vấn mới
-          </h4>
-        </Card.Header>
-        
-        <Card.Body>
-          {error && (
-            <Alert variant="danger" className="mb-4">
-              {error}
-            </Alert>
-          )}
+    <div className="meeting-detail-page">
+      <Container className="mt-4 mb-4">
+        <div className="mb-4 d-flex justify-content-between align-items-center">
+          <Link to="/employer/meetings" className="back-link">
+            <FaArrowLeft className="me-2" />
+            Quay lại danh sách cuộc họp
+          </Link>
+        </div>
+
+        <Card className="meeting-edit-card">
+          <Card.Header>
+            <h4><FaVideo className="me-2" />Tạo cuộc họp phỏng vấn mới</h4>
+          </Card.Header>
           
-          {success && (
-            <Alert variant="success" className="mb-4">
-              Cuộc họp đã được tạo thành công! Đang chuyển hướng...
-            </Alert>
-          )}
+          <Card.Body>
+            {error && (
+              <Alert variant="danger" className="mb-4">
+                {error}
+              </Alert>
+            )}
+            
+            {success && (
+              <Alert variant="success" className="mb-4">
+                Cuộc họp đã được tạo thành công! Đang chuyển hướng...
+              </Alert>
+            )}
 
-          <Form onSubmit={handleCreateMeeting}>
-            <Row>
-              <Col md={6}>
-                <Form.Group className="mb-4">
-                  <Form.Label>Công việc liên quan</Form.Label>
-                  <Select
-                    options={jobs}
-                    isLoading={jobsLoading}
-                    onChange={setSelectedJob}
-                    value={selectedJob}
-                    isClearable
-                    placeholder="Chọn công việc (không bắt buộc)"
-                    noOptionsMessage={() => "Không có công việc nào"}
-                    className="react-select-container"
-                    classNamePrefix="react-select"
-                  />
-                  <Form.Text className="text-muted">
-                    Chọn công việc sẽ giúp lọc ứng viên đã ứng tuyển cho vị trí này
-                  </Form.Text>
-                </Form.Group>
+            <Form onSubmit={handleCreateMeeting}>
+              <Form.Group className="mb-3">
+                <Form.Label>Công việc liên quan</Form.Label>
+                <Select
+                  options={jobs}
+                  isLoading={jobsLoading}
+                  onChange={setSelectedJob}
+                  value={selectedJob}
+                  isClearable
+                  placeholder="Chọn công việc (không bắt buộc)"
+                  noOptionsMessage={() => "Không có công việc nào"}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
+                <Form.Text className="text-muted">
+                  Chọn công việc sẽ giúp lọc ứng viên đã ứng tuyển cho vị trí này
+                </Form.Text>
+              </Form.Group>
 
-                <Form.Group className="mb-4">
-                  <Form.Label>Tiêu đề cuộc họp *</Form.Label>
-              <Form.Control
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                    placeholder={selectedJob ? `Phỏng vấn - ${selectedJob.label}` : "Nhập tiêu đề cuộc họp"}
-                required
-                    disabled={!!selectedJob}
-              />
-            </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Tiêu đề cuộc họp <span className="text-danger">*</span></Form.Label>
+                <Form.Control
+                  type="text"
+                  value={selectedJob ? `Phỏng vấn - ${selectedJob.label}` : title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder={selectedJob ? `Phỏng vấn - ${selectedJob.label}` : "Nhập tiêu đề cuộc họp"}
+                  required
+                  disabled={!!selectedJob}
+                />
+              </Form.Group>
 
-                <Form.Group className="mb-4">
-                  <Form.Label>Mô tả</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Nhập mô tả về nội dung cuộc họp"
-                  />
-                </Form.Group>
-              </Col>
-              
-              <Col md={6}>
-                <Form.Group className="mb-4">
-                  <Form.Label>Thời gian bắt đầu *</Form.Label>
-                  <div className="d-flex align-items-center">
-                    <FaCalendarAlt className="me-2 text-primary" />
-                    <DatePicker
-                      selected={startTime}
-                      onChange={setStartTime}
-                      showTimeSelect
-                      timeFormat="HH:mm"
-                      timeIntervals={15}
-                      dateFormat="dd/MM/yyyy HH:mm"
-                      timeCaption="Giờ"
-                      locale="vi"
-                      minDate={new Date()}
-                      className="form-control"
+              <Form.Group className="mb-3">
+                <Form.Label>Mô tả</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Nhập mô tả về nội dung cuộc họp"
+                />
+              </Form.Group>
+
+              <Row>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label><FaCalendarAlt className="me-2" />Thời gian bắt đầu <span className="text-danger">*</span></Form.Label>
+                    <Form.Control
+                      type="datetime-local"
+                      value={formatDateForForm(startTime)}
+                      onChange={(e) => setStartTime(new Date(e.target.value))}
+                      required
                     />
-                  </div>
-                </Form.Group>
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label><FaClock className="me-2" />Thời lượng (phút) <span className="text-danger">*</span></Form.Label>
+                    <Form.Select
+                      value={duration}
+                      onChange={(e) => setDuration(e.target.value)}
+                      required
+                    >
+                      <option value="30">30 phút</option>
+                      <option value="45">45 phút</option>
+                      <option value="60">60 phút</option>
+                      <option value="90">90 phút</option>
+                      <option value="120">120 phút</option>
+                    </Form.Select>
+                    <Form.Text className="text-muted">
+                      Thời gian kết thúc: {endTime ? endTime.toLocaleString('vi-VN') : 'Chưa xác định'}
+                    </Form.Text>
+                  </Form.Group>
+                </Col>
+              </Row>
 
-                <Form.Group className="mb-4">
-                  <Form.Label>Thời lượng (phút) *</Form.Label>
-                  <Form.Select
-                    value={duration}
-                    onChange={(e) => setDuration(e.target.value)}
-                    required
+              <Form.Group className="mb-3">
+                <Form.Label>Thêm ứng viên <span className="text-danger">*</span></Form.Label>
+                <Select
+                  options={filteredCandidates}
+                  isLoading={candidatesLoading}
+                  isMulti
+                  onChange={setSelectedCandidates}
+                  value={selectedCandidates}
+                  placeholder={selectedJob 
+                    ? "Chọn từ ứng viên đã ứng tuyển vị trí này" 
+                    : "Chọn ứng viên để mời tham gia"
+                  }
+                  noOptionsMessage={() => selectedJob 
+                    ? "Không có ứng viên nào đã ứng tuyển vị trí này" 
+                    : "Không có ứng viên nào"
+                  }
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  components={{
+                    Option: CustomOption
+                  }}
+                  styles={{
+                    option: (base) => ({
+                      ...base,
+                      padding: 0
+                    })
+                  }}
+                />
+                {selectedJob && filteredCandidates.length === 0 && !candidatesLoading && (
+                  <Alert variant="warning" className="mt-2 p-2 small">
+                    Chưa có ứng viên nào ứng tuyển vào vị trí này. Hãy chọn vị trí khác hoặc bỏ chọn vị trí.
+                  </Alert>
+                )}
+              </Form.Group>
+
+              {/* Selected Candidates List */}
+              {selectedCandidates.length > 0 && (
+                <Card className="mb-4">
+                  <Card.Header>
+                    <h5 className="mb-0">
+                      <FaUser className="me-2" />
+                      Ứng viên đã chọn ({selectedCandidates.length})
+                    </h5>
+                  </Card.Header>
+                  <Card.Body>
+                    <ListGroup variant="flush">
+                      {selectedCandidates.map((candidate) => (
+                        <ListGroup.Item key={candidate.value} className="d-flex align-items-center justify-content-between px-0">
+                          <div className="d-flex align-items-center">
+                            <img
+                              src={candidate.data.avatar || 'https://via.placeholder.com/50'}
+                              alt={candidate.label}
+                              className="rounded-circle me-3"
+                              style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = 'https://via.placeholder.com/50';
+                              }}
+                            />
+                            <div>
+                              <div className="fw-bold">{candidate.label}</div>
+                              {candidate.data.email && (
+                                <small className="text-muted">{candidate.data.email}</small>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="ms-3">
+                            <Button 
+                              variant="outline-danger" 
+                              size="sm"
+                              onClick={() => handleRemoveCandidate(candidate.value)}
+                            >
+                              <FaTimes className="me-1" /> Xóa
+                            </Button>
+                          </div>
+                        </ListGroup.Item>
+                      ))}
+                    </ListGroup>
+                  </Card.Body>
+                </Card>
+              )}
+
+              <div className="d-flex justify-content-end mt-4">
+                <Link to="/employer/meetings">
+                  <Button 
+                    variant="secondary" 
+                    className="me-2"
+                    disabled={loading}
                   >
-                    <option value="15">15 phút</option>
-                    <option value="30">30 phút</option>
-                    <option value="45">45 phút</option>
-                    <option value="60">1 giờ</option>
-                    <option value="90">1 giờ 30 phút</option>
-                    <option value="120">2 giờ</option>
-                  </Form.Select>
-                  <Form.Text className="text-muted">
-                    Thời gian kết thúc: {endTime.toLocaleString('vi-VN')}
-                  </Form.Text>
-                </Form.Group>
-
-                <Form.Group className="mb-4">
-                  <Form.Label>Chọn ứng viên *</Form.Label>
-                  <Select
-                    options={filteredCandidates}
-                    isLoading={candidatesLoading}
-                    isMulti
-                    onChange={setSelectedCandidates}
-                    value={selectedCandidates}
-                    placeholder={selectedJob 
-                      ? "Chọn từ ứng viên đã ứng tuyển vị trí này" 
-                      : "Chọn ứng viên để mời tham gia"
-                    }
-                    noOptionsMessage={() => selectedJob 
-                      ? "Không có ứng viên nào đã ứng tuyển vị trí này" 
-                      : "Không có ứng viên nào"
-                    }
-                    className="react-select-container"
-                    classNamePrefix="react-select"
-                    components={{
-                      Option: CustomOption,
-                      SingleValue: CustomSingleValue
-                    }}
-                    styles={{
-                      option: (base) => ({
-                        ...base,
-                        padding: 0
-                      })
-                    }}
-                  />
-                  {selectedJob && filteredCandidates.length === 0 && !candidatesLoading && (
-                    <Alert variant="warning" className="mt-2 p-2 small">
-                      Chưa có ứng viên nào ứng tuyển vào vị trí này. Hãy chọn vị trí khác hoặc bỏ chọn vị trí.
-                    </Alert>
-                  )}
-                </Form.Group>
-              </Col>
-            </Row>
-
-            <div className="d-flex justify-content-between mt-4">
-              <Button 
-                variant="outline-secondary"
-                onClick={() => navigate(-1)}
-                disabled={loading}
-              >
-                Hủy
-              </Button>
-              <Button 
-                variant="primary" 
-                type="submit" 
-                disabled={loading || success}
-              >
-                {loading ? 'Đang tạo...' : 'Tạo cuộc họp'}
-              </Button>
-            </div>
-          </Form>
-        </Card.Body>
-      </Card>
+                    Hủy
+                  </Button>
+                </Link>
+                <Button 
+                  type="submit" 
+                  variant="primary"
+                  disabled={loading || success}
+                >
+                  <FaSave className="me-2" />
+                  {loading ? 'Đang tạo...' : 'Tạo cuộc họp'}
+                </Button>
+              </div>
+            </Form>
+          </Card.Body>
+        </Card>
+      </Container>
     </div>
   );
 };

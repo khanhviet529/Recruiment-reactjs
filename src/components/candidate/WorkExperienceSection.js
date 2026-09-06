@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -17,23 +17,54 @@ const WorkExperienceSection = ({ candidate, setCandidate }) => {
   const [editMode, setEditMode] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
 
-  const handleWorkExperienceSubmit = async (values) => {
+  // Debug effect to track candidate prop changes
+  useEffect(() => {
+    console.log('🔍 WorkExperienceSection - Candidate prop:', candidate);
+    if (candidate && candidate.workExperiences) {
+      console.log('🔍 WorkExperienceSection - Data:', candidate.workExperiences);
+      console.log('🔍 WorkExperienceSection - Count:', candidate.workExperiences?.length || 0);
+    }
+  }, [candidate]);
+
+
+const handleWorkExperienceSubmit = async (values) => {
     try {
+      console.log('🔄 Submitting work experience data:', values);
+      
+      // SAFETY CHECK: Get current candidate data first to preserve all fields
+      let currentCandidateData = {};
+      try {
+        const currentResponse = await axios.get(`http://localhost:5000/candidates/${candidate.id}`);
+        currentCandidateData = currentResponse.data;
+        console.log('📦 Current candidate data:', currentCandidateData);
+      } catch (error) {
+        console.warn('⚠️ Could not fetch current candidate data, using props:', error);
+        currentCandidateData = candidate;
+      }
+      
       // Format dates to strings
       const formattedValues = {
         ...values,
         startDate: values.startDate,
-        endDate: values.endDate
+        endDate: values.endDate,
+        id: editingItem ? editingItem.id : Date.now().toString()
       };
 
       const updatedExperiences = editingItem
-        ? candidate.workExperiences.map(exp => exp.id === editingItem.id ? formattedValues : exp)
-        : [...(candidate.workExperiences || []), { ...formattedValues, id: Date.now().toString() }];
+        ? (currentCandidateData.workExperiences || []).map(exp => exp.id === editingItem.id ? formattedValues : exp)
+        : [...(currentCandidateData.workExperiences || []), formattedValues];
 
-      const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, {
-        ...candidate,
+      console.log('💼 Updated work experiences:', updatedExperiences);
+
+      // Preserve ALL existing fields, only update workExperiences
+      const updatedCandidate = {
+        ...currentCandidateData, // Keep all existing data
         workExperiences: updatedExperiences,
-      });
+        updatedAt: new Date().toISOString()
+      };
+
+      console.log('📝 Sending updated candidate data');
+      const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, updatedCandidate);
 
       setCandidate(response.data);
       setEditMode(null);
@@ -44,15 +75,37 @@ const WorkExperienceSection = ({ candidate, setCandidate }) => {
   };
 
   const handleWorkExperienceDelete = async (id) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa kinh nghiệm làm việc này?')) return;
+
     try {
-      const updatedExperiences = candidate.workExperiences.filter(exp => exp.id !== id);
-      const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, {
-        ...candidate,
-        workExperiences: updatedExperiences,
-      });
+      console.log('🗑️ Deleting work experience with id:', id);
+      
+      // SAFETY CHECK: Get current candidate data first
+      let currentCandidateData = {};
+      try {
+        const currentResponse = await axios.get(`http://localhost:5000/candidates/${candidate.id}`);
+        currentCandidateData = currentResponse.data;
+      } catch (error) {
+        console.warn('⚠️ Could not fetch current candidate data, using props:', error);
+        currentCandidateData = candidate;
+      }
+      
+      const updatedWorkExperiences = (currentCandidateData.workExperiences || []).filter(exp => exp.id !== id);
+      
+      // Preserve ALL existing fields, only update workExperiences
+      const updatedCandidate = {
+        ...currentCandidateData, // Keep all existing data
+        workExperiences: updatedWorkExperiences,
+        updatedAt: new Date().toISOString()
+      };
+
+      console.log('📝 Sending updated candidate data');
+      const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, updatedCandidate);
       setCandidate(response.data);
+      alert('Kinh nghiệm làm việc đã được xóa thành công!');
     } catch (error) {
       console.error('Error deleting work experience:', error);
+      alert('Có lỗi xảy ra khi xóa kinh nghiệm làm việc!');
     }
   };
 

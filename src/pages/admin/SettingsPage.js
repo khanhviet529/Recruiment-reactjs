@@ -19,6 +19,7 @@ import {
   List,
   Tag
 } from 'antd';
+import ImageUploader from '../../components/common/ImageUploader';
 import { 
   UserOutlined, 
   UploadOutlined, 
@@ -30,7 +31,8 @@ import {
   SafetyCertificateOutlined,
   TeamOutlined
 } from '@ant-design/icons';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateUserProfile } from '../../redux/slices/authSlice';
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -44,6 +46,7 @@ const SettingsPage = () => {
   const [generalSettingsForm] = Form.useForm();
   const [emailSettingsForm] = Form.useForm();
   const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   
   const [currentRoles, setCurrentRoles] = useState([
     { id: 'admin', name: 'Quản trị viên', permissions: ['all'] },
@@ -191,6 +194,74 @@ const SettingsPage = () => {
     });
   };
 
+  // Handle avatar upload success
+  const handleAvatarUploadSuccess = async (uploadResult) => {
+    try {
+      console.log('Admin avatar upload success:', uploadResult.url);
+      
+      // Update user in database
+      if (user && user.id) {
+        await updateUserAvatar(user.id, uploadResult.url);
+        
+        // Update Redux state
+        dispatch(updateUserProfile({
+          ...user,
+          profilePicture: uploadResult.url
+        }));
+        
+        message.success('Cập nhật ảnh đại diện thành công!');
+      }
+    } catch (error) {
+      console.error('Error updating admin avatar:', error);
+      message.error('Có lỗi xảy ra khi cập nhật ảnh đại diện');
+    }
+  };
+
+  // Handle avatar upload error
+  const handleAvatarUploadError = (error) => {
+    console.error('Admin avatar upload error:', error);
+    message.error('Không thể tải ảnh lên. Vui lòng thử lại sau.');
+  };
+
+  // Update user avatar in database
+  const updateUserAvatar = async (userId, imageUrl) => {
+    try {
+      const getCurrentResponse = await axios.get(`http://localhost:5000/users/${userId}`);
+      const currentUser = getCurrentResponse.data;
+
+      const updatedUser = {
+        ...currentUser,
+        profilePicture: imageUrl,
+        updatedAt: new Date().toISOString()
+      };
+
+      const response = await axios.put(`http://localhost:5000/users/${userId}`, updatedUser);
+      
+      if (response.data) {
+        console.log('Admin user avatar updated successfully:', response.data);
+        return true;
+      }
+    } catch (error) {
+      console.error('Error updating admin user avatar:', error);
+      
+      // Try PATCH method
+      try {
+        const patchResponse = await axios.patch(`http://localhost:5000/users/${userId}`, {
+          profilePicture: imageUrl,
+          updatedAt: new Date().toISOString()
+        });
+        if (patchResponse.data) {
+          console.log('Admin user avatar updated with PATCH:', patchResponse.data);
+          return true;
+        }
+      } catch (patchError) {
+        console.error('PATCH method also failed for admin user avatar:', patchError);
+        throw patchError;
+      }
+    }
+    return false;
+  };
+
   return (
     <div className="admin-settings-page">
       <Title level={2}>Cài đặt hệ thống</Title>
@@ -209,27 +280,31 @@ const SettingsPage = () => {
           <Row gutter={24}>
             <Col span={8}>
               <Card>
-                <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                <div className="text-center">
                   <Avatar 
-                    size={100} 
+                    size={80} 
                     icon={<UserOutlined />} 
-                    style={{ backgroundColor: '#1890ff' }}
+                    src={user?.profilePicture}
+                    style={{ marginBottom: 16 }}
                   />
-                  <Title level={4} style={{ marginTop: 16, marginBottom: 4 }}>
-                    {user?.fullName || 'Admin User'}
+                  <Title level={4} style={{ marginBottom: 4 }}>
+                    {user?.fullName || user?.name || 'Admin User'}
                   </Title>
                   <Text type="secondary">{user?.email || 'admin@jobportal.com'}</Text>
                   
                   <Divider />
                   
-                  <Upload
-                    name="avatar"
-                    listType="picture"
-                    maxCount={1}
-                    beforeUpload={() => false}
-                  >
-                    <Button icon={<UploadOutlined />}>Thay đổi ảnh đại diện</Button>
-                  </Upload>
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <ImageUploader
+                      currentImageUrl={user?.profilePicture}
+                      onUploadSuccess={handleAvatarUploadSuccess}
+                      onUploadError={handleAvatarUploadError}
+                      isProfilePicture={true}
+                      size={80}
+                      shape="circle"
+                      placeholder={user?.fullName?.charAt(0).toUpperCase() || user?.name?.charAt(0).toUpperCase() || 'A'}
+                    />
+                  </div>
                 </div>
               </Card>
             </Col>

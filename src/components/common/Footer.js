@@ -1,173 +1,118 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import '../../assets/scss/main.scss';
+
+// Helper function to scroll to top when clicking links
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'smooth'
+  });
+};
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="main-footer bg-light py-5">
+    <footer className="text-white py-4" style={{ backgroundColor: '#000D2C' }}>
       <div className="container">
         <div className="row">
-          {/* Company info */}
-          <div className="col-lg-4 mb-4 mb-lg-0">
-            <h5 className="text-primary fw-bold mb-4">JobConnect</h5>
-            <p className="text-muted">
-              Connecting talented professionals with the best job opportunities. Find your dream job or the perfect candidate for your company.
-            </p>
-            <div className="social-media mt-4">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="me-3 text-secondary">
-                <i className="fab fa-facebook-f"></i>
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="me-3 text-secondary">
-                <i className="fab fa-twitter"></i>
-              </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="me-3 text-secondary">
-                <i className="fab fa-linkedin-in"></i>
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-secondary">
-                <i className="fab fa-instagram"></i>
-              </a>
-            </div>
-          </div>
-
-          {/* Quick links */}
-          <div className="col-lg-2 col-6 mb-4 mb-lg-0">
-            <h6 className="fw-bold mb-4">Quick Links</h6>
+          {/* Về JobConnect */}
+          <div className="col-md-3 mb-4">
+            <h5 className="text-white mb-3">Về JobConnect</h5>
             <ul className="list-unstyled">
               <li className="mb-2">
-                <Link to="/" className="text-decoration-none text-secondary">
-                  Home
-                </Link>
+                <Link to="/" className="text-white text-decoration-none" onClick={scrollToTop}>Trang chủ</Link>
               </li>
               <li className="mb-2">
-                <Link to="/jobs" className="text-decoration-none text-secondary">
-                  Find Jobs
-                </Link>
+                <Link to="/about" className="text-white text-decoration-none" onClick={scrollToTop}>Về chúng tôi</Link>
               </li>
               <li className="mb-2">
-                <Link to="/companies" className="text-decoration-none text-secondary">
-                  Companies
-                </Link>
-              </li>
-              <li className="mb-2">
-                <Link to="/about" className="text-decoration-none text-secondary">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-decoration-none text-secondary">
-                  Contact
-                </Link>
+                <Link to="/contact" className="text-white text-decoration-none" onClick={scrollToTop}>Liên hệ</Link>
               </li>
             </ul>
           </div>
 
-          {/* For employers */}
-          <div className="col-lg-2 col-6 mb-4 mb-lg-0">
-            <h6 className="fw-bold mb-4">For Employers</h6>
+          {/* Dành cho ứng viên */}
+          <div className="col-md-3 mb-4">
+            <h5 className="text-white mb-3">Dành cho ứng viên</h5>
             <ul className="list-unstyled">
               <li className="mb-2">
-                <Link to="/employer/post-job" className="text-decoration-none text-secondary">
-                  Post a Job
-                </Link>
+                <Link to="/jobs" className="text-white text-decoration-none" onClick={scrollToTop}>Tìm việc làm</Link>
               </li>
               <li className="mb-2">
-                <Link to="/employer/dashboard" className="text-decoration-none text-secondary">
-                  Employer Dashboard
-                </Link>
+                <Link to="/jobs/search" className="text-white text-decoration-none" onClick={scrollToTop}>Tìm kiếm nâng cao</Link>
               </li>
               <li className="mb-2">
-                <Link to="/pricing" className="text-decoration-none text-secondary">
-                  Pricing Plans
-                </Link>
+                <Link to="/companies" className="text-white text-decoration-none" onClick={scrollToTop}>Danh sách công ty</Link>
               </li>
               <li className="mb-2">
-                <Link to="/employer/resources" className="text-decoration-none text-secondary">
-                  Resources
-                </Link>
-              </li>
-              <li>
-                <Link to="/employer/faq" className="text-decoration-none text-secondary">
-                  FAQ
-                </Link>
+                <Link to="/candidate/register" className="text-white text-decoration-none" onClick={scrollToTop}>Đăng ký ứng viên</Link>
               </li>
             </ul>
           </div>
 
-          {/* For candidates */}
-          <div className="col-lg-2 col-6 mb-4 mb-lg-0">
-            <h6 className="fw-bold mb-4">For Candidates</h6>
+          {/* Dành cho nhà tuyển dụng */}
+          <div className="col-md-3 mb-4">
+            <h5 className="text-white mb-3">Dành cho nhà tuyển dụng</h5>
             <ul className="list-unstyled">
               <li className="mb-2">
-                <Link to="/applicant/browse-jobs" className="text-decoration-none text-secondary">
-                  Browse Jobs
-                </Link>
+                <Link to="/employer/register" className="text-white text-decoration-none" onClick={scrollToTop}>Đăng ký nhà tuyển dụng</Link>
               </li>
               <li className="mb-2">
-                <Link to="/applicant/dashboard" className="text-decoration-none text-secondary">
-                  Candidate Dashboard
-                </Link>
+                <Link to="/employer/login" className="text-white text-decoration-none" onClick={scrollToTop}>Đăng nhập</Link>
               </li>
               <li className="mb-2">
-                <Link to="/applicant/resources" className="text-decoration-none text-secondary">
-                  Career Resources
-                </Link>
+                <Link to="/companies" className="text-white text-decoration-none" onClick={scrollToTop}>Hồ sơ công ty</Link>
               </li>
               <li className="mb-2">
-                <Link to="/applicant/profile" className="text-decoration-none text-secondary">
-                  Create Profile
-                </Link>
-              </li>
-              <li>
-                <Link to="/applicant/faq" className="text-decoration-none text-secondary">
-                  FAQ
-                </Link>
+                <Link to="/jobs" className="text-white text-decoration-none" onClick={scrollToTop}>Xem việc làm</Link>
               </li>
             </ul>
           </div>
 
-          {/* Contact info */}
-          <div className="col-lg-2 col-6">
-            <h6 className="fw-bold mb-4">Contact</h6>
+          {/* Hỗ trợ */}
+          <div className="col-md-3 mb-4">
+            <h5 className="text-white mb-3">Hỗ trợ</h5>
             <ul className="list-unstyled">
-              <li className="mb-2 text-secondary">
-                <i className="fas fa-map-marker-alt me-2"></i> 123 Main Street, City
+              <li className="mb-2">
+                <Link to="/candidate/login" className="text-white text-decoration-none" onClick={scrollToTop}>Đăng nhập</Link>
               </li>
-              <li className="mb-2 text-secondary">
-                <i className="fas fa-phone me-2"></i> (123) 456-7890
+              <li className="mb-2">
+                <Link to="/contact" className="text-white text-decoration-none" onClick={scrollToTop}>Liên hệ hỗ trợ</Link>
               </li>
-              <li className="mb-2 text-secondary">
-                <i className="fas fa-envelope me-2"></i> info@jobconnect.com
+              <li className="mb-2">
+                <Link to="/about" className="text-white text-decoration-none" onClick={scrollToTop}>Hướng dẫn sử dụng</Link>
+              </li>
+              <li className="mb-2">
+                <Link to="/notifications" className="text-white text-decoration-none" onClick={scrollToTop}>Thông báo</Link>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom footer */}
-        <div className="row mt-5 pt-4 border-top">
-          <div className="col-md-6 text-center text-md-start">
-            <p className="mb-0 text-secondary">
-              &copy; {currentYear} JobConnect. All rights reserved.
-            </p>
+        {/* Social links */}
+        <div className="row mt-3 pt-3 border-top border-secondary">
+          <div className="col-md-6">
+            <div className="text-white-50">Kết nối với JobConnect.vn</div>
           </div>
-          <div className="col-md-6 text-center text-md-end mt-3 mt-md-0">
-            <ul className="list-inline mb-0">
-              <li className="list-inline-item">
-                <Link to="/terms" className="text-decoration-none text-secondary small">
-                  Terms of Service
-                </Link>
-              </li>
-              <li className="list-inline-item ms-3">
-                <Link to="/privacy" className="text-decoration-none text-secondary small">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li className="list-inline-item ms-3">
-                <Link to="/cookies" className="text-decoration-none text-secondary small">
-                  Cookies Policy
-                </Link>
-              </li>
-            </ul>
+          <div className="col-md-6">
+            <div className="d-flex justify-content-md-end">
+              <a href="https://facebook.com" className="text-white me-3">
+                <i className="bi bi-facebook" style={{ fontSize: "1.5rem" }}></i>
+              </a>
+              <a href="https://instagram.com" className="text-white me-3">
+                <i className="bi bi-instagram" style={{ fontSize: "1.5rem" }}></i>
+              </a>
+              <a href="https://youtube.com" className="text-white me-3">
+                <i className="bi bi-youtube" style={{ fontSize: "1.5rem" }}></i>
+              </a>
+              <a href="https://linkedin.com" className="text-white me-3">
+                <i className="bi bi-linkedin" style={{ fontSize: "1.5rem" }}></i>
+              </a>
+              <a href="https://tiktok.com" className="text-white">
+                <i className="bi bi-tiktok" style={{ fontSize: "1.5rem" }}></i>
+              </a>
+            </div>
           </div>
         </div>
       </div>

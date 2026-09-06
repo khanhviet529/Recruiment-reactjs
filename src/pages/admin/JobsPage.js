@@ -228,12 +228,6 @@ const JobsPage = () => {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: 60
-    },
-    {
       title: 'Tiêu đề',
       dataIndex: 'title',
       key: 'title',

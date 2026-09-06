@@ -5,18 +5,43 @@
       
       .profile-avatar {
         border: 3px solid #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+          transform: translateY(-2px);
+        }
+      }
+      
+      .ant-btn {
+        min-width: 100px;
+        
+        &:disabled {
+          cursor: not-allowed;
+        }
+      }
+      
+      // Loading overlay styles
+      .spinner-border {
+        border-width: 3px;
+      }
+      
+      // Success message styles
+      small.text-success {
+        font-weight: 500;
+        animation: fadeIn 0.3s ease-in;
       }
     }
 
     .profile-info {
       h2 {
-        font-size: 1.75rem;
+        color: #1890ff;
         font-weight: 600;
       }
 
       .text-muted {
-        color: #6c757d;
+        color: #8c8c8c !important;
       }
     }
   }
@@ -46,7 +71,9 @@
 
   .card {
     border: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
     
     .card-header {
       background-color: #fff;
@@ -60,7 +87,7 @@
     }
     
     .card-body {
-      padding: 1.25rem;
+      padding: 2rem;
     }
   }
 
@@ -122,12 +149,52 @@
   @media (max-width: 768px) {
     .profile-header {
       .profile-avatar-container {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.5rem !important;
+        
+        .profile-avatar {
+          width: 100px !important;
+          height: 100px !important;
+        }
       }
     }
     
-    .card {
-      margin-bottom: 1rem;
+    .card-body {
+      padding: 1.5rem;
+    }
+  }
+}
+
+// Animation for success message
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Upload button hover effects
+.ant-upload {
+  .ant-btn-primary {
+    background: linear-gradient(135deg, #1890ff, #096dd9);
+    border: none;
+    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+    
+    &:hover {
+      background: linear-gradient(135deg, #40a9ff, #1890ff);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+    
+    &.ant-btn-loading {
+      background: linear-gradient(135deg, #91d5ff, #69c0ff);
     }
   }
 } 

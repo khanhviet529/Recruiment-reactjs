@@ -1,0 +1,322 @@
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import axios from 'axios';
+import { message } from 'antd';
+import "../../styles/ProfilePage.scss";
+import { updateUserProfile } from '../../redux/slices/authSlice';
+import PersonalInfoSection from '../../components/candidate/PersonalInfoSection';
+import EducationSection from '../../components/candidate/EducationSection';
+import WorkExperienceSection from '../../components/candidate/WorkExperienceSection';
+import SkillsSection from '../../components/candidate/SkillsSection';
+import ProjectsSection from '../../components/candidate/ProjectsSection';
+import CertificationsSection from '../../components/candidate/CertificationsSection';
+import LanguagesSection from '../../components/candidate/LanguagesSection';
+import ReferencesSection from '../../components/candidate/ReferencesSection';
+import JobPreferencesSection from '../../components/candidate/JobPreferencesSection';
+import ImageUploaderNoView from '../../components/common/ImageUploaderNoView';
+import { getImageWithFallback } from '../../utils/imageUtils';
+
+const CandidateProfilePage = () => {
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  
+  // Simple state - NO automatic loading
+  const [candidate, setCandidate] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [showSections, setShowSections] = useState(false);
+
+  // Manual load - does NOT set candidate automatically
+  const loadCandidateData = async () => {
+    if (!user?.id) {
+      message.error('Không có thông tin người dùng');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      console.log('🔍 Manual loading candidate data for user:', user.id);
+
+      // Try direct candidate lookup first
+      let foundCandidate = null;
+      
+      try {
+        const response = await axios.get(`http://localhost:5000/candidates/cc0d`);
+        foundCandidate = response.data;
+        console.log('✅ Found candidate by direct ID:', foundCandidate.id);
+      } catch (error) {
+        console.warn('❌ Direct ID lookup failed');
+      }
+
+      if (foundCandidate) {
+        // Add email if missing
+        if (!foundCandidate.email && user.email) {
+          foundCandidate.email = user.email;
+        }
+        
+        // MANUAL: Only set candidate when user explicitly wants it
+        setCandidate(foundCandidate);
+        setShowSections(true);
+        message.success('Tải hồ sơ thành công!');
+        console.log('✅ Successfully loaded candidate profile');
+      } else {
+        message.error('Không tìm thấy thông tin hồ sơ.');
+      }
+
+    } catch (err) {
+      console.error('❌ Error loading candidate data:', err);
+      message.error('Không thể tải thông tin hồ sơ.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Hide sections function
+  const hideSections = () => {
+    setShowSections(false);
+    setCandidate(null);
+    message.info('Đã ẩn hồ sơ');
+  };
+
+  // Simple avatar upload
+  const handleAvatarUploadSuccess = async (uploadResult) => {
+    try {
+      if (!candidate?.id) return;
+
+      const response = await axios.get(`http://localhost:5000/candidates/${candidate.id}`);
+      const currentCandidate = response.data;
+
+      const updatedCandidate = {
+        ...currentCandidate,
+        avatar: uploadResult.url
+      };
+
+      const updateResponse = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, updatedCandidate);
+      
+      if (updateResponse.data) {
+        setCandidate(updateResponse.data);
+        message.success('Cập nhật ảnh đại diện thành công');
+      }
+    } catch (error) {
+      console.error('Error updating avatar:', error);
+      message.error('Có lỗi xảy ra khi cập nhật ảnh đại diện');
+    }
+  };
+
+  const handleAvatarUploadError = (error) => {
+    console.error('Avatar upload error:', error);
+    message.error('Có lỗi xảy ra khi tải ảnh lên');
+  };
+
+  const handleAvatarDeleteSuccess = async () => {
+    try {
+      if (!candidate?.id) return;
+
+      const response = await axios.get(`http://localhost:5000/candidates/${candidate.id}`);
+      const currentCandidate = response.data;
+
+      const updatedCandidate = {
+        ...currentCandidate,
+        avatar: null
+      };
+
+      const updateResponse = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, updatedCandidate);
+      
+      if (updateResponse.data) {
+        setCandidate(updateResponse.data);
+        message.success('Xóa ảnh đại diện thành công');
+      }
+    } catch (error) {
+      console.error('Error deleting avatar:', error);
+      message.error('Có lỗi xảy ra khi xóa ảnh đại diện');
+    }
+  };
+
+  const getAvatarUrl = (avatar) => {
+    if (user?.profilePicture) {
+      return user.profilePicture;
+    }
+    if (avatar) {
+      if (typeof avatar === 'string') {
+        return avatar;
+      }
+      if (avatar.url) {
+        return avatar.url;
+      }
+      if (avatar.data && avatar.data.url) {
+        return avatar.data.url;
+      }
+    }
+    if (user?.picture) {
+      return user.picture;
+    }
+    return null;
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <p className="mt-3">Đang tải hồ sơ...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="candidate-profile-page">
+      {/* Control Panel */}
+      <div className="profile-controls mb-4">
+        <div className="card">
+          <div className="card-body">
+            <div className="d-flex justify-content-between align-items-center">
+              <div>
+                <h3 className="mb-1">Quản lý hồ sơ ứng viên</h3>
+                <p className="text-muted mb-0">Sử dụng các nút bên dưới để quản lý hồ sơ của bạn</p>
+              </div>
+              <div className="d-flex gap-2">
+                {!showSections ? (
+                  <button 
+                    className="btn btn-primary"
+                    onClick={loadCandidateData}
+                    disabled={loading}
+                  >
+                    <i className="bi bi-download me-2"></i>
+                    Tải hồ sơ
+                  </button>
+                ) : (
+                  <>
+                    <button 
+                      className="btn btn-outline-primary"
+                      onClick={loadCandidateData}
+                      disabled={loading}
+                    >
+                      <i className="bi bi-arrow-clockwise me-1"></i>
+                      Tải lại
+                    </button>
+                    <button 
+                      className="btn btn-outline-secondary"
+                      onClick={hideSections}
+                    >
+                      <i className="bi bi-eye-slash me-1"></i>
+                      Ẩn hồ sơ
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Profile Header - Only show when sections are visible */}
+      {showSections && candidate && (
+        <div className="profile-header mb-4">
+          <div className="card">
+            <div className="card-body">
+              <div className="d-flex flex-column flex-md-row align-items-center">
+                <div className="profile-avatar-container me-md-4 mb-3 mb-md-0">
+                  <ImageUploaderNoView
+                    currentImageUrl={getImageWithFallback(getAvatarUrl(candidate.avatar), 'avatar')}
+                    onUploadSuccess={handleAvatarUploadSuccess}
+                    onUploadError={handleAvatarUploadError}
+                    onDeleteSuccess={handleAvatarDeleteSuccess}
+                    isProfilePicture={true}
+                    size={120}
+                    shape="circle"
+                    placeholder={candidate?.firstName?.charAt(0).toUpperCase() || '?'}
+                  />
+                </div>
+                <div className="profile-info">
+                  <h2 className="mb-1">{`${candidate?.firstName || ''} ${candidate?.lastName || ''}`}</h2>
+                  <p className="text-muted mb-2">{candidate?.headline || 'Chưa cập nhật tiêu đề'}</p>
+                  <div className="d-flex flex-wrap mb-3">
+                    <div className="me-4 mb-2">
+                      <i className="bi bi-geo-alt me-2"></i>
+                      {candidate?.address || 'Chưa cập nhật địa chỉ'}
+                    </div>
+                    <div className="me-4 mb-2">
+                      <i className="bi bi-envelope me-2"></i>
+                      {candidate?.email || 'Chưa cập nhật email'}
+                    </div>
+                  </div>
+                  <p>{candidate?.summary || 'Chưa cập nhật giới thiệu'}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Profile Sections - Only show when explicitly requested */}
+      {showSections && candidate && (
+        <div className="profile-content">
+          <div className="alert alert-info mb-4">
+            <i className="bi bi-info-circle me-2"></i>
+            <strong>Chế độ manual:</strong> Tất cả chức năng thêm/sửa/xóa hoạt động bình thường. 
+            Data không tự động cập nhật để tránh lỗi render.
+          </div>
+
+          <div className="row">
+            <div className="col-md-12 mb-4">
+              <PersonalInfoSection candidate={candidate} setCandidate={setCandidate} />
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-md-6 mb-4">
+              <EducationSection candidate={candidate} setCandidate={setCandidate} />
+            </div>
+            <div className="col-md-6 mb-4">
+              <WorkExperienceSection candidate={candidate} setCandidate={setCandidate} />
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-md-6 mb-4">
+              <SkillsSection candidate={candidate} setCandidate={setCandidate} />
+            </div>
+            <div className="col-md-6 mb-4">
+              <LanguagesSection candidate={candidate} setCandidate={setCandidate} />
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-md-6 mb-4">
+              <ProjectsSection candidate={candidate} setCandidate={setCandidate} />
+            </div>
+            <div className="col-md-6 mb-4">
+              <CertificationsSection candidate={candidate} setCandidate={setCandidate} />
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-md-6 mb-4">
+              <ReferencesSection candidate={candidate} setCandidate={setCandidate} />
+            </div>
+            <div className="col-md-6 mb-4">
+              <JobPreferencesSection candidate={candidate} setCandidate={setCandidate} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Help text when no sections shown */}
+      {!showSections && (
+        <div className="text-center py-5">
+          <div className="mb-4">
+            <i className="bi bi-folder2-open display-1 text-muted"></i>
+          </div>
+          <h4 className="text-muted mb-3">Hồ sơ chưa được tải</h4>
+          <p className="text-muted">
+            Click nút "Tải hồ sơ" ở trên để hiển thị và chỉnh sửa thông tin hồ sơ của bạn.
+            <br />
+            Tất cả chức năng thêm/sửa/xóa sẽ hoạt động bình thường.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default CandidateProfilePage;

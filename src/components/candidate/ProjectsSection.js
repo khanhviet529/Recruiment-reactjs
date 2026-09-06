@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -17,16 +17,40 @@ const projectSchema = Yup.object({
 
 const ProjectsSection = ({ candidate, setCandidate }) => {
   const [editMode, setEditMode] = useState(null);
+  const [forceRender, setForceRender] = useState(0);
   const [editingItem, setEditingItem] = useState(null);
 
-  const handleProjectSubmit = async (values) => {
+  // Debug effect to track candidate prop changes
+  useEffect(() => {
+    console.log('🔍 ProjectsSection - Candidate prop:', candidate);
+    if (candidate && candidate.projectss) {
+      console.log('🔍 ProjectsSection - Data:', candidate.projectss);
+      console.log('🔍 ProjectsSection - Count:', candidate.projectss?.length || 0);
+    }
+  }, [candidate]);
+    setForceRender(prev => prev + 1); // Force re-render
+
+
+const handleProjectSubmit = async (values) => {
     try {
+      console.log('🔄 Updating section data...');
+      
+      // SAFETY CHECK: Get current candidate data first to preserve all fields
+      let currentCandidateData = {};
+      try {
+        const currentResponse = await axios.get(`http://localhost:5000/candidates/${candidate.id}`);
+        currentCandidateData = currentResponse.data;
+        console.log('📦 Current candidate data:', currentCandidateData);
+      } catch (error) {
+        console.warn('⚠️ Could not fetch current candidate data, using props:', error);
+        currentCandidateData = candidate;
+      }
       const updatedProjects = editingItem
         ? candidate.projects.map(proj => proj.id === editingItem.id ? values : proj)
         : [...(candidate.projects || []), { ...values, id: Date.now().toString() }];
 
       const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, {
-        ...candidate,
+        ...currentCandidateData, // Keep all existing data
         projects: updatedProjects,
       });
 
@@ -40,9 +64,21 @@ const ProjectsSection = ({ candidate, setCandidate }) => {
 
   const handleProjectDelete = async (id) => {
     try {
+      console.log('🔄 Updating section data...');
+      
+      // SAFETY CHECK: Get current candidate data first to preserve all fields
+      let currentCandidateData = {};
+      try {
+        const currentResponse = await axios.get(`http://localhost:5000/candidates/${candidate.id}`);
+        currentCandidateData = currentResponse.data;
+        console.log('📦 Current candidate data:', currentCandidateData);
+      } catch (error) {
+        console.warn('⚠️ Could not fetch current candidate data, using props:', error);
+        currentCandidateData = candidate;
+      }
       const updatedProjects = candidate.projects.filter(proj => proj.id !== id);
       const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, {
-        ...candidate,
+        ...currentCandidateData, // Keep all existing data
         projects: updatedProjects,
       });
       setCandidate(response.data);

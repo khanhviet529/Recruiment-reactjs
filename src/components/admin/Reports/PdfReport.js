@@ -1,236 +1,474 @@
-import React from 'react';
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
-import moment from 'moment';
-import { message } from 'antd';
+// import { jsPDF } from 'jspdf';
+// import 'jspdf-autotable';
+// import html2canvas from 'html2canvas';
+// import moment from 'moment';
+// import { message } from 'antd';
 
-const generatePdfReport = (statsData, userChartData, jobChartData, applicationStats, timeToFillData, topEmployers, topJobs) => {
-  try {
-    // Kiểm tra dữ liệu đầu vào
-    if (!statsData || !userChartData || !jobChartData || !applicationStats || !timeToFillData) {
-      message.error('Thiếu dữ liệu cần thiết để tạo báo cáo PDF');
-      return false;
-    }
+// // Cấu hình font tiếng Việt (sử dụng font mặc định hỗ trợ Unicode)
+// const setupVietnameseFont = (doc) => {
+//   // Sử dụng font Helvetica với encoding UTF-8
+//   doc.setFont('helvetica');
+  
+//   // Kiểm tra xem autoTable có được thêm vào không
+//   if (typeof doc.autoTable !== 'function') {
+//     console.error('jspdf-autotable not loaded properly');
+//     throw new Error('jspdf-autotable not available');
+//   }
+// };
 
-    // Tạo tài liệu PDF mới
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const today = moment().format('DD/MM/YYYY');
-    
-    // Thêm tiêu đề và ngày
-    doc.setFontSize(18);
-    doc.setTextColor(40, 40, 40);
-    doc.text("BÁO CÁO TUYỂN DỤNG", pageWidth / 2, 20, { align: "center" });
-    
-    doc.setFontSize(12);
-    doc.setTextColor(100, 100, 100);
-    doc.text(`Ngày báo cáo: ${today}`, pageWidth / 2, 30, { align: "center" });
-    
-    // Thêm thống kê tổng hợp
-    doc.setFontSize(14);
-    doc.setTextColor(40, 40, 40);
-    doc.text("TỔNG QUAN THỐNG KÊ", 14, 45);
-    
-    doc.setFontSize(11);
-    doc.setTextColor(60, 60, 60);
-    doc.text(`1. Tổng số người dùng: ${statsData.users?.total || 0}`, 14, 55);
-    doc.text(`   - Ứng viên: ${statsData.users?.candidates || 0}`, 14, 61);
-    doc.text(`   - Nhà tuyển dụng: ${statsData.users?.employers || 0}`, 14, 67);
-    doc.text(`   - Tỷ lệ tăng trưởng: ${statsData.users?.growth || 0}%`, 14, 73);
-    
-    doc.text(`2. Tin tuyển dụng:`, 14, 83);
-    doc.text(`   - Tổng số tin: ${statsData.jobs?.total || 0}`, 14, 89);
-    doc.text(`   - Đang hoạt động: ${statsData.jobs?.active || 0}`, 14, 95);
-    doc.text(`   - Đơn ứng tuyển: ${statsData.jobs?.applications || 0}`, 14, 101);
-    doc.text(`   - Tỷ lệ tăng trưởng: ${statsData.jobs?.growth || 0}%`, 14, 107);
-    
-    // Thêm thống kê trạng thái đơn ứng tuyển với bảng
-    doc.setFontSize(14);
-    doc.setTextColor(40, 40, 40);
-    doc.text("TRẠNG THÁI ĐƠN ỨNG TUYỂN", 14, 122);
-    
-    // Tạo bảng thống kê đơn ứng tuyển
-    const appStatsHeaders = [['Trạng thái', 'Số lượng', 'Tỷ lệ (%)']]
-    const appStatsData = []
-    
-    if (applicationStats.labels && applicationStats.datasets && applicationStats.datasets[0] && applicationStats.datasets[0].data) {
-      const totalApps = applicationStats.datasets[0].data.reduce((sum, val) => sum + (val || 0), 0) || 1;
-      
-      applicationStats.labels.forEach((label, idx) => {
-        if (label) {
-          const count = (applicationStats.datasets[0].data[idx] || 0);
-          const percentage = ((count / totalApps) * 100).toFixed(1);
-          appStatsData.push([label, count.toString(), percentage]);
-        }
-      });
-    } else {
-      appStatsData.push(['Không có dữ liệu', '0', '0']);
-    }
-    
-    let lastTableEndY = 127;
-    try {
-      doc.autoTable({
-        head: appStatsHeaders,
-        body: appStatsData,
-        startY: lastTableEndY,
-        styles: { fontSize: 10, cellPadding: 3 },
-        headStyles: { fillColor: [75, 75, 75] }
-      });
-      lastTableEndY = doc.lastAutoTable.finalY;
-    } catch (tableError) {
-      console.error("Lỗi tạo bảng:", tableError);
-      lastTableEndY = 150;
-    }
-    
-    // Phần nhà tuyển dụng hàng đầu
-    doc.setFontSize(14);
-    doc.setTextColor(40, 40, 40);
-    doc.text("NHÀ TUYỂN DỤNG HÀNG ĐẦU", 14, lastTableEndY + 15);
-    
-    const employerHeaders = [['Tên công ty', 'Số tin đăng', 'Số đơn ứng tuyển']]
-    const employerData = Array.isArray(topEmployers) && topEmployers.length > 0 
-      ? topEmployers.slice(0, 5).map(employer => [
-          employer.name || 'Không xác định',
-          (employer.jobs || 0).toString(),
-          (employer.applications || 0).toString()
-        ])
-      : [['Không có dữ liệu', '0', '0']];
-    
-    try {
-      doc.autoTable({
-        head: employerHeaders,
-        body: employerData,
-        startY: lastTableEndY + 20,
-        styles: { fontSize: 10, cellPadding: 3 },
-        headStyles: { fillColor: [75, 75, 75] }
-      });
-      lastTableEndY = doc.lastAutoTable.finalY;
-    } catch (tableError) {
-      console.error("Lỗi tạo bảng nhà tuyển dụng:", tableError);
-      lastTableEndY += 50;
-    }
-    
-    // Phần tin tuyển dụng hàng đầu
-    doc.setFontSize(14);
-    doc.setTextColor(40, 40, 40);
-    doc.text("TIN TUYỂN DỤNG HÀNG ĐẦU", 14, lastTableEndY + 15);
-    
-    const jobHeaders = [['Tiêu đề', 'Công ty', 'Số đơn ứng tuyển']]
-    const jobData = Array.isArray(topJobs) && topJobs.length > 0
-      ? topJobs.slice(0, 5).map(job => [
-          job.title || 'Không xác định',
-          job.company || 'Không xác định',
-          (job.applications || 0).toString()
-        ])
-      : [['Không có dữ liệu', 'Không có dữ liệu', '0']];
-    
-    try {
-      doc.autoTable({
-        head: jobHeaders,
-        body: jobData,
-        startY: lastTableEndY + 20,
-        styles: { fontSize: 10, cellPadding: 3 },
-        headStyles: { fillColor: [75, 75, 75] }
-      });
-      lastTableEndY = doc.lastAutoTable.finalY;
-    } catch (tableError) {
-      console.error("Lỗi tạo bảng tin tuyển dụng:", tableError);
-      lastTableEndY += 50;
-    }
-    
-    // Thêm trang mới cho chỉ số hiệu suất
-    doc.addPage();
-    
-    // Chỉ số thời gian tuyển dụng
-    doc.setFontSize(14);
-    doc.setTextColor(40, 40, 40);
-    doc.text("CHỈ SỐ HIỆU SUẤT TUYỂN DỤNG", 14, 20);
-    
-    doc.setFontSize(11);
-    doc.setTextColor(60, 60, 60);
-    doc.text(`1. Thời gian tuyển dụng trung bình: ${timeToFillData.average || 0} ngày`, 14, 30);
-    
-    // Tạo bảng thời gian tuyển dụng theo ngành nếu có dữ liệu
-    let ttfStartY = 35;
-    if (timeToFillData.byIndustry && Array.isArray(timeToFillData.byIndustry) && timeToFillData.byIndustry.length > 0) {
-      const ttfHeaders = [['Ngành nghề', 'Số ngày trung bình']]
-      const ttfData = timeToFillData.byIndustry
-        .filter(item => item && item.industry && item.averageDays !== undefined)
-        .sort((a, b) => a.averageDays - b.averageDays)
-        .slice(0, 8)
-        .map(item => [
-          item.industry,
-          item.averageDays.toString()
-        ]);
-      
-      if (ttfData.length > 0) {
-        try {
-          doc.autoTable({
-            head: ttfHeaders,
-            body: ttfData,
-            startY: ttfStartY,
-            styles: { fontSize: 10, cellPadding: 3 },
-            headStyles: { fillColor: [75, 75, 75] }
-          });
-          ttfStartY = doc.lastAutoTable.finalY;
-        } catch (tableError) {
-          console.error("Lỗi tạo bảng thời gian tuyển dụng:", tableError);
-          ttfStartY = 50;
-        }
-      } else {
-        ttfStartY = 50; // Điều chỉnh nếu không có dữ liệu
-      }
-    } else {
-      ttfStartY = 50;
-    }
-    
-    // Thêm gợi ý dựa trên phân tích dữ liệu
-    doc.setFontSize(14);
-    doc.setTextColor(40, 40, 40);
-    doc.text("GỢI Ý CẢI THIỆN", 14, ttfStartY + 20);
-    
-    doc.setFontSize(11);
-    doc.setTextColor(60, 60, 60);
-    
-    let recommendationY = ttfStartY + 40;
-    
-    // Gợi ý tăng trưởng người dùng
-    if (!statsData.users?.growth || statsData.users.growth < 5) {
-      doc.text("1. Cải thiện tăng trưởng người dùng:", 14, recommendationY);
-      doc.text("   - Tăng cường các chiến dịch marketing", 14, recommendationY + 6);
-      doc.text("   - Cải thiện trải nghiệm người dùng", 14, recommendationY + 12);
-      recommendationY += 18;
-    }
-    
-    // Gợi ý đăng tin tuyển dụng
-    if (!statsData.jobs?.growth || statsData.jobs.growth < 10) {
-      const numRecommendation = (!statsData.users?.growth || statsData.users.growth < 5) ? "2" : "1";
-      doc.text(`${numRecommendation}. Kích thích hoạt động đăng tin tuyển dụng:`, 14, recommendationY);
-      doc.text("   - Cung cấp ưu đãi cho nhà tuyển dụng", 14, recommendationY + 6);
-      doc.text("   - Đơn giản hóa quy trình đăng tin", 14, recommendationY + 12);
-      recommendationY += 18;
-    }
-    
-    // Gợi ý thời gian tuyển dụng
-    if (!timeToFillData.average || timeToFillData.average > 25) {
-      const userLowGrowth = (!statsData.users?.growth || statsData.users.growth < 5) ? 1 : 0;
-      const jobLowGrowth = (!statsData.jobs?.growth || statsData.jobs.growth < 10) ? 1 : 0;
-      const numRecommendation = userLowGrowth + jobLowGrowth + 1;
-      
-      doc.text(`${numRecommendation}. Giảm thời gian tuyển dụng:`, 14, recommendationY);
-      doc.text("   - Tối ưu hóa quy trình sàng lọc hồ sơ", 14, recommendationY + 6);
-      doc.text("   - Rút ngắn chu trình phỏng vấn", 14, recommendationY + 12);
-    }
-    
-    // Lưu PDF
-    doc.save(`bao-cao-tuyen-dung-${moment().format('DD-MM-YYYY')}.pdf`);
-    message.success('Báo cáo đã được tạo thành công!');
-    return true;
-  } catch (error) {
-    console.error('Error generating PDF:', error);
-    message.error('Có lỗi xảy ra khi tạo báo cáo PDF');
-    return false;
-  }
-};
+// // Hàm vẽ header cho báo cáo
+// const drawReportHeader = (doc) => {
+//   const pageWidth = doc.internal.pageSize.getWidth();
+//   const today = moment().format('DD/MM/YYYY HH:mm');
+  
+//   // Background header
+//   doc.setFillColor(41, 128, 185);
+//   doc.rect(0, 0, pageWidth, 35, 'F');
+  
+//   // Logo placeholder (có thể thêm logo sau)
+//   doc.setFillColor(255, 255, 255);
+//   doc.circle(20, 17.5, 8, 'F');
+//   doc.setTextColor(41, 128, 185);
+//   doc.setFontSize(12);
+//   doc.setFont('helvetica', 'bold');
+//   doc.text('HR', 16.5, 21);
+  
+//   // Tiêu đề chính
+//   doc.setTextColor(255, 255, 255);
+//   doc.setFontSize(20);
+//   doc.setFont('helvetica', 'bold');
+//   doc.text('BAO CAO TUYEN DUNG', pageWidth / 2, 15, { align: 'center' });
+  
+//   doc.setFontSize(12);
+//   doc.setFont('helvetica', 'normal');
+//   doc.text(`Ngay bao cao: ${today}`, pageWidth / 2, 25, { align: 'center' });
+  
+//   return 45; // Trả về vị trí Y để tiếp tục vẽ content
+// };
 
-export default generatePdfReport; 
+// // Hàm vẽ footer
+// const drawFooter = (doc, pageNumber, totalPages) => {
+//   const pageWidth = doc.internal.pageSize.getWidth();
+//   const pageHeight = doc.internal.pageSize.getHeight();
+  
+//   doc.setDrawColor(200, 200, 200);
+//   doc.line(14, pageHeight - 20, pageWidth - 14, pageHeight - 20);
+  
+//   doc.setTextColor(100, 100, 100);
+//   doc.setFontSize(10);
+//   doc.text(`Trang ${pageNumber} / ${totalPages}`, pageWidth - 14, pageHeight - 10, { align: 'right' });
+//   doc.text('He thong quan ly tuyen dung', 14, pageHeight - 10);
+// };
+
+// // Hàm vẽ section header
+// const drawSectionHeader = (doc, title, yPosition, icon = '') => {
+//   const pageWidth = doc.internal.pageSize.getWidth();
+  
+//   // Background cho section
+//   doc.setFillColor(245, 245, 245);
+//   doc.rect(14, yPosition - 5, pageWidth - 28, 15, 'F');
+  
+//   // Border trái
+//   doc.setFillColor(52, 152, 219);
+//   doc.rect(14, yPosition - 5, 3, 15, 'F');
+  
+//   doc.setTextColor(44, 62, 80);
+//   doc.setFontSize(14);
+//   doc.setFont('helvetica', 'bold');
+//   doc.text(`${icon} ${title}`, 22, yPosition + 4);
+  
+//   return yPosition + 20;
+// };
+
+// // Hàm tạo thống kê tổng quan với card design
+// const drawOverviewStats = (doc, statsData, startY) => {
+//   const cardWidth = 45;
+//   const cardHeight = 35;
+//   const spacing = 10;
+//   const startX = 14;
+  
+//   const stats = [
+//     {
+//       title: 'Tong nguoi dung',
+//       value: statsData.users?.total || 0,
+//       subtitle: `Tang truong: ${statsData.users?.growth || 0}%`,
+//       color: [52, 152, 219],
+//       icon: '👥'
+//     },
+//     {
+//       title: 'Nha tuyen dung',
+//       value: statsData.users?.employers || 0,
+//       subtitle: `${statsData.users?.total > 0 ? Math.round(statsData.users.employers / statsData.users.total * 100) : 0}% tong so`,
+//       color: [155, 89, 182],
+//       icon: '🏢'
+//     },
+//     {
+//       title: 'Tin tuyen dung',
+//       value: statsData.jobs?.total || 0,
+//       subtitle: `Hoat dong: ${statsData.jobs?.active || 0}`,
+//       color: [46, 204, 113],
+//       icon: '📋'
+//     },
+//     {
+//       title: 'don ung tuyen',
+//       value: statsData.jobs?.applications || 0,
+//       subtitle: `TB: ${statsData.jobs?.total > 0 ? (statsData.jobs.applications / statsData.jobs.total).toFixed(1) : 0}/tin`,
+//       color: [231, 76, 60],
+//       icon: '📄'
+//     }
+//   ];
+  
+//   stats.forEach((stat, index) => {
+//     const x = startX + (index * (cardWidth + spacing));
+//     const y = startY;
+    
+//     // Card background
+//     doc.setFillColor(255, 255, 255);
+//     doc.roundedRect(x, y, cardWidth, cardHeight, 3, 3, 'F');
+    
+//     // Card border
+//     doc.setDrawColor(230, 230, 230);
+//     doc.setLineWidth(0.5);
+//     doc.roundedRect(x, y, cardWidth, cardHeight, 3, 3, 'S');
+    
+//     // Icon background
+//     doc.setFillColor(...stat.color);
+//     doc.circle(x + 8, y + 8, 4, 'F');
+    
+//     // Icon (sử dụng text thay vì emoji để tương thích)
+//     doc.setTextColor(255, 255, 255);
+//     doc.setFontSize(8);
+//     doc.text('●', x + 6, y + 10);
+    
+//     // Title
+//     doc.setTextColor(100, 100, 100);
+//     doc.setFontSize(8);
+//     doc.setFont('helvetica', 'normal');
+//     doc.text(stat.title, x + 2, y + 18, { maxWidth: cardWidth - 4 });
+    
+//     // Value
+//     doc.setTextColor(44, 62, 80);
+//     doc.setFontSize(16);
+//     doc.setFont('helvetica', 'bold');
+//     doc.text(stat.value.toString(), x + 2, y + 26);
+    
+//     // Subtitle
+//     doc.setTextColor(120, 120, 120);
+//     doc.setFontSize(7);
+//     doc.setFont('helvetica', 'normal');
+//     doc.text(stat.subtitle, x + 2, y + 32, { maxWidth: cardWidth - 4 });
+//   });
+  
+//   return startY + cardHeight + 15;
+// };
+
+// // Hàm tạo bảng với thiết kế đẹp
+// const createStyledTable = (doc, headers, data, startY, title = '') => {
+//   if (title) {
+//     doc.setTextColor(44, 62, 80);
+//     doc.setFontSize(12);
+//     doc.setFont('helvetica', 'bold');
+//     doc.text(title, 14, startY);
+//     startY += 10;
+//   }
+  
+//   if (!data || data.length === 0) {
+//     doc.setTextColor(150, 150, 150);
+//     doc.setFontSize(10);
+//     doc.text('Khong co du lieu', 14, startY + 10);
+//     return startY + 25;
+//   }
+  
+//   const finalY = doc.autoTable(doc, {
+//     head: [headers],
+//     body: data,
+//     startY: startY,
+//     theme: 'grid',
+//     styles: {
+//       fontSize: 9,
+//       cellPadding: 4,
+//       textColor: [44, 62, 80],
+//       lineColor: [220, 220, 220],
+//       lineWidth: 0.5
+//     },
+//     headStyles: {
+//       fillColor: [52, 152, 219],
+//       textColor: [255, 255, 255],
+//       fontSize: 10,
+//       fontStyle: 'bold',
+//       halign: 'center'
+//     },
+//     alternateRowStyles: {
+//       fillColor: [248, 249, 250]
+//     },
+//     columnStyles: {
+//       0: { cellWidth: 'auto' },
+//       1: { halign: 'center' },
+//       2: { halign: 'center' }
+//     },
+//     margin: { left: 14, right: 14 }
+//   });
+  
+//   return finalY + 10;
+// };
+
+// // Hàm tạo biểu đồ từ canvas (nếu có)
+// const addChartToReport = async (doc, chartRef, title, yPosition) => {
+//   if (!chartRef || !chartRef.current) {
+//     return yPosition;
+//   }
+  
+//   try {
+//     const canvas = await html2canvas(chartRef.current, {
+//       backgroundColor: '#ffffff',
+//       scale: 2,
+//       logging: false
+//     });
+    
+//     const imgData = canvas.toDataURL('image/png');
+//     const imgWidth = 180;
+//     const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    
+//     // Kiểm tra xem có đủ chỗ trong trang không
+//     const pageHeight = doc.internal.pageSize.getHeight();
+//     if (yPosition + imgHeight + 30 > pageHeight - 30) {
+//       doc.addPage();
+//       yPosition = drawReportHeader(doc);
+//     }
+    
+//     if (title) {
+//       yPosition = drawSectionHeader(doc, title, yPosition, '📊');
+//     }
+    
+//     doc.addImage(imgData, 'PNG', 14, yPosition, imgWidth, imgHeight);
+//     return yPosition + imgHeight + 15;
+//   } catch (error) {
+//     console.error('Error adding chart to report:', error);
+//     return yPosition;
+//   }
+// };
+
+// // Hàm tạo phân tích và gợi ý
+// const drawAnalysisSection = (doc, statsData, timeToFillData, conversionData, startY) => {
+//   let currentY = drawSectionHeader(doc, 'PHAN TICH & GOI Y', startY, '💡');
+  
+//   const pageWidth = doc.internal.pageSize.getWidth();
+  
+//   // Phân tích hiệu suất
+//   doc.setTextColor(44, 62, 80);
+//   doc.setFontSize(11);
+//   doc.setFont('helvetica', 'bold');
+//   doc.text('Hieu suat tuyen dung:', 14, currentY);
+//   currentY += 8;
+  
+//   doc.setFont('helvetica', 'normal');
+//   doc.setFontSize(9);
+//   doc.setTextColor(80, 80, 80);
+  
+//   const analysisPoints = [];
+  
+//   // Phân tích tăng trưởng
+//   if (statsData.users?.growth > 10) {
+//     analysisPoints.push('✓ Tang truong nguoi dung tot (' + statsData.users.growth + '%)');
+//   } else if (statsData.users?.growth < 5) {
+//     analysisPoints.push('⚠ Tang truong nguoi dung cham (' + statsData.users.growth + '%)');
+//   }
+  
+//   // Phân tích tỷ lệ ứng tuyển
+//   const avgApplicationsPerJob = statsData.jobs?.total > 0 ? 
+//     (statsData.jobs.applications / statsData.jobs.total).toFixed(1) : 0;
+  
+//   if (avgApplicationsPerJob > 10) {
+//     analysisPoints.push('✓ Ty le ung tuyen cao (' + avgApplicationsPerJob + ' don/tin)');
+//   } else if (avgApplicationsPerJob < 5) {
+//     analysisPoints.push('⚠ Ty le ung tuyen thap (' + avgApplicationsPerJob + ' don/tin)');
+//   }
+  
+//   // Phân tích thời gian tuyển dụng
+//   if (timeToFillData?.average) {
+//     if (timeToFillData.average <= 20) {
+//       analysisPoints.push('✓ Thoi gian tuyen dung tot (' + timeToFillData.average + ' ngay)');
+//     } else if (timeToFillData.average > 30) {
+//       analysisPoints.push('⚠ Thoi gian tuyen dung dai (' + timeToFillData.average + ' ngay)');
+//     }
+//   }
+  
+//   analysisPoints.forEach(point => {
+//     doc.text('• ' + point, 18, currentY);
+//     currentY += 6;
+//   });
+  
+//   currentY += 5;
+  
+//   // Gợi ý cải thiện
+//   doc.setTextColor(44, 62, 80);
+//   doc.setFontSize(11);
+//   doc.setFont('helvetica', 'bold');
+//   doc.text('Goi y cai thien:', 14, currentY);
+//   currentY += 8;
+  
+//   doc.setFont('helvetica', 'normal');
+//   doc.setFontSize(9);
+//   doc.setTextColor(80, 80, 80);
+  
+//   const suggestions = [];
+  
+//   if (statsData.users?.growth < 5) {
+//     suggestions.push('Tang cuong marketing de thu hut nguoi dung moi');
+//   }
+  
+//   if (avgApplicationsPerJob < 5) {
+//     suggestions.push('Cai thien mo ta cong viec de hap dan hon');
+//     suggestions.push('Xem xet lai yeu cau cong viec co phu hop');
+//   }
+  
+//   if (timeToFillData?.average > 30) {
+//     suggestions.push('Rut ngan quy trinh danh gia ho so');
+//     suggestions.push('Tang toc do phan hoi voi ung vien');
+//   }
+  
+//   if (suggestions.length === 0) {
+//     suggestions.push('Cac chi so dang o muc tot, tiep tuc duy tri');
+//   }
+  
+//   suggestions.forEach((suggestion, index) => {
+//     doc.text(`${index + 1}. ${suggestion}`, 18, currentY);
+//     currentY += 6;
+//   });
+  
+//   return currentY + 10;
+// };
+
+// // Hàm chính tạo báo cáo PDF
+// const generatePdfReport = async (
+//   statsData, 
+//   userChartData, 
+//   jobChartData, 
+//   applicationStats, 
+//   timeToFillData, 
+//   topEmployers, 
+//   topJobs,
+//   conversionData = null,
+//   chartRefs = null
+// ) => {
+//   try {
+//     // Kiểm tra dữ liệu đầu vào
+//     if (!statsData) {
+//       message.error('Thieu du lieu thong ke de tao bao cao');
+//       return false;
+//     }
+
+//     const doc = new jsPDF();
+//     setupVietnameseFont(doc);
+    
+//     let currentY = drawReportHeader(doc);
+    
+//     // Thống kê tổng quan
+//     currentY = drawOverviewStats(doc, statsData, currentY);
+    
+//     // Trạng thái đơn ứng tuyển
+//     if (applicationStats?.labels && applicationStats?.datasets?.[0]?.data) {
+//       currentY = drawSectionHeader(doc, 'TRANG THAI DON UNG TUYEN', currentY, '📊');
+      
+//       const totalApps = applicationStats.datasets[0].data.reduce((sum, val) => sum + (val || 0), 0) || 1;
+//       const appStatsData = applicationStats.labels.map((label, idx) => {
+//         const count = applicationStats.datasets[0].data[idx] || 0;
+//         const percentage = ((count / totalApps) * 100).toFixed(1);
+//         return [label, count.toString(), percentage + '%'];
+//       });
+      
+//       currentY = createStyledTable(
+//         doc,
+//         ['Trang thai', 'So luong', 'Ty le'],
+//         appStatsData,
+//         currentY
+//       );
+//     }
+    
+//     // Nhà tuyển dụng hàng đầu
+//     if (topEmployers && topEmployers.length > 0) {
+//       currentY = drawSectionHeader(doc, 'NHA TUYEN DUNG HANG DAU', currentY, '🏆');
+      
+//       const employerData = topEmployers.slice(0, 5).map((employer, index) => [
+//         `${index + 1}. ${employer.name || 'Khong xac dinh'}`,
+//         (employer.jobs || 0).toString(),
+//         (employer.applications || 0).toString()
+//       ]);
+      
+//       currentY = createStyledTable(
+//         doc,
+//         ['Cong ty', 'Tin dang', 'Don ung tuyen'],
+//         employerData,
+//         currentY
+//       );
+//     }
+    
+//     // Tin tuyển dụng hàng đầu
+//     if (topJobs && topJobs.length > 0) {
+//       // Kiểm tra xem có cần trang mới không
+//       const pageHeight = doc.internal.pageSize.getHeight();
+//       if (currentY > pageHeight - 80) {
+//         doc.addPage();
+//         currentY = drawReportHeader(doc);
+//       }
+      
+//       currentY = drawSectionHeader(doc, 'TIN TUYEN DUNG HANG DAU', currentY, '⭐');
+      
+//       const jobData = topJobs.slice(0, 5).map((job, index) => [
+//         `${index + 1}. ${job.title || 'Khong xac dinh'}`,
+//         job.company || 'Khong xac dinh',
+//         (job.applications || 0).toString()
+//       ]);
+      
+//       currentY = createStyledTable(
+//         doc,
+//         ['Tieu de', 'Cong ty', 'Don ung tuyen'],
+//         jobData,
+//         currentY
+//       );
+//     }
+    
+//     // Thêm trang mới cho phân tích
+//     doc.addPage();
+//     currentY = drawReportHeader(doc);
+    
+//     // Phân tích và gợi ý
+//     currentY = drawAnalysisSection(doc, statsData, timeToFillData, conversionData, currentY);
+    
+//     // Thêm biểu đồ nếu có
+//     if (chartRefs) {
+//       if (chartRefs.userChart) {
+//         doc.addPage();
+//         currentY = drawReportHeader(doc);
+//         currentY = await addChartToReport(doc, chartRefs.userChart, 'BIEU DO NGUOI DUNG', currentY);
+//       }
+      
+//       if (chartRefs.jobChart) {
+//         doc.addPage();
+//         currentY = drawReportHeader(doc);
+//         currentY = await addChartToReport(doc, chartRefs.jobChart, 'BIEU DO TIN TUYEN DUNG', currentY);
+//       }
+//     }
+    
+//     // Thêm footer cho tất cả các trang
+//     const totalPages = doc.internal.getNumberOfPages();
+//     for (let i = 1; i <= totalPages; i++) {
+//       doc.setPage(i);
+//       drawFooter(doc, i, totalPages);
+//     }
+    
+//     // Lưu file
+//     const fileName = `bao-cao-tuyen-dung-${moment().format('YYYY-MM-DD-HHmm')}.pdf`;
+//     doc.save(fileName);
+    
+//     message.success('Bao cao da duoc tao thanh cong!');
+//     return true;
+    
+//   } catch (error) {
+//     console.error('Error generating PDF report:', error);
+//     message.error('Co loi xay ra khi tao bao cao: ' + error.message);
+//     return false;
+//   }
+// };
+
+// export default generatePdfReport; 

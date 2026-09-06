@@ -15,17 +15,30 @@ const CompanyDetail = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // Fetch company details
-        const companyResponse = await axios.get(`http://localhost:5000/employers/${id}`);
-        setCompany(companyResponse.data);
+        
+        // First, get all employers to find the correct employer by id
+        const employersResponse = await axios.get(`http://localhost:5000/employers`);
+        const allEmployers = employersResponse.data;
+        const company = allEmployers.find(emp => emp.id === id || emp.userId === id);
+        
+        if (!company) {
+          setError('Không tìm thấy thông tin công ty');
+          setLoading(false);
+          return;
+        }
+        
+        setCompany(company);
 
-        // Fetch company jobs
+        // Fetch company jobs using the correct employerId field
         const jobsResponse = await axios.get('http://localhost:5000/jobs');
-        const companyJobs = jobsResponse.data.filter(job => job.employerId === parseInt(id));
+        const companyJobs = jobsResponse.data.filter(job => 
+          job.employerId === company.userId || job.employerId === company.id
+        );
         setJobs(companyJobs);
 
         setLoading(false);
       } catch (err) {
+        console.error('Error fetching company data:', err);
         setError('Không thể tải thông tin công ty');
         setLoading(false);
       }
@@ -246,18 +259,20 @@ const CompanyDetail = () => {
                               <p className="card-text text-muted mb-3">
                                 {job.shortDescription}
                               </p>
-                              <div className="d-flex flex-wrap gap-2 mb-3">
-                                {job.skills.slice(0, 5).map((skill, index) => (
-                                  <span key={index} className="badge bg-light text-dark">
-                                    {skill}
-                                  </span>
-                                ))}
-                                {job.skills.length > 5 && (
-                                  <span className="badge bg-light text-primary">
-                                    +{job.skills.length - 5}
-                                  </span>
-                                )}
-                              </div>
+                              {job.skills && job.skills.length > 0 && (
+                                <div className="d-flex flex-wrap gap-2 mb-3">
+                                  {job.skills.slice(0, 5).map((skill, index) => (
+                                    <span key={index} className="badge bg-light text-dark">
+                                      {skill}
+                                    </span>
+                                  ))}
+                                  {job.skills.length > 5 && (
+                                    <span className="badge bg-light text-primary">
+                                      +{job.skills.length - 5}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
                             </div>
                             <div className="text-end">
                               {job.isUrgent && (

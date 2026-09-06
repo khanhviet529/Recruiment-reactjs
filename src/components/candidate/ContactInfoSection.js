@@ -11,7 +11,7 @@ const contactInfoSchema = Yup.object({
   country: Yup.string().required('Quốc gia là bắt buộc'),
   linkedin: Yup.string().url('URL LinkedIn không hợp lệ'),
   github: Yup.string().url('URL GitHub không hợp lệ'),
-  website: Yup.string().url('URL website không hợp lệ'),
+  website: Yup.string().url('URL Website không hợp lệ'),
 });
 
 const ContactInfoSection = ({ candidate, setCandidate }) => {
@@ -30,92 +30,30 @@ const ContactInfoSection = ({ candidate, setCandidate }) => {
     }
   };
 
-  return (
-    <div className="card">
-      <div className="card-header d-flex justify-content-between align-items-center">
-        <h5 className="mb-0">Thông tin liên hệ</h5>
-        <button 
-          className="btn btn-sm btn-primary"
-          onClick={() => setEditMode(!editMode)}
-        >
-          <i className="bi bi-pencil me-1"></i> {editMode ? 'Hủy' : 'Chỉnh sửa'}
-        </button>
-      </div>
-      <div className="card-body">
-        {editMode ? (
-          <Formik
-            initialValues={candidate?.contactInfo || {
-              email: '',
-              phone: '',
-              address: '',
-              city: '',
-              country: '',
-              linkedin: '',
-              github: '',
-              website: ''
-            }}
-            validationSchema={contactInfoSchema}
-            onSubmit={handleContactInfoSubmit}
+  const initialValues = {
+    email: candidate?.contactInfo?.email || '',
+    phone: candidate?.contactInfo?.phone || '',
+    address: candidate?.contactInfo?.address || '',
+    city: candidate?.contactInfo?.city || '',
+    country: candidate?.contactInfo?.country || '',
+    linkedin: candidate?.contactInfo?.linkedin || '',
+    github: candidate?.contactInfo?.github || '',
+    website: candidate?.contactInfo?.website || '',
+  };
+
+  if (!editMode) {
+    return (
+      <div className="card">
+        <div className="card-header d-flex justify-content-between align-items-center">
+          <h5 className="mb-0">Thông tin liên hệ</h5>
+          <button 
+            className="btn btn-sm btn-primary"
+            onClick={() => setEditMode(!editMode)}
           >
-            {({ isSubmitting }) => (
-              <Form>
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label className="form-label">Email</label>
-                    <Field type="email" name="email" className="form-control" />
-                    <ErrorMessage name="email" component="div" className="text-danger" />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">Số điện thoại</label>
-                    <Field type="text" name="phone" className="form-control" />
-                    <ErrorMessage name="phone" component="div" className="text-danger" />
-                  </div>
-                </div>
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label className="form-label">Địa chỉ</label>
-                    <Field type="text" name="address" className="form-control" />
-                    <ErrorMessage name="address" component="div" className="text-danger" />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">Thành phố</label>
-                    <Field type="text" name="city" className="form-control" />
-                    <ErrorMessage name="city" component="div" className="text-danger" />
-                  </div>
-                </div>
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label className="form-label">Quốc gia</label>
-                    <Field type="text" name="country" className="form-control" />
-                    <ErrorMessage name="country" component="div" className="text-danger" />
-                  </div>
-                </div>
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label className="form-label">LinkedIn</label>
-                    <Field type="url" name="linkedin" className="form-control" />
-                    <ErrorMessage name="linkedin" component="div" className="text-danger" />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">GitHub</label>
-                    <Field type="url" name="github" className="form-control" />
-                    <ErrorMessage name="github" component="div" className="text-danger" />
-                  </div>
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Website cá nhân</label>
-                  <Field type="url" name="website" className="form-control" />
-                  <ErrorMessage name="website" component="div" className="text-danger" />
-                </div>
-                <div className="d-flex justify-content-end">
-                  <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-                    Lưu thay đổi
-                  </button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        ) : (
+            <i className="bi bi-pencil me-1"></i> {editMode ? 'Hủy' : 'Chỉnh sửa'}
+          </button>
+        </div>
+        <div className="card-body">
           <div>
             <div className="row mb-3">
               <div className="col-md-6">
@@ -178,7 +116,103 @@ const ContactInfoSection = ({ candidate, setCandidate }) => {
               </div>
             </div>
           </div>
-        )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="card">
+      <div className="card-header d-flex justify-content-between align-items-center">
+        <h5 className="mb-0">Chỉnh sửa thông tin liên hệ</h5>
+        <button 
+          className="btn btn-sm btn-secondary"
+          onClick={() => setEditMode(!editMode)}
+        >
+          Hủy
+        </button>
+      </div>
+      <div className="card-body">
+        <Formik
+          initialValues={initialValues}
+          validationSchema={contactInfoSchema}
+          onSubmit={handleContactInfoSubmit}
+        >
+          {({ isSubmitting }) => (
+            <Form>
+              <div className="row mb-3">
+                <div className="col-md-6">
+                  <label className="form-label">Email</label>
+                  <Field type="email" name="email" className="form-control" />
+                  <ErrorMessage name="email" component="div" className="text-danger" />
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label">Số điện thoại</label>
+                  <Field type="text" name="phone" className="form-control" />
+                  <ErrorMessage name="phone" component="div" className="text-danger" />
+                </div>
+              </div>
+              <div className="row mb-3">
+                <div className="col-md-6">
+                  <label className="form-label">Địa chỉ</label>
+                  <Field type="text" name="address" className="form-control" />
+                  <ErrorMessage name="address" component="div" className="text-danger" />
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label">Thành phố</label>
+                  <Field type="text" name="city" className="form-control" />
+                  <ErrorMessage name="city" component="div" className="text-danger" />
+                </div>
+              </div>
+              <div className="row mb-3">
+                <div className="col-md-6">
+                  <label className="form-label">Quốc gia</label>
+                  <Field type="text" name="country" className="form-control" />
+                  <ErrorMessage name="country" component="div" className="text-danger" />
+                </div>
+              </div>
+              <div className="row mb-3">
+                <div className="col-md-6">
+                  <label className="form-label">LinkedIn</label>
+                  <Field type="url" name="linkedin" className="form-control" />
+                  <ErrorMessage name="linkedin" component="div" className="text-danger" />
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label">GitHub</label>
+                  <Field type="url" name="github" className="form-control" />
+                  <ErrorMessage name="github" component="div" className="text-danger" />
+                </div>
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Website cá nhân</label>
+                <Field type="url" name="website" className="form-control" />
+                <ErrorMessage name="website" component="div" className="text-danger" />
+              </div>
+              <div className="d-flex justify-content-end">
+                <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                  {isSubmitting ? 'Đang lưu...' : 'Lưu thay đổi'}
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </div>
+  );
+};
+
+export default ContactInfoSection; 
+
+                <ErrorMessage name="website" component="div" className="text-danger" />
+              </div>
+              <div className="d-flex justify-content-end">
+                <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                  {isSubmitting ? 'Đang lưu...' : 'Lưu thay đổi'}
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </div>
     </div>
   );

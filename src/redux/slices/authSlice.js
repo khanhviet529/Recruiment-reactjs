@@ -252,23 +252,39 @@ export const resetPassword = createAsyncThunk(
 // Logout user (client-side only)
 export const logout = createAsyncThunk('auth/logout', async () => {
   try {
+    console.log('Logout initiated - clearing all session data');
+    
     // Remove localStorage items
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('intended_role'); // Xóa vai trò dự định khi đăng xuất
     
-    // Clear Google's session state cookies
-    document.cookie = "g_state=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    // Clear Google's session state cookies more thoroughly
+    const googleCookies = ['g_state', 'g_csrf_token', '__Host-1PLSID', '__Host-3PLSID', 'SAPISID', 'APISID', 'SSID', 'HSID', 'SID'];
+    googleCookies.forEach(cookieName => {
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.google.com;`;
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.googleapis.com;`;
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    });
     
     // Try to reset active Google accounts if the API is available
     if (window.google && window.google.accounts) {
       try {
         window.google.accounts.id.cancel();
-        console.log('Google account session reset');
+        window.google.accounts.id.disableAutoSelect();
+        console.log('Google account session reset and auto-select disabled');
       } catch (e) {
         console.log('Google account reset not applicable');
       }
     }
+    
+    // Clear any cached authentication state
+    if (window.sessionStorage) {
+      sessionStorage.removeItem('google_oauth_state');
+      sessionStorage.removeItem('google_auth_cache');
+    }
+    
+    console.log('Logout completed successfully');
   } catch (error) {
     console.error('Error during logout:', error);
   }
@@ -413,11 +429,14 @@ export const loginWithGoogle = createAsyncThunk(
       // Hoặc lấy từ googleData nếu đã truyền vào
       const attemptedRole = googleData.role || intendedRole;
       
+      console.log('Google Login - Attempted role:', attemptedRole, 'for email:', googleData.email);
+      
       // Kiểm tra tài khoản Google đã tồn tại chưa
       const googleIdCheck = await axios.get(`${API_URL}/users?googleId=${googleData.sub}`);
       
       if (googleIdCheck.data.length > 0) {
         const existingUser = googleIdCheck.data[0];
+        console.log('Existing Google user found with role:', existingUser.role);
         
         // Kiểm tra role có khớp không
         if (existingUser.role !== attemptedRole) {
@@ -428,15 +447,25 @@ export const loginWithGoogle = createAsyncThunk(
           }
         }
         
-        // Cập nhật lastLogin
-        await axios.patch(`${API_URL}/users/${existingUser.id}`, {
+        // Cập nhật lastLogin và đảm bảo thông tin Google mới nhất
+        const updatedUserData = {
           lastLogin: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        });
+          updatedAt: new Date().toISOString(),
+          profilePicture: googleData.picture || existingUser.profilePicture,
+          firstName: googleData.given_name || existingUser.firstName,
+          lastName: googleData.family_name || existingUser.lastName,
+          name: googleData.name || existingUser.name,
+          isVerified: true,
+          status: 'active'
+        };
+        
+        const updateResponse = await axios.patch(`${API_URL}/users/${existingUser.id}`, updatedUserData);
+        
+        // Lấy user data đầy đủ sau khi cập nhật
+        const userResponse = await axios.get(`${API_URL}/users/${existingUser.id}`);
+        let userData = userResponse.data;
         
         // Lấy profile tương ứng với role
-        let userData = { ...existingUser };
-        
         if (existingUser.role === 'employer') {
           const employerResponse = await axios.get(`${API_URL}/employers?userId=${existingUser.id}`);
           if (employerResponse.data.length > 0) {
@@ -450,20 +479,32 @@ export const loginWithGoogle = createAsyncThunk(
         }
         
         // Tạo token và lưu vào localStorage
-        const token = btoa(JSON.stringify({ id: existingUser.id, email: existingUser.email }));
+        const token = btoa(JSON.stringify({ id: userData.id, email: userData.email }));
+        
+        // Clear any existing storage before setting new data
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('intended_role');
+        
         localStorage.setItem('user', JSON.stringify(userData));
         localStorage.setItem('token', token);
         
+        console.log('Google Login successful for existing user:', userData.role);
         return { user: userData, token };
       }
       
       // Tạo tài khoản mới nếu chưa tồn tại
+      console.log('Creating new Google user with role:', attemptedRole);
       
-      // Kiểm tra email đã được sử dụng chưa
-      // const emailCheck = await axios.get(`${API_URL}/users?email=${googleData.email}`);
-      // if (emailCheck.data.length > 0) {
-      //   return rejectWithValue('Email này đã được sử dụng với tài khoản khác. Vui lòng sử dụng email khác.');
-      // }
+      // Kiểm tra email đã được sử dụng với tài khoản khác chưa (không phải Google)
+      const emailCheck = await axios.get(`${API_URL}/users?email=${googleData.email}`);
+      if (emailCheck.data.length > 0) {
+        // Có user với email này nhưng không có Google ID
+        const existingEmailUser = emailCheck.data[0];
+        if (!existingEmailUser.googleId) {
+          return rejectWithValue('Email này đã được đăng ký với phương thức khác. Vui lòng đăng nhập bằng mật khẩu hoặc sử dụng email khác.');
+        }
+      }
       
       // Tạo user mới
       const newUser = {
@@ -523,14 +564,22 @@ export const loginWithGoogle = createAsyncThunk(
       
       // Tạo token và lưu vào localStorage
       const token = btoa(JSON.stringify({ id: user.id, email: user.email }));
+      
+      // Clear any existing storage before setting new data
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      localStorage.removeItem('intended_role');
+      
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('token', token);
       
+      console.log('Google Registration successful for new user:', user.role);
       return { user, token };
       
     } catch (error) {
       console.error('Lỗi đăng nhập Google:', error);
-      return rejectWithValue(error.message || 'Đăng nhập Google thất bại');
+      const errorMessage = error.response?.data?.message || error.message || 'Đăng nhập Google thất bại';
+      return rejectWithValue(errorMessage);
     }
   }
 );
@@ -556,6 +605,11 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
       state.success = false;
+    },
+    updateUserProfile: (state, action) => {
+      state.user = { ...state.user, ...action.payload };
+      // Update localStorage as well
+      localStorage.setItem('user', JSON.stringify(state.user));
     },
   },
   extraReducers: (builder) => {
@@ -666,7 +720,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { reset } = authSlice.actions;
+export const { reset, updateUserProfile } = authSlice.actions;
 
 // Add selector
 export const selectAuth = (state) => state.auth;

@@ -18,14 +18,14 @@ const CandidateLayout = () => {
           {/* Sidebar */}
           <div className="col-md-3 col-lg-2 sidebar">
             <div className="sidebar-sticky pt-3">
-              <ul className="nav flex-column">
+              <ul className="nav">
                 <li className="nav-item">
                   <Link 
                     className={`nav-link ${isActive('/candidate/dashboard') ? 'active' : ''}`}
                     to="/candidate/dashboard"
                   >
                     <i className="bi bi-speedometer2 me-2"></i>
-                    Dashboard
+                    Bảng điều khiển
                   </Link>
                 </li>
                 <li className="nav-item">
@@ -37,7 +37,7 @@ const CandidateLayout = () => {
                     Hồ sơ cá nhân
                   </Link>
                 </li>
-                <li className="nav-item">
+                {/* <li className="nav-item">
                   <Link 
                     className={`nav-link ${isActive('/candidate/jobs') ? 'active' : ''}`}
                     to="/candidate/jobs"
@@ -45,7 +45,7 @@ const CandidateLayout = () => {
                     <i className="bi bi-search me-2"></i>
                     Tìm việc làm
                   </Link>
-                </li>
+                </li> */}
                 <li className="nav-item">
                   <Link 
                     className={`nav-link ${isActive('/candidate/applications') ? 'active' : ''}`}
@@ -73,7 +73,7 @@ const CandidateLayout = () => {
                     Công việc đã lưu
                   </Link>
                 </li>
-                <li className="nav-item">
+                {/* <li className="nav-item">
                   <Link 
                     className={`nav-link ${isActive('/candidate/job-search') ? 'active' : ''}`}
                     to="/candidate/job-search"
@@ -81,7 +81,7 @@ const CandidateLayout = () => {
                     <i className="bi bi-search me-2"></i>
                     Tìm kiếm nâng cao
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>
