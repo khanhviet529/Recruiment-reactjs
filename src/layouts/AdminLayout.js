@@ -183,11 +183,6 @@ const AdminLayout = () => {
               label: <Link to="/admin/skills">Quản lý kỹ năng</Link>,
             },
             // {
-            //   key: '/admin/meetings',
-            //   icon: <VideoCameraOutlined />,
-            //   label: <Link to="/admin/meetings">Quản lý cuộc họp</Link>,
-            // },
-            // {
             //   key: '/admin/messages',
             //   icon: <MessageOutlined />,
             //   label: <Link to="/admin/messages">Tin nhắn hỗ trợ</Link>,

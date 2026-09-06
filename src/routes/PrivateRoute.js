@@ -62,7 +62,7 @@ const PrivateRoute = ({ children }) => {
     // Determine redirect path based on the requested route
     let redirectPath = '/auth/login';
     
-    if (location.pathname.includes('/employer') || location.pathname.includes('/meeting')) {
+    if (location.pathname.includes('/employer')) {
       redirectPath = '/employer/login';
     } else if (location.pathname.includes('/candidate')) {
       redirectPath = '/candidate/login';

@@ -9,8 +9,7 @@ import {
   ClockCircleOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
-  EyeOutlined,
-  VideoCameraOutlined
+  EyeOutlined
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 
@@ -21,8 +20,7 @@ const CandidateDashboardPage = () => {
     pendingApplications: 0,
     interviewApplications: 0,
     acceptedApplications: 0,
-    rejectedApplications: 0,
-    upcomingMeetings: 0
+    rejectedApplications: 0
   });
   const [recentApplications, setRecentApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,21 +41,6 @@ const CandidateDashboardPage = () => {
         // Lấy danh sách đơn ứng tuyển của ứng viên
         const applicationsResponse = await axios.get(`http://localhost:5000/applications?candidateId=${candidateId}`);
         const applications = applicationsResponse.data || [];
-        
-        // Lấy thông tin cuộc họp sắp tới
-        const now = new Date().toISOString();
-        const meetingsResponse = await axios.get(`http://localhost:5000/meetings`);
-        const allMeetings = meetingsResponse.data || [];
-        
-        // Lọc cuộc họp liên quan đến ứng viên này
-        const candidateMeetings = allMeetings.filter(meeting => 
-          meeting.participants.some(p => p.userId === user.id && p.userType === 'candidate')
-        );
-        
-        // Đếm số cuộc họp sắp tới
-        const upcomingMeetings = candidateMeetings.filter(meeting => 
-          meeting.startTime > now
-        ).length;
         
         // Lấy thông tin chi tiết của mỗi công việc đã ứng tuyển để hiển thị
         const processedApplications = await Promise.all(applications.slice(0, 5).map(async (app) => {
@@ -96,8 +79,7 @@ const CandidateDashboardPage = () => {
           pendingApplications: applications.filter(app => app.status === 'pending').length,
           interviewApplications: applications.filter(app => app.status === 'interviewing').length,
           acceptedApplications: applications.filter(app => ['hired', 'offered'].includes(app.status)).length,
-          rejectedApplications: applications.filter(app => app.status === 'rejected').length,
-          upcomingMeetings: upcomingMeetings
+          rejectedApplications: applications.filter(app => app.status === 'rejected').length
         };
         
         setStats(stats);
@@ -110,8 +92,7 @@ const CandidateDashboardPage = () => {
           pendingApplications: 3,
           interviewApplications: 2,
           acceptedApplications: 1,
-          rejectedApplications: 2,
-          upcomingMeetings: 1
+          rejectedApplications: 2
         });
         setRecentApplications([
           {
@@ -148,8 +129,7 @@ const CandidateDashboardPage = () => {
         pendingApplications: 3,
         interviewApplications: 2,
         acceptedApplications: 1,
-        rejectedApplications: 2,
-        upcomingMeetings: 1
+        rejectedApplications: 2
       });
       
       setRecentApplications([
@@ -273,25 +253,6 @@ const CandidateDashboardPage = () => {
         </Col>
       </Row>
       
-      <Row gutter={[16, 16]} className="mb-4">
-        <Col xs={24} sm={12}>
-          <Card>
-            <Statistic
-              title="Cuộc họp phỏng vấn sắp tới"
-              value={stats.upcomingMeetings}
-              prefix={<VideoCameraOutlined />}
-              valueStyle={{ color: '#6366f1' }}
-            />
-            <div style={{ marginTop: '10px' }}>
-              <Link to="/candidate/meetings">
-                <Button type="primary" icon={<VideoCameraOutlined />} size="small">
-                  Xem lịch phỏng vấn
-                </Button>
-              </Link>
-            </div>
-          </Card>
-        </Col>
-      </Row>
       
       <Card
         title="Đơn ứng tuyển gần đây"

@@ -306,52 +306,6 @@ export const validationService = {
     return { isValid, errors };
   },
 
-  // Meeting validation
-  validateMeeting: (meeting) => {
-    const errors = {};
-    let isValid = true;
-
-    // Title validation
-    const titleValidation = validationService.validateName(meeting.title, 'Tiêu đề cuộc họp');
-    if (!titleValidation.isValid) {
-      errors.title = titleValidation.message;
-      isValid = false;
-    }
-
-    // Description validation
-    if (meeting.description) {
-      const descValidation = validationService.validateDescription(
-        meeting.description, 
-        10, 
-        1000, 
-        'Mô tả cuộc họp'
-      );
-      if (!descValidation.isValid) {
-        errors.description = descValidation.message;
-        isValid = false;
-      }
-    }
-
-    // Time validation
-    const timeValidation = validationService.validateDateRange(
-      meeting.startTime, 
-      meeting.endTime, 
-      'Thời gian bắt đầu', 
-      'Thời gian kết thúc'
-    );
-    if (!timeValidation.isValid) {
-      errors.time = timeValidation.message;
-      isValid = false;
-    }
-
-    // Participants validation
-    if (!Array.isArray(meeting.participants) || meeting.participants.length === 0) {
-      errors.participants = 'Cần có ít nhất một người tham gia';
-      isValid = false;
-    }
-
-    return { isValid, errors };
-  },
 
   // Application validation
   validateApplication: (application) => {

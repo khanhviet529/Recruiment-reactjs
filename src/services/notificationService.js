@@ -5,8 +5,6 @@ const API_BASE_URL = 'http://localhost:5000';
 const NOTIFICATION_TYPES = {
   APPLICATION_STATUS_CHANGED: 'application_status_changed',
   APPLICATION_RECEIVED: 'application_received',
-  MEETING_REMINDER: 'meeting_reminder',
-  MEETING_INVITATION: 'meeting_invitation',
   JOB_POSTED: 'job_posted',
   PROFILE_UPDATED: 'profile_updated',
   SYSTEM_NOTIFICATION: 'system_notification'
@@ -208,38 +206,6 @@ export const notificationService = {
     });
   },
 
-  createMeetingReminderNotification: async (userId, meetingId, meetingTitle, startTime) => {
-    const timeUntilMeeting = new Date(startTime) - new Date();
-    const hoursUntilMeeting = Math.round(timeUntilMeeting / (1000 * 60 * 60));
-
-    return await notificationService.createNotification({
-      recipient: userId,
-      type: NOTIFICATION_TYPES.MEETING_REMINDER,
-      title: 'Nhắc nhở cuộc họp',
-      message: `Bạn có cuộc họp "${meetingTitle}" sắp diễn ra trong ${hoursUntilMeeting} giờ nữa.`,
-      data: {
-        meetingId,
-        startTime
-      },
-      link: `/meetings/${meetingId}`
-    });
-  },
-
-  createMeetingInvitationNotification: async (userId, meetingId, meetingTitle, organizerName, startTime) => {
-    return await notificationService.createNotification({
-      recipient: userId,
-      type: NOTIFICATION_TYPES.MEETING_INVITATION,
-      title: 'Lời mời tham gia cuộc họp',
-      message: `${organizerName} đã mời bạn tham gia cuộc họp "${meetingTitle}" vào ${new Date(startTime).toLocaleString('vi-VN')}.`,
-      data: {
-        meetingId,
-        organizerName,
-        startTime
-      },
-      link: `/meetings/${meetingId}`
-    });
-  },
-
   createJobPostedNotification: async (candidateId, jobId, jobTitle, companyName) => {
     return await notificationService.createNotification({
       recipient: candidateId,
@@ -304,7 +270,7 @@ export const notificationService = {
           email: true,
           push: true,
           applicationUpdates: true,
-          meetingReminders: true,
+          testReminders: true,   // nhac lam bai danh gia (thay cho nhac cuoc hop)
           jobRecommendations: true,
           marketingEmails: false
         }

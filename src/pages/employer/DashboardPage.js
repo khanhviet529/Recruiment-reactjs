@@ -9,8 +9,7 @@ import {
   TeamOutlined,
   ClockCircleOutlined,
   CheckCircleOutlined,
-  CloseCircleOutlined,
-  VideoCameraOutlined
+  CloseCircleOutlined
 } from '@ant-design/icons';
 
 const DashboardPage = () => {
@@ -21,8 +20,7 @@ const DashboardPage = () => {
     totalApplications: 0,
     newApplications: 0,
     interviewsScheduled: 0,
-    hiredCandidates: 0,
-    upcomingMeetings: 0
+    hiredCandidates: 0
   });
   const [recentApplications, setRecentApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,21 +51,6 @@ const DashboardPage = () => {
               // Lọc ra các đơn ứng tuyển thuộc về công việc của nhà tuyển dụng
               applications = allApplicationsResponse.data.filter(app => jobIds.includes(app.jobId)) || [];
             }
-            
-            // Lấy thông tin cuộc họp sắp tới
-            const now = new Date().toISOString();
-            const meetingsResponse = await axios.get(`http://localhost:5000/meetings`);
-            const allMeetings = meetingsResponse.data || [];
-            
-            // Lọc cuộc họp liên quan đến nhà tuyển dụng này
-            const employerMeetings = allMeetings.filter(meeting => 
-              meeting.participants.some(p => p.userId === user.id && p.userType === 'employer')
-            );
-            
-            // Đếm số cuộc họp sắp tới
-            const upcomingMeetings = employerMeetings.filter(meeting => 
-              meeting.startTime > now
-            ).length;
             
             // Lấy 5 đơn ứng tuyển gần đây nhất
             const recentApplications = await Promise.all(
@@ -115,8 +98,7 @@ const DashboardPage = () => {
               totalApplications: applications.length,
               newApplications: applications.filter(app => app.status === 'applied').length,
               interviewsScheduled: applications.filter(app => app.status === 'interviewing').length,
-              hiredCandidates: applications.filter(app => app.status === 'hired').length,
-              upcomingMeetings: upcomingMeetings
+              hiredCandidates: applications.filter(app => app.status === 'hired').length
             });
             
             setRecentApplications(recentApplications);
@@ -130,8 +112,7 @@ const DashboardPage = () => {
             totalApplications: 12,
             newApplications: 4,
             interviewsScheduled: 2,
-            hiredCandidates: 1,
-            upcomingMeetings: 2
+            hiredCandidates: 1
           });
           
           setRecentApplications([
@@ -218,11 +199,6 @@ const DashboardPage = () => {
               Đăng tin tuyển dụng
             </Button>
           </Link>
-          <Link to="/employer/meetings/create">
-            <Button type="primary" icon={<VideoCameraOutlined />}>
-              Tạo cuộc họp
-            </Button>
-          </Link>
         </div>
       </div>
 
@@ -286,19 +262,6 @@ const DashboardPage = () => {
               prefix={<CheckCircleOutlined />}
               valueStyle={{ color: '#3f8600' }}
             />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <Card>
-            <Statistic
-              title="Cuộc họp sắp tới"
-              value={stats.upcomingMeetings || 0}
-              prefix={<VideoCameraOutlined />}
-              valueStyle={{ color: '#6366f1' }}
-            />
-            <div className="statistic-footer">
-              <Link to="/employer/meetings">Xem lịch họp</Link>
-            </div>
           </Card>
         </Col>
       </Row>
