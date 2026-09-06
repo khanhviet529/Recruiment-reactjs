@@ -20,7 +20,6 @@ import JobsPage from '../pages/JobsPage';
 import CompaniesPage from '../pages/CompaniesPage';
 import CompanyDetail from '../pages/CompanyDetail';
 import NotificationsPage from '../pages/NotificationsPage';
-import TestAgoraPage from '../pages/TestAgoraPage';
 
 // Auth Pages
 import LoginPage from '../pages/auth/LoginPage';
@@ -63,31 +62,8 @@ import AdminMessagesPage from '../pages/admin/MessagesPage';
 import AdminReportsPage from '../pages/admin/ReportsPage';
 import AdminSettingsPage from '../pages/admin/SettingsPage';
 
-// Admin Meeting Pages
-import AdminMeetingsPage from '../pages/admin/MeetingsPage';
-import MeetingDetailPage from '../pages/admin/meetings/MeetingDetailPage';
-import CreateMeetingPage from '../pages/admin/meetings/CreateMeetingPage';
-import EditMeetingPage from '../pages/admin/meetings/EditMeetingPage';
 
-// Meeting Components
-import MeetingRoom from '../components/meeting/MeetingRoom';
-import SimpleMeetingRoom from '../components/meeting/SimpleMeetingRoom';
-import SmartMeetingRoom from '../components/meeting/SmartMeetingRoom';
-import CreateMeeting from '../components/meeting/CreateMeeting';
-import EmployerMeetingsPage from '../pages/employer/MeetingsPage';
-import CandidateMeetingsPage from '../pages/candidate/MeetingsPage';
-import EmployerMeetingDetailPage from '../pages/employer/MeetingDetailPage';
-import EmployerEditMeetingPage from '../pages/employer/EditMeetingPage';
-import CandidateMeetingDetailPage from '../pages/candidate/MeetingDetailPage';
-import MeetingsLayout from '../layouts/MeetingsLayout';
-import MeetingRedirect from '../components/common/MeetingRedirect';
-import MeetingRoomRedirect from '../components/common/MeetingRoomRedirect';
 
-// Enhanced Meeting Components (NEW)
-import EnhancedMeetingPage from '../pages/meeting/EnhancedMeetingPage';
-import MeetingRoomEnhanced from '../components/meeting/MeetingRoomEnhanced';
-import TokenManagementPanel from '../components/meeting/TokenManagementPanel';
-import WaitingRoom from '../components/meeting/WaitingRoom';
 
 // Custom Routes
 import PrivateRoute from './PrivateRoute';
@@ -111,27 +87,7 @@ const AppRoutes = () => {
         <Route path="/jobs/search" element={<SearchPage />} />
         <Route path="/companies" element={<CompaniesPage />} />
         <Route path="/companies/:id" element={<CompanyDetail />} />
-        <Route path="/test-agora" element={<TestAgoraPage />} />
       </Route>
-
-      {/* Enhanced Meeting Routes (NEW) - Available to all authenticated users */}
-      <Route path="/meeting-enhanced/:meetingId" element={
-        <PrivateRoute>
-          <EnhancedMeetingPage />
-        </PrivateRoute>
-      } />
-      
-      <Route path="/meeting-room-enhanced/:meetingId" element={
-        <PrivateRoute>
-          <MeetingRoomEnhanced />
-        </PrivateRoute>
-      } />
-
-      <Route path="/token-management/:meetingId" element={
-        <PrivateRoute>
-          <TokenManagementPanel />
-        </PrivateRoute>
-      } />
 
       {/* Auth Routes */}
       <Route path="/auth" element={<AuthLayout />}>
@@ -206,14 +162,6 @@ const AppRoutes = () => {
         <Route path="applications/:id" element={<EmployerApplicationDetailPage />} />
         <Route path="recruitment-process" element={<EmployerRecruitmentProcessPage />} />
         
-        {/* Traditional Meetings routes inside EmployerLayout */}
-        <Route path="meetings" element={<MeetingsLayout><EmployerMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/upcoming" element={<MeetingsLayout><EmployerMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/ongoing" element={<MeetingsLayout><EmployerMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/past" element={<MeetingsLayout><EmployerMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/create" element={<MeetingsLayout><CreateMeeting /></MeetingsLayout>} />
-        <Route path="meetings/:meetingId" element={<MeetingsLayout><EmployerMeetingDetailPage /></MeetingsLayout>} />
-        <Route path="meetings/edit/:meetingId" element={<MeetingsLayout><EmployerEditMeetingPage /></MeetingsLayout>} />
       </Route>
 
       {/* Candidate Routes */}
@@ -237,12 +185,6 @@ const AppRoutes = () => {
         <Route path="saved-jobs" element={<SavedJobsPage />} />
         <Route path="search" element={<JobSearchPage />} />
         
-        {/* Traditional Meetings routes inside CandidateLayout */}
-        <Route path="meetings" element={<MeetingsLayout><CandidateMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/upcoming" element={<MeetingsLayout><CandidateMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/ongoing" element={<MeetingsLayout><CandidateMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/past" element={<MeetingsLayout><CandidateMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/:meetingId" element={<MeetingsLayout><CandidateMeetingDetailPage /></MeetingsLayout>} />
       </Route>
 
       {/* Admin Routes */}
@@ -264,57 +206,7 @@ const AppRoutes = () => {
         <Route path="reports" element={<AdminReportsPage />} />
         <Route path="settings" element={<AdminSettingsPage />} />
         
-        {/* Admin Meetings */}
-        <Route path="meetings" element={<AdminMeetingsPage />} />
-        <Route path="meetings/create" element={<CreateMeetingPage />} />
-        <Route path="meetings/:meetingId" element={<MeetingDetailPage />} />
-        <Route path="meetings/edit/:meetingId" element={<EditMeetingPage />} />
       </Route>
-
-      {/* Meeting Room Routes */}
-      <Route path="/meeting/:meetingId" element={
-        <PrivateRoute>
-          <SmartMeetingRoom />
-        </PrivateRoute>
-      } />
-      
-      {/* Waiting Room Route */}
-      <Route path="/waiting-room/:meetingId" element={
-        <PrivateRoute>
-          <WaitingRoom />
-        </PrivateRoute>
-      } />
-      
-      <Route path="/meeting-smart/:meetingId" element={
-        <PrivateRoute>
-          <SmartMeetingRoom />
-        </PrivateRoute>
-      } />
-      
-      <Route path="/meeting-simple/:meetingId" element={
-        <PrivateRoute>
-          <SimpleMeetingRoom />
-        </PrivateRoute>
-      } />
-      
-      <Route path="/meeting-full/:meetingId" element={
-        <PrivateRoute>
-          <MeetingRoom />
-        </PrivateRoute>
-      } />
-
-      {/* Meeting Redirect Routes */}
-      <Route path="/meeting-redirect/:meetingId" element={
-        <PrivateRoute>
-          <MeetingRedirect />
-        </PrivateRoute>
-      } />
-      
-      <Route path="/meeting-room-redirect/:meetingId" element={
-        <PrivateRoute>
-          <MeetingRoomRedirect />
-        </PrivateRoute>
-      } />
 
       {/* Notifications (for all authenticated users) */}
       <Route path="/notifications" element={
