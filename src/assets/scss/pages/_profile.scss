@@ -44,7 +44,7 @@
           margin-bottom: 0.5rem;
           
           i {
-            color: #4A90E2;
+            color: #4f46e5;
             width: 20px;
             text-align: center;
           }
@@ -55,7 +55,7 @@
   
   .profile-content {
     .nav-tabs {
-      border-bottom: 1px solid #dee2e6;
+      border-bottom: 1px solid #e2e8f0;
       margin-bottom: 1.5rem;
       
       .nav-item {
@@ -66,18 +66,18 @@
         border: 1px solid transparent;
         border-top-left-radius: 0.25rem;
         border-top-right-radius: 0.25rem;
-        color: #495057;
+        color: #334155;
         font-weight: 500;
         padding: 0.75rem 1.25rem;
         
         &:hover {
-          border-color: #e9ecef #e9ecef #dee2e6;
+          border-color: #f1f5f9 #f1f5f9 #e2e8f0;
         }
         
         &.active {
-          color: #4A90E2;
+          color: #4f46e5;
           background-color: #fff;
-          border-color: #dee2e6 #dee2e6 #fff;
+          border-color: #e2e8f0 #e2e8f0 #fff;
           font-weight: 600;
         }
       }
@@ -105,7 +105,7 @@
     }
     
     .education-item, .experience-item {
-      border-bottom: 1px solid #e9ecef;
+      border-bottom: 1px solid #f1f5f9;
       padding-bottom: 1.5rem;
       margin-bottom: 1.5rem;
       

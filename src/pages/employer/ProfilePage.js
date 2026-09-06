@@ -480,7 +480,7 @@ const EmployerProfilePage = () => {
               <Title level={4}>{profile.companyName}</Title>
               {profile.verified && (
                 <div className="verified-badge mb-2">
-                  <CheckCircleOutlined style={{ color: '#52c41a' }} /> <Text type="success">Đã xác thực</Text>
+                  <CheckCircleOutlined style={{ color: '#059669' }} /> <Text type="success">Đã xác thực</Text>
                 </div>
               )}
               

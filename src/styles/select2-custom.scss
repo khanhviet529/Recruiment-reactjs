@@ -3,7 +3,7 @@
   .select2-selection--multiple,
   .select2-selection--single {
     border-radius: 50rem;
-    border: 1px solid #dee2e6;
+    border: 1px solid #e2e8f0;
 
     &:focus {
       border-color: #86b7fe;
@@ -15,16 +15,16 @@
     .select2-selection__choice {
       background-color: #e7f1ff;
       border-color: #d0e2ff;
-      color: #0d6efd;
+      color: #4f46e5;
       border-radius: 50rem;
       padding: 2px 8px;
 
       &__remove {
-        color: #0d6efd;
+        color: #4f46e5;
         margin-right: 5px;
 
         &:hover {
-          // background-color: #0d6efd;
+          // background-color: #4f46e5;
           color: white;
         }
       }
@@ -33,20 +33,20 @@
 
   .select2-results__option {
     &--highlighted[aria-selected] {
-      background-color: #f8f9fa;
-      color: #212529;
+      background-color: #f8fafc;
+      color: #0f172a;
     }
 
     &[aria-selected=true] {
       background-color: #e7f1ff;
-      color: #0d6efd;
+      color: #4f46e5;
       position: relative;
 
       &::after {
         content: "✓";
         position: absolute;
         right: 10px;
-        color: #0d6efd;
+        color: #4f46e5;
       }
     }
   }
@@ -121,7 +121,7 @@
   display: inline-flex;
   align-items: center;
   background-color: #e7f1ff;
-  color: #0d6efd;
+  color: #4f46e5;
   border-radius: 50rem;
   padding: 2px 8px;
   font-size: 14px;
@@ -212,11 +212,11 @@
       .advanced-search-toggle {
         padding: 0.75rem 1.5rem;
         border: none;
-        background-color: #f8f9fa;
+        background-color: #f8fafc;
         color: #0073e6;
 
         &:hover {
-          background-color: #e9ecef;
+          background-color: #f1f5f9;
         }
       }
     }
@@ -226,7 +226,7 @@
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease-out;
-    background-color: #f8f9fa;
+    background-color: #f8fafc;
     border-radius: 0.5rem;
     margin-top: 1rem;
 
@@ -241,7 +241,7 @@
       .form-label {
         font-weight: 500;
         margin-bottom: 0.5rem;
-        color: #495057;
+        color: #334155;
       }
     }
   }

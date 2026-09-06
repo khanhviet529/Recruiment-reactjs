@@ -280,7 +280,7 @@ const CandidateDashboardPage = () => {
               title="Cuộc họp phỏng vấn sắp tới"
               value={stats.upcomingMeetings}
               prefix={<VideoCameraOutlined />}
-              valueStyle={{ color: '#722ed1' }}
+              valueStyle={{ color: '#6366f1' }}
             />
             <div style={{ marginTop: '10px' }}>
               <Link to="/candidate/meetings">

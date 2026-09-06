@@ -1374,7 +1374,7 @@ const ReportsPage = () => {
                   title="Nhà tuyển dụng"
                   value={statsData.users.employers}
                   prefix={<TeamOutlined />}
-                  valueStyle={{ color: '#1890ff' }}
+                  valueStyle={{ color: '#4f46e5' }}
                 />
                 <div style={{ marginTop: 5 }}>
                   <Text type="secondary">
@@ -1540,7 +1540,7 @@ const ReportsPage = () => {
                             <Statistic 
                               title="Đã phỏng vấn" 
                               value={getChartData(applicationStats, 0, 2, 0)} 
-                              valueStyle={{ fontSize: '1.2em', color: '#1890ff' }}
+                              valueStyle={{ fontSize: '1.2em', color: '#4f46e5' }}
                             />
                           </Col>
                         </Row>
@@ -1556,7 +1556,7 @@ const ReportsPage = () => {
                             <Statistic 
                               title="Đã từ chối" 
                               value={getChartData(applicationStats, 0, 4, 0)} 
-                              valueStyle={{ fontSize: '1.2em', color: '#ff4d4f' }}
+                              valueStyle={{ fontSize: '1.2em', color: '#e11d48' }}
                             />
                           </Col>
                         </Row>

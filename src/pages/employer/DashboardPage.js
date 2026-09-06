@@ -274,7 +274,7 @@ const DashboardPage = () => {
               title="Lịch phỏng vấn"
               value={stats.interviewsScheduled}
               prefix={<ClockCircleOutlined />}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: '#4f46e5' }}
             />
           </Card>
         </Col>
@@ -294,7 +294,7 @@ const DashboardPage = () => {
               title="Cuộc họp sắp tới"
               value={stats.upcomingMeetings || 0}
               prefix={<VideoCameraOutlined />}
-              valueStyle={{ color: '#722ed1' }}
+              valueStyle={{ color: '#6366f1' }}
             />
             <div className="statistic-footer">
               <Link to="/employer/meetings">Xem lịch họp</Link>

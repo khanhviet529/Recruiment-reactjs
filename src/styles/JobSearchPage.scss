@@ -24,7 +24,7 @@
       background: transparent;
       
       .ant-collapse-item {
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid #f1f5f9;
         
         &:last-child {
           border-bottom: none;
@@ -81,7 +81,7 @@
     }
     
     &.ant-select-focused .ant-select-selector {
-      border-color: #1890ff !important;
+      border-color: #4f46e5 !important;
       box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
     }
   }
@@ -93,15 +93,15 @@
       border-radius: 4px;
       
       &:hover {
-        background-color: #f5f5f5;
+        background-color: #f8fafc;
       }
       
       &.ant-select-item-option-selected {
-        background-color: #e6f7ff;
+        background-color: #eef2ff;
         font-weight: normal;
         
         .ant-select-item-option-state {
-          color: #1890ff;
+          color: #4f46e5;
         }
       }
     }

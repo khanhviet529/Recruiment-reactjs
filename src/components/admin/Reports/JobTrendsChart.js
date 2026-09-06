@@ -213,7 +213,7 @@ const JobTrendsChart = ({
                         {conversionRates.map(([period, rate], idx) => (
                           <li key={idx} style={{ marginBottom: 5, listStyleType: 'none', padding: '3px 0' }}>
                             <Text>{period}: </Text>
-                            <Text style={{ color: parseFloat(rate) >= 5 ? 'green' : parseFloat(rate) >= 2 ? '#faad14' : '#ff4d4f' }}>
+                            <Text style={{ color: parseFloat(rate) >= 5 ? 'green' : parseFloat(rate) >= 2 ? '#d97706' : '#e11d48' }}>
                               {rate}%
                             </Text>
                             {parseFloat(rate) >= 10 && <Tag color="green" style={{marginLeft: 8}}>Xuất sắc</Tag>}
@@ -256,7 +256,7 @@ const JobTrendsChart = ({
                     
                     <Paragraph>
                       <Text strong>Tỷ lệ tăng trưởng 30 ngày: </Text>
-                      <Text style={{ color: statsData.jobs.growth >= 0 ? '#ffffff' : '#ff4d4f' }}>
+                      <Text style={{ color: statsData.jobs.growth >= 0 ? '#ffffff' : '#e11d48' }}>
                         {statsData.jobs.growth >= 0 ? '+' : ''}{statsData.jobs.growth}%
                       </Text>
                     </Paragraph>

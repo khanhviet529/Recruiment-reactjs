@@ -154,7 +154,7 @@
     box-shadow: 0 1px 3px rgba(82, 196, 26, 0.3);
 
     &:hover:not(:disabled) {
-      background: linear-gradient(135deg, #73d13d, var(--success-500));
+      background: linear-gradient(135deg, #10b981, var(--success-500));
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(82, 196, 26, 0.4);
     }
@@ -180,7 +180,7 @@
     box-shadow: 0 1px 3px rgba(245, 34, 45, 0.3);
 
     &:hover:not(:disabled) {
-      background: linear-gradient(135deg, #ff4d4f, var(--error-500));
+      background: linear-gradient(135deg, #e11d48, var(--error-500));
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(245, 34, 45, 0.4);
     }

@@ -773,7 +773,7 @@ const ApplicationDetailPage = () => {
                   <div 
                     key={similarJob.id} 
                     className="similar-job-item mb-3 pb-3" 
-                    style={{ borderBottom: index < similarJobs.length - 1 ? '1px solid #f0f0f0' : 'none' }}
+                    style={{ borderBottom: index < similarJobs.length - 1 ? '1px solid #f1f5f9' : 'none' }}
                   >
                     <Title level={5} style={{ marginBottom: 4 }}>
                       {similarJob.title}

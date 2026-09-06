@@ -457,19 +457,19 @@ const MessagesPage = () => {
       {/* Statistics summary */}
       <div className="message-stats mb-4">
         <Space size="large">
-          <Badge count={messageStats.total} overflowCount={999} style={{ backgroundColor: '#1890ff' }}>
+          <Badge count={messageStats.total} overflowCount={999} style={{ backgroundColor: '#4f46e5' }}>
             <Text strong>Tổng tin nhắn</Text>
           </Badge>
           
-          <Badge count={messageStats.pending} overflowCount={999} style={{ backgroundColor: '#faad14' }}>
+          <Badge count={messageStats.pending} overflowCount={999} style={{ backgroundColor: '#d97706' }}>
             <Text strong>Đang xử lý</Text>
           </Badge>
           
-          <Badge count={messageStats.resolved} overflowCount={999} style={{ backgroundColor: '#52c41a' }}>
+          <Badge count={messageStats.resolved} overflowCount={999} style={{ backgroundColor: '#059669' }}>
             <Text strong>Đã giải quyết</Text>
           </Badge>
           
-          <Badge count={messageStats.urgent} overflowCount={999} style={{ backgroundColor: '#f5222d' }}>
+          <Badge count={messageStats.urgent} overflowCount={999} style={{ backgroundColor: '#e11d48' }}>
             <Text strong>Cần xử lý gấp</Text>
           </Badge>
         </Space>
@@ -529,7 +529,7 @@ const MessagesPage = () => {
       <div className="message-container">
         <Card style={{ display: 'flex', flexDirection: 'row', padding: 0, height: 'calc(100vh - 280px)' }}>
           {/* Message list */}
-          <div className="message-list" style={{ width: '30%', borderRight: '1px solid #f0f0f0', overflow: 'auto' }}>
+          <div className="message-list" style={{ width: '30%', borderRight: '1px solid #f1f5f9', overflow: 'auto' }}>
             <List
               loading={loading}
               itemLayout="horizontal"
@@ -544,14 +544,14 @@ const MessagesPage = () => {
                     padding: '12px 16px', 
                     cursor: 'pointer',
                     backgroundColor: selectedMessage?.id === item.id ? '#f0f7ff' : 'transparent',
-                    borderLeft: selectedMessage?.id === item.id ? '3px solid #1890ff' : '3px solid transparent'
+                    borderLeft: selectedMessage?.id === item.id ? '3px solid #4f46e5' : '3px solid transparent'
                   }}
                 >
                   <List.Item.Meta
                     avatar={
                       <Badge 
                         dot 
-                        color={item.status === 'pending' ? '#faad14' : '#52c41a'}
+                        color={item.status === 'pending' ? '#d97706' : '#059669'}
                         offset={[0, 28]}
                       >
                         <Avatar icon={<UserOutlined />} />
@@ -563,7 +563,7 @@ const MessagesPage = () => {
                           {item.subject}
                         </span>
                         {item.priority === 'high' && (
-                          <ExclamationCircleOutlined style={{ color: '#f5222d' }} />
+                          <ExclamationCircleOutlined style={{ color: '#e11d48' }} />
                         )}
                       </div>
                     }
@@ -587,7 +587,7 @@ const MessagesPage = () => {
           <div className="message-detail" style={{ width: '70%', display: 'flex', flexDirection: 'column' }}>
             {selectedMessage ? (
               <>
-                <div className="message-detail-header" style={{ padding: '16px 24px', borderBottom: '1px solid #f0f0f0' }}>
+                <div className="message-detail-header" style={{ padding: '16px 24px', borderBottom: '1px solid #f1f5f9' }}>
                   <div className="d-flex justify-content-between align-items-center">
                     <Title level={4}>{selectedMessage.subject}</Title>
                     <Button 
@@ -621,7 +621,7 @@ const MessagesPage = () => {
                     <div className="message-replies">
                       <Divider orientation="left">Phản hồi</Divider>
                       {selectedMessage.replies.map(reply => (
-                        <Card key={reply.id} style={{ marginBottom: 16, backgroundColor: '#f6ffed' }}>
+                        <Card key={reply.id} style={{ marginBottom: 16, backgroundColor: '#ecfdf5' }}>
                           <div className="reply-header" style={{ marginBottom: 8 }}>
                             <Space>
                               <Text strong>{reply.staffName}</Text>
@@ -635,7 +635,7 @@ const MessagesPage = () => {
                   )}
                 </div>
                 
-                <div className="message-reply-form" style={{ padding: '16px 24px', borderTop: '1px solid #f0f0f0' }}>
+                <div className="message-reply-form" style={{ padding: '16px 24px', borderTop: '1px solid #f1f5f9' }}>
                   <TextArea
                     rows={4}
                     placeholder="Nhập phản hồi của bạn..."

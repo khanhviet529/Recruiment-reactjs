@@ -157,7 +157,7 @@ const JobDetailSimple = () => {
             <div style={{ flex: 1 }}>
               <Title level={2}>{job.title}</Title>
               {employer && (
-                <Text strong style={{ fontSize: '16px', color: '#1890ff' }}>
+                <Text strong style={{ fontSize: '16px', color: '#4f46e5' }}>
                   {employer.companyName}
                 </Text>
               )}

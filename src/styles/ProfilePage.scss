@@ -36,34 +36,34 @@
 
     .profile-info {
       h2 {
-        color: #1890ff;
+        color: #4f46e5;
         font-weight: 600;
       }
 
       .text-muted {
-        color: #8c8c8c !important;
+        color: #64748b !important;
       }
     }
   }
 
   .nav-tabs {
-    border-bottom: 2px solid #dee2e6;
+    border-bottom: 2px solid #e2e8f0;
     
     .nav-link {
-      color: #6c757d;
+      color: #64748b;
       border: none;
       padding: 0.75rem 1.25rem;
       font-weight: 500;
       
       &:hover {
-        color: #0d6efd;
+        color: #4f46e5;
         border: none;
       }
       
       &.active {
-        color: #0d6efd;
+        color: #4f46e5;
         border: none;
-        border-bottom: 2px solid #0d6efd;
+        border-bottom: 2px solid #4f46e5;
         margin-bottom: -2px;
       }
     }
@@ -77,7 +77,7 @@
     
     .card-header {
       background-color: #fff;
-      border-bottom: 1px solid #dee2e6;
+      border-bottom: 1px solid #e2e8f0;
       padding: 1rem 1.25rem;
       
       h5 {
@@ -94,10 +94,10 @@
   .skills-list {
     .progress {
       height: 8px;
-      background-color: #e9ecef;
+      background-color: #f1f5f9;
       
       .progress-bar {
-        background-color: #0d6efd;
+        background-color: #4f46e5;
         font-size: 0.75rem;
         line-height: 8px;
       }
@@ -107,7 +107,7 @@
   .education-item,
   .experience-item {
     padding-bottom: 1rem;
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid #e2e8f0;
     
     &:last-child {
       border-bottom: none;
@@ -121,7 +121,7 @@
     }
     
     .text-muted {
-      color: #6c757d;
+      color: #64748b;
       font-size: 0.9rem;
     }
   }
@@ -131,8 +131,8 @@
     
     .form-check-input {
       &:checked {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
+        background-color: #4f46e5;
+        border-color: #4f46e5;
       }
     }
     
@@ -179,12 +179,12 @@
 // Upload button hover effects
 .ant-upload {
   .ant-btn-primary {
-    background: linear-gradient(135deg, #1890ff, #096dd9);
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
     border: none;
     box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
     
     &:hover {
-      background: linear-gradient(135deg, #40a9ff, #1890ff);
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
     }
@@ -194,7 +194,7 @@
     }
     
     &.ant-btn-loading {
-      background: linear-gradient(135deg, #91d5ff, #69c0ff);
+      background: linear-gradient(135deg, #a5b4fc, #818cf8);
     }
   }
 } 

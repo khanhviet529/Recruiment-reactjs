@@ -1,7 +1,7 @@
 /* Employer Profile Page Styling */
 .employer-profile-page {
   padding: 20px;
-  background: #f5f5f5;
+  background: #f8fafc;
   min-height: 100vh;
 
   .company-profile {
@@ -68,7 +68,7 @@
           
           .anticon {
             margin-right: 8px;
-            color: #1890ff;
+            color: #4f46e5;
           }
         }
       }
@@ -78,7 +78,7 @@
           margin-bottom: 8px;
           
           strong {
-            color: #262626;
+            color: #1e293b;
           }
         }
       }
@@ -90,7 +90,7 @@
           border-radius: 6px;
           
           &:hover {
-            background: #f0f0f0;
+            background: #f1f5f9;
           }
         }
       }
@@ -105,7 +105,7 @@
           
           &::before {
             content: "✓";
-            color: #52c41a;
+            color: #059669;
             margin-right: 8px;
             font-weight: bold;
           }
@@ -131,7 +131,7 @@
       border: none;
       
       .ant-card-head {
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid #f1f5f9;
         
         .ant-card-head-title {
           font-size: 18px;
@@ -142,11 +142,11 @@
     
     .image-uploader {
       .ant-avatar {
-        border: 2px dashed #d9d9d9;
+        border: 2px dashed #cbd5e1;
         transition: all 0.3s ease;
         
         &:hover {
-          border-color: #1890ff;
+          border-color: #4f46e5;
         }
       }
     }
@@ -154,7 +154,7 @@
     .ant-form-item-label {
       label {
         font-weight: 500;
-        color: #262626;
+        color: #1e293b;
       }
     }
     
@@ -165,7 +165,7 @@
       
       &:focus,
       &:hover {
-        border-color: #1890ff;
+        border-color: #4f46e5;
         box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
       }
     }

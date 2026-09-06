@@ -167,7 +167,7 @@ const EmployerDashboard = () => {
         title: 'Đơn ứng tuyển mới',
         description: `${app.candidateName || 'Ứng viên'} đã ứng tuyển vào vị trí: ${app.jobTitle || 'N/A'}`,
         time: app.appliedAt,
-        icon: <FileOutlined style={{ color: '#1890ff' }} />
+        icon: <FileOutlined style={{ color: '#4f46e5' }} />
       });
     });
 
@@ -179,7 +179,7 @@ const EmployerDashboard = () => {
         title: 'Phỏng vấn sắp tới',
         description: meeting.title,
         time: meeting.startTime,
-        icon: <VideoCameraOutlined style={{ color: '#52c41a' }} />
+        icon: <VideoCameraOutlined style={{ color: '#059669' }} />
       });
     });
 
@@ -191,7 +191,7 @@ const EmployerDashboard = () => {
         title: 'Tin tuyển dụng mới',
         description: `Đã đăng tin tuyển dụng: ${job.title}`,
         time: job.postedAt || job.createdAt,
-        icon: <PlusOutlined style={{ color: '#722ed1' }} />
+        icon: <PlusOutlined style={{ color: '#6366f1' }} />
       });
     });
 
@@ -284,7 +284,7 @@ const EmployerDashboard = () => {
               title="Tin tuyển dụng"
               value={dashboardData.stats.totalJobs}
               prefix={<FileOutlined />}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: '#4f46e5' }}
             />
             <Text type="secondary">
               {dashboardData.stats.activeJobs} đang hoạt động
@@ -297,7 +297,7 @@ const EmployerDashboard = () => {
               title="Tổng ứng tuyển"
               value={dashboardData.stats.totalApplications}
               prefix={<UserOutlined />}
-              valueStyle={{ color: '#52c41a' }}
+              valueStyle={{ color: '#059669' }}
             />
             <Text type="secondary">
               {dashboardData.stats.newApplications} mới trong tuần
@@ -310,7 +310,7 @@ const EmployerDashboard = () => {
               title="Đang phỏng vấn"
               value={dashboardData.stats.interviewsScheduled}
               prefix={<VideoCameraOutlined />}
-              valueStyle={{ color: '#722ed1' }}
+              valueStyle={{ color: '#6366f1' }}
             />
           </Card>
         </Col>
@@ -320,7 +320,7 @@ const EmployerDashboard = () => {
               title="Đã tuyển dụng"
               value={dashboardData.stats.hiredCandidates}
               prefix={<CheckCircleOutlined />}
-              valueStyle={{ color: '#52c41a' }}
+              valueStyle={{ color: '#059669' }}
             />
           </Card>
         </Col>
@@ -427,7 +427,7 @@ const EmployerDashboard = () => {
               />
             ) : (
               <div style={{ textAlign: 'center', padding: '50px 0' }}>
-                <UserOutlined style={{ fontSize: 48, color: '#d9d9d9' }} />
+                <UserOutlined style={{ fontSize: 48, color: '#cbd5e1' }} />
                 <div style={{ marginTop: 16 }}>
                   <Text type="secondary">Chưa có đơn ứng tuyển nào</Text>
                 </div>
@@ -480,7 +480,7 @@ const EmployerDashboard = () => {
               />
             ) : (
               <div style={{ textAlign: 'center', padding: '50px 0' }}>
-                <FileOutlined style={{ fontSize: 48, color: '#d9d9d9' }} />
+                <FileOutlined style={{ fontSize: 48, color: '#cbd5e1' }} />
                 <div style={{ marginTop: 16 }}>
                   <Text type="secondary">Chưa có tin tuyển dụng nào</Text>
                 </div>
@@ -504,12 +504,12 @@ const EmployerDashboard = () => {
                 renderItem={item => (
                   <List.Item>
                     <List.Item.Meta
-                      avatar={<Avatar icon={<TrophyOutlined />} style={{ backgroundColor: '#faad14' }} />}
+                      avatar={<Avatar icon={<TrophyOutlined />} style={{ backgroundColor: '#d97706' }} />}
                       title={item.title}
                       description={
                         <div>
                           <Text strong>{item.applicationCount}</Text> ứng viên • 
-                          <Text strong style={{ color: '#52c41a' }}> {item.hiredCount}</Text> đã tuyển
+                          <Text strong style={{ color: '#059669' }}> {item.hiredCount}</Text> đã tuyển
                           <br />
                           <Progress 
                             percent={item.applicationCount > 0 ? (item.hiredCount / item.applicationCount * 100) : 0} 
@@ -524,7 +524,7 @@ const EmployerDashboard = () => {
               />
             ) : (
               <div style={{ textAlign: 'center', padding: '30px 0' }}>
-                <BarChartOutlined style={{ fontSize: 48, color: '#d9d9d9' }} />
+                <BarChartOutlined style={{ fontSize: 48, color: '#cbd5e1' }} />
                 <div style={{ marginTop: 16 }}>
                   <Text type="secondary">Chưa có dữ liệu thống kê</Text>
                 </div>
@@ -551,7 +551,7 @@ const EmployerDashboard = () => {
                     ]}
                   >
                     <List.Item.Meta
-                      avatar={<Avatar icon={<VideoCameraOutlined />} style={{ backgroundColor: '#52c41a' }} />}
+                      avatar={<Avatar icon={<VideoCameraOutlined />} style={{ backgroundColor: '#059669' }} />}
                       title={item.title}
                       description={
                         <div>
@@ -568,7 +568,7 @@ const EmployerDashboard = () => {
               />
             ) : (
               <div style={{ textAlign: 'center', padding: '30px 0' }}>
-                <VideoCameraOutlined style={{ fontSize: 48, color: '#d9d9d9' }} />
+                <VideoCameraOutlined style={{ fontSize: 48, color: '#cbd5e1' }} />
                 <div style={{ marginTop: 16 }}>
                   <Text type="secondary">Chưa có phỏng vấn nào</Text>
                 </div>
@@ -609,7 +609,7 @@ const EmployerDashboard = () => {
               />
             ) : (
               <div style={{ textAlign: 'center', padding: '30px 0' }}>
-                <BellOutlined style={{ fontSize: 48, color: '#d9d9d9' }} />
+                <BellOutlined style={{ fontSize: 48, color: '#cbd5e1' }} />
                 <div style={{ marginTop: 16 }}>
                   <Text type="secondary">Chưa có hoạt động nào</Text>
                 </div>

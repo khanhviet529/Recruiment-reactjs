@@ -133,7 +133,7 @@ const CandidateDashboard = () => {
         title: 'Ứng tuyển mới',
         description: `Đã ứng tuyển vào vị trí: ${app.jobTitle || 'N/A'}`,
         time: app.appliedAt,
-        icon: <FileOutlined style={{ color: '#1890ff' }} />
+        icon: <FileOutlined style={{ color: '#4f46e5' }} />
       });
     });
 
@@ -145,7 +145,7 @@ const CandidateDashboard = () => {
         title: 'Phỏng vấn sắp tới',
         description: meeting.title,
         time: meeting.startTime,
-        icon: <VideoCameraOutlined style={{ color: '#52c41a' }} />
+        icon: <VideoCameraOutlined style={{ color: '#059669' }} />
       });
     });
 
@@ -218,7 +218,7 @@ const CandidateDashboard = () => {
               title="Tổng đơn ứng tuyển"
               value={dashboardData.stats.totalApplications}
               prefix={<FileOutlined />}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: '#4f46e5' }}
             />
           </Card>
         </Col>
@@ -228,7 +228,7 @@ const CandidateDashboard = () => {
               title="Đang chờ xử lý"
               value={dashboardData.stats.pendingApplications}
               prefix={<ClockCircleOutlined />}
-              valueStyle={{ color: '#faad14' }}
+              valueStyle={{ color: '#d97706' }}
             />
           </Card>
         </Col>
@@ -238,7 +238,7 @@ const CandidateDashboard = () => {
               title="Phỏng vấn"
               value={dashboardData.stats.interviewApplications}
               prefix={<VideoCameraOutlined />}
-              valueStyle={{ color: '#722ed1' }}
+              valueStyle={{ color: '#6366f1' }}
             />
           </Card>
         </Col>
@@ -248,7 +248,7 @@ const CandidateDashboard = () => {
               title="Được chấp nhận"
               value={dashboardData.stats.acceptedApplications}
               prefix={<CheckCircleOutlined />}
-              valueStyle={{ color: '#52c41a' }}
+              valueStyle={{ color: '#059669' }}
             />
           </Card>
         </Col>
@@ -315,7 +315,7 @@ const CandidateDashboard = () => {
               />
             ) : (
               <div style={{ textAlign: 'center', padding: '50px 0' }}>
-                <FileOutlined style={{ fontSize: 48, color: '#d9d9d9' }} />
+                <FileOutlined style={{ fontSize: 48, color: '#cbd5e1' }} />
                 <div style={{ marginTop: 16 }}>
                   <Text type="secondary">Chưa có đơn ứng tuyển nào</Text>
                 </div>
@@ -367,7 +367,7 @@ const CandidateDashboard = () => {
               />
             ) : (
               <div style={{ textAlign: 'center', padding: '50px 0' }}>
-                <StarOutlined style={{ fontSize: 48, color: '#d9d9d9' }} />
+                <StarOutlined style={{ fontSize: 48, color: '#cbd5e1' }} />
                 <div style={{ marginTop: 16 }}>
                   <Text type="secondary">Chưa có đề xuất nào</Text>
                 </div>
@@ -396,7 +396,7 @@ const CandidateDashboard = () => {
                     ]}
                   >
                     <List.Item.Meta
-                      avatar={<Avatar icon={<VideoCameraOutlined />} style={{ backgroundColor: '#52c41a' }} />}
+                      avatar={<Avatar icon={<VideoCameraOutlined />} style={{ backgroundColor: '#059669' }} />}
                       title={item.title}
                       description={
                         <div>
@@ -444,7 +444,7 @@ const CandidateDashboard = () => {
               />
             ) : (
               <div style={{ textAlign: 'center', padding: '30px 0' }}>
-                <BellOutlined style={{ fontSize: 48, color: '#d9d9d9' }} />
+                <BellOutlined style={{ fontSize: 48, color: '#cbd5e1' }} />
                 <div style={{ marginTop: 16 }}>
                   <Text type="secondary">Chưa có hoạt động nào</Text>
                 </div>

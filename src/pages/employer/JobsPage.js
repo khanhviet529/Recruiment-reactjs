@@ -174,7 +174,7 @@ const JobsPage = () => {
       render: (count) => {
         return (
           <span style={{ 
-            color: count > 0 ? 'black' : '#8c8c8c' 
+            color: count > 0 ? 'black' : '#64748b' 
           }}>
             {count || 0}
           </span>
@@ -199,7 +199,7 @@ const JobsPage = () => {
             <Tag color={config.color}>{config.text}</Tag>
             {status === 'paused' && record.pauseReason && (
               <Tooltip title={record.pauseReason}>
-                <InfoCircleOutlined style={{ marginLeft: 8, color: '#faad14' }} />
+                <InfoCircleOutlined style={{ marginLeft: 8, color: '#d97706' }} />
               </Tooltip>
             )}
           </div>

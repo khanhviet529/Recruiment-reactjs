@@ -259,7 +259,7 @@ const JobDetail = () => {
             <div style={{ flex: 1 }}>
               <Title level={2}>{job.title || 'Tiêu đề công việc'}</Title>
               {employer && (
-                <Text strong style={{ fontSize: '16px', color: '#1890ff' }}>
+                <Text strong style={{ fontSize: '16px', color: '#4f46e5' }}>
                   {employer.companyName}
                 </Text>
               )}
@@ -443,7 +443,7 @@ const JobDetail = () => {
         ]}
       >
         <div style={{ textAlign: 'center' }}>
-          <FilePdfOutlined style={{ fontSize: 48, color: '#52c41a', marginBottom: 16 }} />
+          <FilePdfOutlined style={{ fontSize: 48, color: '#059669', marginBottom: 16 }} />
           <p>Đơn ứng tuyển và CV của bạn đã được gửi thành công!</p>
           <p>Bạn có thể theo dõi trạng thái đơn ứng tuyển trong trang quản lý của mình.</p>
         </div>

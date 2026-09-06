@@ -236,7 +236,7 @@ const AdminLayout = () => {
             
             <Dropdown overlay={userMenu} placement="bottomRight" trigger={['click']}>
               <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                <Avatar style={{ backgroundColor: '#1890ff', marginRight: 8 }} icon={<UserOutlined />} />
+                <Avatar style={{ backgroundColor: '#4f46e5', marginRight: 8 }} icon={<UserOutlined />} />
                 {user ? (
                   <span style={{ marginRight: 8 }}>{user.email}</span>
                 ) : (

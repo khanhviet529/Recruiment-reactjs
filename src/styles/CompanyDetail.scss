@@ -1,7 +1,7 @@
 .company-detail {
   .cover-image {
     position: relative;
-    background-color: #f8f9fa;
+    background-color: #f8fafc;
     
     &::before {
       content: '';
@@ -31,22 +31,22 @@
   }
 
   .nav-tabs {
-    border-bottom: 2px solid #e9ecef;
+    border-bottom: 2px solid #f1f5f9;
     
     .nav-link {
       border: none;
-      color: #6c757d;
+      color: #64748b;
       padding: 1rem 1.5rem;
       font-weight: 500;
       position: relative;
       
       &:hover {
         border: none;
-        color: #0d6efd;
+        color: #4f46e5;
       }
       
       &.active {
-        color: #0d6efd;
+        color: #4f46e5;
         background: none;
         
         &::after {
@@ -56,7 +56,7 @@
           left: 0;
           right: 0;
           height: 2px;
-          background-color: #0d6efd;
+          background-color: #4f46e5;
         }
       }
     }
@@ -67,7 +67,7 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.05);
     
     .card-title {
-      color: #212529;
+      color: #0f172a;
       font-weight: 600;
     }
   }
@@ -112,11 +112,11 @@
     }
 
     .card-title {
-      color: #212529;
+      color: #0f172a;
       font-weight: 600;
       
       &:hover {
-        color: #0d6efd;
+        color: #4f46e5;
       }
     }
 

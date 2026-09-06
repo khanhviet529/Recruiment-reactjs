@@ -32,7 +32,7 @@
       border: 2px solid transparent;
       
       &:hover {
-        border-color: #4A90E2;
+        border-color: #4f46e5;
       }
     }
   }
@@ -50,12 +50,12 @@
 
       .dropdown-item {
         padding: 0.5rem 1rem;
-        color: #495057;
+        color: #334155;
         font-size: 0.9rem;
         
         &:hover, &:focus {
           background-color: rgba(74, 144, 226, 0.1);
-          color: #4A90E2;
+          color: #4f46e5;
         }
         
         &:active {
@@ -64,7 +64,7 @@
 
         &.text-danger:hover {
           background-color: rgba(220, 53, 69, 0.1);
-          color: #dc3545;
+          color: #e11d48;
         }
 
         i {
@@ -75,7 +75,7 @@
 
       .dropdown-divider {
         margin: 0.5rem 0;
-        border-top: 1px solid #e9ecef;
+        border-top: 1px solid #f1f5f9;
       }
     }
   }

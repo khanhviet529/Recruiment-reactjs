@@ -170,7 +170,7 @@ const ReportPreview = ({
   ];
 
   const getStatusColor = (index) => {
-    const colors = ['#1890ff', '#ffffff', '#ffffff', '#f5222d', '#722ed1'];
+    const colors = ['#4f46e5', '#ffffff', '#ffffff', '#e11d48', '#6366f1'];
     return colors[index % colors.length];
   };
 
@@ -183,7 +183,7 @@ const ReportPreview = ({
       title: 'Tong nguoi dung',
       value: statsData?.users?.total || 0,
       icon: <UserOutlined />,
-      color: '#1890ff',
+      color: '#4f46e5',
       growth: statsData?.users?.growth || 0
     },
     {
@@ -197,7 +197,7 @@ const ReportPreview = ({
       title: 'Tin tuyen dung',
       value: statsData.jobs?.total || 0,
       icon: <FileTextOutlined />,
-      color: '#52c41a',
+      color: '#059669',
       growth: statsData.jobs?.growth || 0
     },
     {
@@ -238,7 +238,7 @@ const ReportPreview = ({
   };
 
   return (
-    <div className="report-preview" style={{ padding: '24px', backgroundColor: '#f5f5f5' }}>
+    <div className="report-preview" style={{ padding: '24px', backgroundColor: '#f8fafc' }}>
       {/* Header */}
       <Card style={{ marginBottom: 24, textAlign: 'center', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
         <Title level={2} style={{ color: 'white', margin: 0 }}>
@@ -365,7 +365,7 @@ const ReportPreview = ({
                 (statsData.jobs?.total > 0 ? (statsData.jobs.applications / statsData.jobs.total) >= 5 : true) &&
                 (!timeToFillData?.average || timeToFillData.average <= 30)) && (
                 <Paragraph>
-                  <Text strong style={{ color: '#52c41a' }}>
+                  <Text strong style={{ color: '#059669' }}>
                     • Các chỉ số đang ở mức tốt, tiếp tục duy trì
                   </Text>
                 </Paragraph>

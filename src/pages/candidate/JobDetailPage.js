@@ -555,7 +555,7 @@ const JobDetailPage = () => {
               
               <Button 
                 type={isSaved ? "default" : "text"} 
-                icon={isSaved ? <HeartFilled style={{ color: '#ff4d4f' }} /> : <HeartOutlined />} 
+                icon={isSaved ? <HeartFilled style={{ color: '#e11d48' }} /> : <HeartOutlined />} 
                 onClick={handleToggleSaveJob}
                 block
               >
@@ -769,7 +769,7 @@ const JobDetailPage = () => {
         ]}
       >
         <div className="text-center">
-          <FilePdfOutlined style={{ fontSize: 48, color: '#52c41a', marginBottom: 16 }} />
+          <FilePdfOutlined style={{ fontSize: 48, color: '#059669', marginBottom: 16 }} />
           <p>Đơn ứng tuyển và CV của bạn đã được gửi thành công!</p>
           <p>Bạn có thể theo dõi trạng thái đơn ứng tuyển trong trang quản lý của mình.</p>
         </div>

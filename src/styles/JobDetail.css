@@ -2,7 +2,7 @@
 .job-detail-page {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   color: #333;
-  background-color: #f5f5f5;
+  background-color: #f8fafc;
 }
  
 /* Header Section */
@@ -54,7 +54,7 @@
 }
 .company-name {
   font-size: 16px;
-  color: #1890ff;
+  color: #4f46e5;
   display: block;
   margin-bottom: 12px;
   text-decoration: none;
@@ -75,20 +75,20 @@
   align-items: center;
   margin-right: 24px;
   margin-bottom: 8px;
-  color: #595959;
+  color: #475569;
   font-size: 14px;
 }
 
 .meta-item .anticon {
   margin-right: 6px;
   font-size: 16px;
-  color: #8c8c8c;
+  color: #64748b;
 }
 
 .deadline {
   display: flex;
   align-items: center;
-  color: #ff4d4f;
+  color: #e11d48;
   font-size: 14px;
   margin-bottom: 12px;
 }
@@ -104,7 +104,7 @@
 }
 
 .urgent-tag {
-  background-color: #fff1f0;
+  background-color: #fff1f2;
   border-color: #ffa39e;
   color: #cf1322;
 }
@@ -115,8 +115,8 @@
 }
 
 .apply-button {
-  background-color: #1890ff;
-  border-color: #1890ff;
+  background-color: #4f46e5;
+  border-color: #4f46e5;
 }
 
 .save-button {
@@ -160,11 +160,11 @@
 
 .section-title .anticon {
   margin-right: 8px;
-  color: #1890ff;
+  color: #4f46e5;
 }
 
 .section-content {
-  color: #595959;
+  color: #475569;
   font-size: 14px;
   line-height: 1.6;
 }
@@ -192,7 +192,7 @@
 }
 
 .benefit-icon {
-  color: #52c41a;
+  color: #059669;
   margin-right: 8px;
   margin-top: 3px;
 }
@@ -222,7 +222,7 @@
 
 .card-title .anticon {
   margin-right: 8px;
-  color: #1890ff;
+  color: #4f46e5;
 }
 
 .info-list {
@@ -235,13 +235,13 @@
 
 .info-label {
   font-size: 14px;
-  color: #8c8c8c;
+  color: #64748b;
   margin-bottom: 4px;
 }
 
 .info-value {
   font-size: 14px;
-  color: #262626;
+  color: #1e293b;
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -249,7 +249,7 @@
 
 .info-value .anticon {
   margin-right: 6px;
-  color: #8c8c8c;
+  color: #64748b;
 }
 
 .culture-info {
@@ -281,14 +281,14 @@
 
 .company-location {
   font-size: 14px;
-  color: #595959;
+  color: #475569;
   display: flex;
   align-items: center;
 }
 
 .company-location .anticon {
   margin-right: 4px;
-  color: #8c8c8c;
+  color: #64748b;
 }
 
 .sidebar-actions {
@@ -323,10 +323,10 @@
 }
 
 .uploaded-cv {
-  border: 1px dashed #d9d9d9;
+  border: 1px dashed #cbd5e1;
   border-radius: 4px;
   padding: 16px;
-  background-color: #fafafa;
+  background-color: #f8fafc;
 }
 
 .file-preview {

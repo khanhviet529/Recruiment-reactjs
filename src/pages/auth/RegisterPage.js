@@ -220,7 +220,7 @@ const RegisterPage = () => {
             <div className="col-md-8 col-lg-6">
               <div className="card shadow-sm">
                 <div className="card-body p-4 text-center">
-                  <i className="bi bi-envelope-check" style={{ fontSize: '3rem', color: '#28a745', marginBottom: '1rem' }}></i>
+                  <i className="bi bi-envelope-check" style={{ fontSize: '3rem', color: '#059669', marginBottom: '1rem' }}></i>
                   <h2 className="mb-3">Xác thực email của bạn</h2>
                   <p className="mb-3">
                     Chúng tôi đã gửi một email xác thực đến <strong>{verificationEmail}</strong>.

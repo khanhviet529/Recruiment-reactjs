@@ -854,7 +854,7 @@ const SearchPage = () => {
             <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap">
               <Title level={4} style={{ margin: 0 }}>
                 {totalJobs > 0 ? (
-                  <Badge count={totalJobs} overflowCount={9999} style={{ backgroundColor: '#52c41a' }}>
+                  <Badge count={totalJobs} overflowCount={9999} style={{ backgroundColor: '#059669' }}>
                     <span style={{ marginRight: '10px' }}>Kết quả tìm kiếm</span>
                   </Badge>
                 ) : (

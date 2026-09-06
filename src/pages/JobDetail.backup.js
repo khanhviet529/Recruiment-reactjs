@@ -648,7 +648,7 @@ const JobDetail = () => {
                     <Space direction="vertical" style={{ width: "100%" }}>
                       <div className="file-preview">
                         <Space>
-                          <FilePdfOutlined style={{ fontSize: 24, color: "#52c41a" }} />
+                          <FilePdfOutlined style={{ fontSize: 24, color: "#059669" }} />
                           <Text strong>{fileList[0].name}</Text>
                           <Text type="success">Đã tải lên thành công</Text>
                         </Space>
@@ -757,7 +757,7 @@ const JobDetail = () => {
         return (
           <div className="application-step">
             <div className="text-center my-4">
-              <CheckCircleOutlined style={{ fontSize: 60, color: "#52c41a" }} />
+              <CheckCircleOutlined style={{ fontSize: 60, color: "#059669" }} />
               <Title level={3} className="mt-3">Đã ứng tuyển thành công!</Title>
               <Text className="d-block mb-4">
                 Chúc mừng! Đơn ứng tuyển của bạn đã được gửi đến nhà tuyển dụng.
@@ -912,7 +912,7 @@ const JobDetail = () => {
             <Button
               type={isSaved ? "default" : "default"}
               size="large"
-              icon={isSaved ? <HeartFilled style={{ color: "#ff4d4f" }} /> : <HeartOutlined />}
+              icon={isSaved ? <HeartFilled style={{ color: "#e11d48" }} /> : <HeartOutlined />}
                       onClick={handleToggleSaveJob}
               className="save-button"
                     >

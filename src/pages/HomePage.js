@@ -551,7 +551,7 @@ const HomePage = () => {
                       <div className="employer-info">
                         <h3 className="employer-name">{employer.name}</h3>
                         <div className="employer-job-count">
-                          <Badge count={employer.openJobs || 0} overflowCount={999} style={{ backgroundColor: '#52c41a' }} />
+                          <Badge count={employer.openJobs || 0} overflowCount={999} style={{ backgroundColor: '#059669' }} />
                           <span className="ml-2">vị trí đang tuyển</span>
                         </div>
                         {employer.industry && (

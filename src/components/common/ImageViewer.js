@@ -65,9 +65,9 @@ const ImageViewer = ({
             shape={shape}
             icon={getPlaceholder()}
             style={{
-              backgroundColor: '#f0f0f0',
-              color: '#bfbfbf',
-              border: '2px dashed #d9d9d9'
+              backgroundColor: '#f1f5f9',
+              color: '#94a3b8',
+              border: '2px dashed #cbd5e1'
             }}
           />
         )}

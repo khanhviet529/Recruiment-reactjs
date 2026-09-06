@@ -21,12 +21,12 @@
     min-width: 80px;
     
     &.ant-btn-primary {
-      background: linear-gradient(135deg, #1890ff, #096dd9);
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
       border: none;
       box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
       
       &:hover {
-        background: linear-gradient(135deg, #40a9ff, #1890ff);
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
       }
@@ -36,14 +36,14 @@
       }
       
       &.ant-btn-loading {
-        background: linear-gradient(135deg, #91d5ff, #69c0ff);
+        background: linear-gradient(135deg, #a5b4fc, #818cf8);
       }
     }
   }
   
   .ant-progress {
     .ant-progress-bg {
-      background: linear-gradient(135deg, #1890ff, #096dd9);
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
     }
   }
   

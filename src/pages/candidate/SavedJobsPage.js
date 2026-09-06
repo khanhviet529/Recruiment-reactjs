@@ -213,7 +213,7 @@ const SavedJobsPage = () => {
                   )}
                 </Title>
               </Link>
-              <HeartFilled style={{ position: 'absolute', top: 0, right: 0, color: '#ff4d4f' }} />
+              <HeartFilled style={{ position: 'absolute', top: 0, right: 0, color: '#e11d48' }} />
             </div>
             
             <Link to={`/companies/${job.company.id}`}>
@@ -305,7 +305,7 @@ const SavedJobsPage = () => {
         <Row justify="space-between" align="middle" className="mb-4">
           <Col>
             <Title level={2}>
-              <HeartFilled style={{ color: '#ff4d4f', marginRight: 8 }} />
+              <HeartFilled style={{ color: '#e11d48', marginRight: 8 }} />
               Công việc đã lưu
             </Title>
             <Text type="secondary">

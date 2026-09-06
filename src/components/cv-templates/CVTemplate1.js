@@ -103,7 +103,7 @@ const CVTemplate1 = ({ candidate, activeSections = [] }) => {
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #3498db;
+            background-color: #4f46e5;
             color: white;
             font-size: 28px;
             font-weight: bold;
@@ -118,7 +118,7 @@ const CVTemplate1 = ({ candidate, activeSections = [] }) => {
             margin: 0 0 3px 0;
             font-size: 22px;
             font-weight: 700;
-            color: #2c3e50;
+            color: #1e293b;
           }
           
           .position {
@@ -137,7 +137,7 @@ const CVTemplate1 = ({ candidate, activeSections = [] }) => {
             font-size: 18px;
             font-weight: 600;
             margin: 0 0 8mm 0;
-            color: #2c3e50;
+            color: #1e293b;
             border-bottom: 1.5px solid #eaeaea;
             padding-bottom: 6px;
             break-after: avoid;
@@ -148,7 +148,7 @@ const CVTemplate1 = ({ candidate, activeSections = [] }) => {
             margin: 0 0 3px 0;
             font-size: 16px;
             font-weight: 600;
-            color: #3498db;
+            color: #4f46e5;
             break-after: avoid;
             page-break-after: avoid;
           }
@@ -196,7 +196,7 @@ const CVTemplate1 = ({ candidate, activeSections = [] }) => {
           }
           
           .skill-tag, .interest-tag {
-            background-color: #f0f0f0;
+            background-color: #f1f5f9;
             border-radius: 4px;
             padding: 4px 8px;
             font-size: 13px;

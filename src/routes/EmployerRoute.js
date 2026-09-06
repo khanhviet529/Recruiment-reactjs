@@ -46,7 +46,7 @@ const EmployerRoute = ({ children }) => {
   if (loading || !localAuth.checked) {
     return (
       <div className="loading-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <ClipLoader color="#4A90E2" size={50} />
+        <ClipLoader color="#4f46e5" size={50} />
       </div>
     );
   }

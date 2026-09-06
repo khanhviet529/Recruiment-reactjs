@@ -282,7 +282,7 @@ const UserTrendsChart = ({
                     
                     <Paragraph>
                       <Text strong>Tỷ lệ tăng trưởng 30 ngày: </Text>
-                      <Text style={{ color: statsData.users.growth >= 0 ? '#ffffff' : '#ff4d4f' }}>
+                      <Text style={{ color: statsData.users.growth >= 0 ? '#ffffff' : '#e11d48' }}>
                         {statsData.users.growth >= 0 ? '+' : ''}{statsData.users.growth}%
                       </Text>
                     </Paragraph>

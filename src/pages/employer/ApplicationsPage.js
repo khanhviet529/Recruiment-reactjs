@@ -376,7 +376,7 @@ const ApplicationsPage = () => {
             ))}
             {record.hasNotes && (
               <Tooltip title="Có ghi chú">
-                <InfoCircleOutlined style={{ color: '#1890ff' }} />
+                <InfoCircleOutlined style={{ color: '#4f46e5' }} />
               </Tooltip>
             )}
           </Space>

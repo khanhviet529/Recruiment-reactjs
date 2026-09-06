@@ -147,7 +147,7 @@ const CVUploader = ({
               disabled={isUploading || disabled}
             >
               <p className="ant-upload-drag-icon">
-                <FilePdfOutlined style={{ fontSize: 32, color: '#1890ff' }} />
+                <FilePdfOutlined style={{ fontSize: 32, color: '#4f46e5' }} />
               </p>
               <p className="ant-upload-text">Kéo thả file PDF CV của bạn vào đây</p>
               <p className="ant-upload-hint">Hoặc nhấp để chọn file</p>
@@ -192,7 +192,7 @@ const CVUploader = ({
           <Space direction="vertical" style={{ width: '100%' }}>
             <div className="file-preview">
               <Space>
-                <FilePdfOutlined style={{ fontSize: 24, color: '#52c41a' }} />
+                <FilePdfOutlined style={{ fontSize: 24, color: '#059669' }} />
                 <Text strong>{fileName}</Text>
                 <Text type="success">Đã tải lên thành công</Text>
               </Space>

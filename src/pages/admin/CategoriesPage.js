@@ -243,7 +243,7 @@ const CategoriesPage = () => {
       width: 150,
       render: (text) => (
         <code style={{ 
-          backgroundColor: '#f5f5f5', 
+          backgroundColor: '#f8fafc', 
           padding: '2px 6px', 
           borderRadius: '3px',
           fontSize: '12px'
@@ -511,7 +511,7 @@ const CategoriesPage = () => {
               <Col span={12}>
                 <div className="category-meta-item" style={{ marginBottom: 16 }}>
                   <Text strong>Slug: </Text>
-                  <code style={{ backgroundColor: '#f5f5f5', padding: '2px 4px', borderRadius: '3px' }}>
+                  <code style={{ backgroundColor: '#f8fafc', padding: '2px 4px', borderRadius: '3px' }}>
                     {currentCategory.slug}
                   </code>
                 </div>

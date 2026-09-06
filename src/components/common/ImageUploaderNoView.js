@@ -330,9 +330,9 @@ const ImageUploaderNoView = ({
               shape={shape}
               icon={getPlaceholder()}
               style={{
-                backgroundColor: '#f0f0f0',
-                color: '#bfbfbf',
-                border: '2px dashed #d9d9d9'
+                backgroundColor: '#f1f5f9',
+                color: '#94a3b8',
+                border: '2px dashed #cbd5e1'
               }}
             />
           )}
@@ -416,7 +416,7 @@ const ImageUploaderNoView = ({
 
         {/* File name display */}
         {fileName && (
-          <Text style={{ fontSize: '12px', color: '#8c8c8c' }}>
+          <Text style={{ fontSize: '12px', color: '#64748b' }}>
             {fileName}
           </Text>
         )}

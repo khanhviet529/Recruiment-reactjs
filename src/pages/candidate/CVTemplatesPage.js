@@ -791,13 +791,13 @@ const CVTemplatesPage = () => {
                     display: 'flex', 
                     justifyContent: 'center', 
                     alignItems: 'center',
-                    border: '1px dashed #d9d9d9',
+                    border: '1px dashed #cbd5e1',
                     cursor: 'pointer'
                   }}
                   onClick={handleAddSection}
                 >
                   <div className="text-center">
-                    <PlusOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
+                    <PlusOutlined style={{ fontSize: '24px', color: '#4f46e5' }} />
                     <div>Thêm mục mới</div>
                   </div>
                 </Card>
@@ -815,7 +815,7 @@ const CVTemplatesPage = () => {
             <Card
               hoverable
               cover={
-                <div className="template-thumbnail" style={{ height: '200px', background: '#f0f0f0' }}>
+                <div className="template-thumbnail" style={{ height: '200px', background: '#f1f5f9' }}>
                   {/* Placeholder for template thumbnail */}
                   <div className="d-flex align-items-center justify-content-center h-100">
                     <h3>{template.name}</h3>

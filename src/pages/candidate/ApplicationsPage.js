@@ -216,7 +216,7 @@ const ApplicationsPage = () => {
       content: (
         <div>
           <p>Bạn có chắc chắn muốn hủy đơn ứng tuyển cho vị trí <strong>"{jobTitle}"</strong>?</p>
-          <p style={{ color: '#ff4d4f', fontSize: '14px' }}>
+          <p style={{ color: '#e11d48', fontSize: '14px' }}>
             ⚠️ Lưu ý: Sau khi hủy, bạn có thể ứng tuyển lại vị trí này.
           </p>
         </div>

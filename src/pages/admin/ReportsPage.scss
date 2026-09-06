@@ -1,6 +1,6 @@
 .admin-reports-page {
   padding: 24px;
-  background-color: #f5f5f5;
+  background-color: #f8fafc;
   min-height: 100vh;
 
   .reports-header {
@@ -15,7 +15,7 @@
 
     h2 {
       margin: 0;
-      color: #1890ff;
+      color: #4f46e5;
       font-weight: 600;
     }
 
@@ -35,7 +35,7 @@
         }
 
         &.ant-btn-primary {
-          background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+          background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
           border: none;
         }
       }
@@ -52,11 +52,11 @@
     }
 
     .ant-card-head {
-      border-bottom: 2px solid #f0f0f0;
+      border-bottom: 2px solid #f1f5f9;
       
       .ant-card-head-title {
         font-weight: 600;
-        color: #262626;
+        color: #1e293b;
       }
     }
   }
@@ -75,14 +75,14 @@
   .ant-statistic {
     .ant-statistic-title {
       font-size: 14px;
-      color: #8c8c8c;
+      color: #64748b;
       margin-bottom: 8px;
     }
 
     .ant-statistic-content {
       font-size: 24px;
       font-weight: 600;
-      color: #262626;
+      color: #1e293b;
     }
   }
 
@@ -93,14 +93,14 @@
       
       &.ant-tabs-tab-active {
         .ant-tabs-tab-btn {
-          color: #1890ff;
+          color: #4f46e5;
           font-weight: 600;
         }
       }
     }
 
     .ant-tabs-ink-bar {
-      background: linear-gradient(90deg, #1890ff 0%, #096dd9 100%);
+      background: linear-gradient(90deg, #4f46e5 0%, #4338ca 100%);
       height: 3px;
     }
   }
@@ -112,9 +112,9 @@
       overflow: hidden;
 
       .ant-table-thead > tr > th {
-        background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
         font-weight: 600;
-        color: #262626;
+        color: #1e293b;
         border-bottom: 2px solid #e8e8e8;
       }
 
@@ -122,11 +122,11 @@
         transition: all 0.3s ease;
 
         &:hover {
-          background-color: #f5f5f5;
+          background-color: #f8fafc;
         }
 
         > td {
-          border-bottom: 1px solid #f0f0f0;
+          border-bottom: 1px solid #f1f5f9;
         }
       }
     }
@@ -150,7 +150,7 @@
     }
 
     &.ant-alert-info {
-      background:linear-gradient(135deg, #e6f7ff 0%, rgb(21 84 173) 100%);
+      background:linear-gradient(135deg, #eef2ff 0%, rgb(21 84 173) 100%);
       
     }
   }
@@ -162,7 +162,7 @@
     border: none;
 
     &.ant-tag-green {
-      // background: linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%);
+      // background: linear-gradient(135deg, #ecfdf5 0%, #d9f7be 100%);
       background: green;
       color: #ffffff;
     }
@@ -174,8 +174,8 @@
     }
 
     &.ant-tag-blue {
-      background: linear-gradient(135deg, #e6f7ff 0%, #91d5ff 100%);
-      color: #096dd9;
+      background: linear-gradient(135deg, #eef2ff 0%, #a5b4fc 100%);
+      color: #4338ca;
     }
   }
 
@@ -223,14 +223,14 @@
 
   .ant-table {
     .ant-table-thead > tr > th {
-      background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
       color: white;
       font-weight: 600;
       text-align: center;
     }
 
     .ant-table-tbody > tr:nth-child(even) {
-      background-color: #fafafa;
+      background-color: #f8fafc;
     }
   }
 
