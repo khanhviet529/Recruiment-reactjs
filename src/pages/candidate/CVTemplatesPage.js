@@ -791,13 +791,13 @@ const CVTemplatesPage = () => {
                     display: 'flex', 
                     justifyContent: 'center', 
                     alignItems: 'center',
-                    border: '1px dashed #d9d9d9',
+                    border: '1px dashed #cbd5e1',
                     cursor: 'pointer'
                   }}
                   onClick={handleAddSection}
                 >
                   <div className="text-center">
-                    <PlusOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
+                    <PlusOutlined style={{ fontSize: '24px', color: '#4f46e5' }} />
                     <div>Thêm mục mới</div>
                   </div>
                 </Card>
@@ -814,8 +814,12 @@ const CVTemplatesPage = () => {
           <Col xs={24} sm={12} md={8} key={template.id}>
             <Card
               hoverable
+              /* Cac the phai cao bang nhau, neu khong hang nut "Xem truoc /
+                 Tai xuong" se lech nhau vi mo ta dai ngan khac nhau */
+              style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+              styles={{ body: { flex: '1 1 auto' } }}
               cover={
-                <div className="template-thumbnail" style={{ height: '200px', background: '#f0f0f0' }}>
+                <div className="template-thumbnail" style={{ height: '200px', background: '#f1f5f9' }}>
                   {/* Placeholder for template thumbnail */}
                   <div className="d-flex align-items-center justify-content-center h-100">
                     <h3>{template.name}</h3>
@@ -862,14 +866,26 @@ const CVTemplatesPage = () => {
         }}
         maskClosable={true}
         destroyOnClose={true}
-        footer={[
-          <Button key="no" onClick={() => handleConfirmProfileData(false)}>
-            Không, tôi sẽ điền thông tin mới
-          </Button>,
-          <Button key="yes" type="primary" onClick={() => handleConfirmProfileData(true)}>
-            Có, sử dụng thông tin hồ sơ
-          </Button>
-        ]}
+        width={520}
+        /* Hai nut de tren MOT hang: nhan da rut gon va dung flex nowrap
+           de khong bi xuong dong nhu truoc */
+        footer={
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: 8,
+              flexWrap: 'nowrap',
+            }}
+          >
+            <Button onClick={() => handleConfirmProfileData(false)}>
+              Điền thông tin mới
+            </Button>
+            <Button type="primary" onClick={() => handleConfirmProfileData(true)}>
+              Dùng thông tin hồ sơ
+            </Button>
+          </div>
+        }
       >
         <p>Bạn có muốn sử dụng thông tin từ hồ sơ cá nhân để tạo CV không?</p>
       </Modal>

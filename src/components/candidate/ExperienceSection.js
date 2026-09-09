@@ -3,6 +3,11 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import moment from 'moment';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 
 const experienceSchema = Yup.object({
   title: Yup.string().required('Chức danh là bắt buộc'),
@@ -78,7 +83,7 @@ const ExperienceSection = ({ candidate, setCandidate }) => {
             setEditingItem(null);
           }}
         >
-          <i className="bi bi-plus me-1"></i> Thêm mới
+          <PlusOutlined className="me-1" /> Thêm mới
         </button>
       </div>
       <div className="card-body">
@@ -161,13 +166,13 @@ const ExperienceSection = ({ candidate, setCandidate }) => {
                       setEditingItem(exp);
                     }}
                   >
-                    <i className="bi bi-pencil"></i>
+                    <EditOutlined />
                   </button>
                   <button 
                     className="btn btn-sm btn-outline-danger"
                     onClick={() => handleDeleteExperience(exp.id)}
                   >
-                    <i className="bi bi-trash"></i>
+                    <DeleteOutlined />
                   </button>
                 </div>
               </div>

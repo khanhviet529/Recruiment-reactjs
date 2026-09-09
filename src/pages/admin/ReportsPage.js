@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './ReportsPage.scss';
+import './ReportsPage.scss';
 import { 
   Card, 
   Row, 
@@ -19,7 +21,8 @@ import {
   Tag,
   Tooltip,
   Progress,
-  message
+  message,
+  Modal
 } from 'antd';
 import {
   UserOutlined,
@@ -37,7 +40,8 @@ import {
   EnvironmentOutlined,
   ClockCircleOutlined,
   FireOutlined,
-  TrophyOutlined
+  TrophyOutlined,
+  EyeOutlined
 } from '@ant-design/icons';
 import { Chart } from 'react-chartjs-2';
 import { 
@@ -60,9 +64,10 @@ import {
   UserTrendsChart,
   JobTrendsChart,
   IndustryAnalysis,
-  generatePdfReport,
+  generatePdfReportSimple,
   exportChartToImage,
   setChartRef,
+  ReportPreview
 } from '../../components/admin/Reports';
 // import UserTrendsChart from '../../components/admin/reports/UserTrendsChart';
 // import JobTrendsChart from '../../components/admin/reports/JobTrendsChart';
@@ -266,6 +271,7 @@ const ReportsPage = () => {
   // Report time periods
   const [timeFrame, setTimeFrame] = useState('monthly');
   const [activeTab, setActiveTab] = useState('1');
+  const [previewVisible, setPreviewVisible] = useState(false);
   
   // Setup chart export references
   const [chartRefs, setChartRefs] = useState({
@@ -1224,29 +1230,31 @@ const ReportsPage = () => {
   };
   
   // Modified exportReport to handle chart-specific exports
-  const exportReport = () => {
+  const exportReport = async () => {
     try {
       setLoading(true);
       
       // Generate PDF report with data
-      const success = generatePdfReport(
+      const success = await generatePdfReportSimple(
         statsData,
         userChartData,
         jobChartData,
         applicationStats,
         timeToFillData,
         topEmployers,
-        topJobs
+        topJobs,
+        conversionData,
+        chartRefs
       );
       
       if (success) {
         message.success('Báo cáo đã được tạo thành công!');
       }
       
-      setLoading(false);
     } catch (error) {
       console.error('Error exporting report:', error);
       message.error('Có lỗi xảy ra khi xuất báo cáo. Vui lòng thử lại sau.');
+    } finally {
       setLoading(false);
     }
   };
@@ -1282,6 +1290,10 @@ const ReportsPage = () => {
     }
   };
   
+  const showPreview = () => {
+    setPreviewVisible(true);
+  };
+  
   return (
     <div className="admin-reports-page">
       <div className="reports-header d-flex justify-content-between align-items-center mb-4">
@@ -1301,6 +1313,14 @@ const ReportsPage = () => {
             style={{ marginRight: 16 }}
           >
             Làm mới
+          </Button>
+          
+          <Button 
+            icon={<EyeOutlined />}
+            onClick={showPreview}
+            style={{ marginRight: 16 }}
+          >
+            Xem trước
           </Button>
           
           <Button 
@@ -1340,7 +1360,7 @@ const ReportsPage = () => {
                   prefix={<UserOutlined />}
                   suffix={
                     <Text type="secondary" style={{ fontSize: '0.8em' }}>
-                      <RiseOutlined style={{ color: '#3f8600' }} /> {statsData.users.growth}%
+                      <RiseOutlined style={{ color: '#ffffff' }} /> {statsData.users.growth}%
                     </Text>
                   }
                 />
@@ -1354,7 +1374,7 @@ const ReportsPage = () => {
                   title="Nhà tuyển dụng"
                   value={statsData.users.employers}
                   prefix={<TeamOutlined />}
-                  valueStyle={{ color: '#1890ff' }}
+                  valueStyle={{ color: '#4f46e5' }}
                 />
                 <div style={{ marginTop: 5 }}>
                   <Text type="secondary">
@@ -1372,7 +1392,7 @@ const ReportsPage = () => {
                   prefix={<FileTextOutlined />}
                   suffix={
                     <Text type="secondary" style={{ fontSize: '0.8em' }}>
-                      <RiseOutlined style={{ color: '#3f8600' }} /> {statsData.jobs.growth}%
+                      <RiseOutlined style={{ color: '#ffffff' }} /> {statsData.jobs.growth}%
                     </Text>
                   }
                 />
@@ -1386,7 +1406,7 @@ const ReportsPage = () => {
                   title="Đơn ứng tuyển"
                   value={statsData.jobs.applications}
                   prefix={<CheckCircleOutlined />}
-                  valueStyle={{ color: '#52c41a' }}
+                  valueStyle={{ color: '#ffffff' }}
                 />
                 <Text type="secondary">
                   Trung bình {statsData.jobs.total > 0 ? (statsData.jobs.applications / statsData.jobs.total).toFixed(1) : 0} đơn/tin
@@ -1520,7 +1540,7 @@ const ReportsPage = () => {
                             <Statistic 
                               title="Đã phỏng vấn" 
                               value={getChartData(applicationStats, 0, 2, 0)} 
-                              valueStyle={{ fontSize: '1.2em', color: '#1890ff' }}
+                              valueStyle={{ fontSize: '1.2em', color: '#4f46e5' }}
                             />
                           </Col>
                         </Row>
@@ -1529,14 +1549,14 @@ const ReportsPage = () => {
                             <Statistic 
                               title="Đã nhận việc" 
                               value={getChartData(applicationStats, 0, 3, 0)} 
-                              valueStyle={{ fontSize: '1.2em', color: '#52c41a' }}
+                              valueStyle={{ fontSize: '1.2em', color: '#ffffff' }}
                             />
                           </Col>
                           <Col span={12}>
                             <Statistic 
                               title="Đã từ chối" 
                               value={getChartData(applicationStats, 0, 4, 0)} 
-                              valueStyle={{ fontSize: '1.2em', color: '#ff4d4f' }}
+                              valueStyle={{ fontSize: '1.2em', color: '#e11d48' }}
                             />
                           </Col>
                         </Row>
@@ -1592,7 +1612,7 @@ const ReportsPage = () => {
                             title="Số ngày trung bình"
                             value={timeToFillData.average}
                             suffix="ngày"
-                            valueStyle={{ color: timeToFillData.average > 30 ? '#faad14' : '#52c41a' }}
+                            valueStyle={{ color: '#ffffff' }}
                           />
                           <div style={{ marginTop: 16 }}>
                             <Text type="secondary">Đánh giá: </Text>
@@ -1609,31 +1629,31 @@ const ReportsPage = () => {
                     </Row>
                     <Alert
                       type="info"
-                      message="Gợi ý cải thiện quy trình tuyển dụng"
+                      message="Khuyến nghị quản lý hệ thống"
                       description={
                         <div>
                           {conversionData.rates.viewToApply < 5 && (
                             <Paragraph>
-                              <Text strong>Cải thiện tỷ lệ lượt xem → ứng tuyển: </Text>
-                              <Text>Đảm bảo mô tả công việc rõ ràng, hấp dẫn, và dễ ứng tuyển.</Text>
+                              <Text strong>Tối ưu hóa hiệu quả kết nối: </Text>
+                              <Text>Cải thiện thuật toán gợi ý và giao diện tìm kiếm việc làm.</Text>
                             </Paragraph>
                           )}
                           {conversionData.rates.applyToInterview < 20 && (
                             <Paragraph>
-                              <Text strong>Cải thiện tỷ lệ ứng tuyển → phỏng vấn: </Text>
-                              <Text>Xem xét lại quy trình sàng lọc hồ sơ, đảm bảo yêu cầu công việc phù hợp với thị trường.</Text>
+                              <Text strong>Nâng cao chất lượng tin đăng: </Text>
+                              <Text>Tăng cường kiểm duyệt và hướng dẫn nhà tuyển dụng tạo tin đăng chất lượng.</Text>
                             </Paragraph>
                           )}
                           {conversionData.rates.interviewToHire < 15 && (
                             <Paragraph>
-                              <Text strong>Cải thiện tỷ lệ phỏng vấn → nhận việc: </Text>
-                              <Text>Kiểm tra lại quy trình phỏng vấn và đề xuất đãi ngộ cạnh tranh hơn.</Text>
+                              <Text strong>Tối ưu hóa quy trình tuyển dụng: </Text>
+                              <Text>Phát triển công cụ hỗ trợ nhà tuyển dụng quản lý ứng viên hiệu quả hơn.</Text>
                             </Paragraph>
                           )}
                           {timeToFillData.average > 30 && (
                             <Paragraph>
-                              <Text strong>Giảm thời gian tuyển dụng: </Text>
-                              <Text>Rút ngắn thời gian đánh giá hồ sơ và quy trình phê duyệt nội bộ.</Text>
+                              <Text strong>Cải thiện hiệu suất hệ thống: </Text>
+                              <Text>Tối ưu hóa giao diện và tính năng để rút ngắn thời gian tuyển dụng.</Text>
                             </Paragraph>
                           )}
                           {(conversionData.rates.viewToApply >= 5 && 
@@ -1641,8 +1661,8 @@ const ReportsPage = () => {
                             conversionData.rates.interviewToHire >= 15 && 
                             timeToFillData.average <= 30) && (
                             <Paragraph>
-                              <Text strong>Các chỉ số đang ở mức tốt: </Text>
-                              <Text>Tiếp tục duy trì các quy trình hiện tại và theo dõi chỉ số thường xuyên.</Text>
+                              <Text strong>Hệ thống hoạt động hiệu quả: </Text>
+                              <Text>Tiếp tục giám sát và phát triển tính năng mới để duy trì hiệu suất.</Text>
                             </Paragraph>
                           )}
                         </div>
@@ -1655,6 +1675,40 @@ const ReportsPage = () => {
           </Card>
         </>
       )}
+      
+      {/* Preview Modal */}
+      <Modal
+        title="Xem trước báo cáo"
+        open={previewVisible}
+        onCancel={() => setPreviewVisible(false)}
+        width="90%"
+        style={{ top: 20 }}
+        footer={[
+          <Button key="close" onClick={() => setPreviewVisible(false)}>
+            Đóng
+          </Button>,
+          <Button 
+            key="export" 
+            type="primary" 
+            icon={<DownloadOutlined />}
+            onClick={() => {
+              setPreviewVisible(false);
+              exportReport();
+            }}
+          >
+            Xuất PDF
+          </Button>
+        ]}
+      >
+        <ReportPreview
+          statsData={statsData}
+          applicationStats={applicationStats}
+          topEmployers={topEmployers}
+          topJobs={topJobs}
+          timeToFillData={timeToFillData}
+          conversionData={conversionData}
+        />
+      </Modal>
     </div>
   );
 };

@@ -5,7 +5,7 @@ import { ClipLoader, BeatLoader, BarLoader } from 'react-spinners';
 const Loading = ({
   type = 'clip',
   size = 35,
-  color = '#4A90E2',
+  color = '#4f46e5',
   fullScreen = false,
   text = 'Loading...',
   className = '',

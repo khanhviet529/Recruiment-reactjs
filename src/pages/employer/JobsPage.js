@@ -33,11 +33,40 @@ const JobsPage = () => {
           employerId: user.id,
           status: filters.status !== 'all' ? filters.status : undefined,
           q: filters.search || undefined,
-          _sort: 'postedAt',
+          _sort: 'createdAt',
           _order: 'desc'
         }
       });
-      setJobs(response.data);
+      
+      // Fetch applications count for each job
+      const jobsWithCounts = await Promise.all(
+        response.data.map(async (job) => {
+          try {
+            const applicationsResponse = await axios.get(`http://localhost:5000/applications?jobId=${job.id}`);
+            const applicationsCount = applicationsResponse.data ? applicationsResponse.data.length : 0;
+            
+            return {
+              ...job,
+              applicationsCount,
+              // Map fields properly
+              position: job.positions || job.title, // Use positions field or fallback to title
+              postedDate: job.createdAt || job.postedAt, // Use createdAt or postedAt
+              deadline: job.applicationDeadline || job.deadline // Use applicationDeadline or deadline
+            };
+          } catch (error) {
+            console.error(`Error fetching applications for job ${job.id}:`, error);
+            return {
+              ...job,
+              applicationsCount: 0,
+              position: job.positions || job.title,
+              postedDate: job.createdAt || job.postedAt,
+              deadline: job.applicationDeadline || job.deadline
+            };
+          }
+        })
+      );
+      
+      setJobs(jobsWithCounts);
     } catch (error) {
       console.error('Error fetching jobs:', error);
     } finally {
@@ -109,11 +138,18 @@ const JobsPage = () => {
         <Link to={`/employer/jobs/${record.id}`}>{text}</Link>
       ),
     },
-    {
-      title: 'Vị trí',
-      dataIndex: 'position',
-      key: 'position',
-    },
+    // {
+    //   title: 'Vị trí',
+    //   dataIndex: 'position',
+    //   key: 'position',
+    //   render: (text, record) => {
+    //     // Display positions count if available, otherwise show title
+    //     if (record.positions && typeof record.positions === 'number') {
+    //       return `${record.positions} vị trí`;
+    //     }
+    //     return text || record.title || 'N/A';
+    //   },
+    // },
     {
       title: 'Địa điểm',
       dataIndex: 'location',
@@ -123,18 +159,27 @@ const JobsPage = () => {
       title: 'Ngày đăng',
       dataIndex: 'postedDate',
       key: 'postedDate',
-      render: (date) => moment(date).format('DD/MM/YYYY'),
+      render: (date) => date ? moment(date).format('DD/MM/YYYY') : 'N/A',
     },
     {
       title: 'Hạn nộp',
       dataIndex: 'deadline',
       key: 'deadline',
-      render: (date) => moment(date).format('DD/MM/YYYY'),
+      render: (date) => date ? moment(date).format('DD/MM/YYYY') : 'N/A',
     },
     {
       title: 'Số ứng viên',
       dataIndex: 'applicationsCount',
       key: 'applicationsCount',
+      render: (count) => {
+        return (
+          <span style={{ 
+            color: count > 0 ? 'black' : '#64748b' 
+          }}>
+            {count || 0}
+          </span>
+        );
+      },
     },
     {
       title: 'Trạng thái',
@@ -154,7 +199,7 @@ const JobsPage = () => {
             <Tag color={config.color}>{config.text}</Tag>
             {status === 'paused' && record.pauseReason && (
               <Tooltip title={record.pauseReason}>
-                <InfoCircleOutlined style={{ marginLeft: 8, color: '#faad14' }} />
+                <InfoCircleOutlined style={{ marginLeft: 8, color: '#d97706' }} />
               </Tooltip>
             )}
           </div>

@@ -1,0 +1,127 @@
+/* Sidebar khu vực ứng viên / nhà tuyển dụng */
+
+.dsb {
+  position: sticky;
+  top: calc(var(--header-h) + var(--sp-4));
+  align-self: start;
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  padding: var(--sp-3);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.dsb__title {
+  padding: var(--sp-2) var(--sp-3) var(--sp-3);
+  font-size: var(--fs-xs);
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+
+/* Điểm sửa quan trọng: xếp DỌC, không dùng .nav của Bootstrap */
+.dsb__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dsb__link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  color: var(--text-body);
+  font-size: var(--fs-base);
+  font-weight: 550;
+  line-height: 1.3;
+  transition: background-color var(--transition), color var(--transition);
+
+  &:hover {
+    background: var(--bg-muted);
+    color: var(--text-strong);
+  }
+
+  &.is-active {
+    background: var(--brand-soft);
+    color: var(--brand);
+  }
+}
+
+.dsb__icon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.dsb__label {
+  min-width: 0;
+}
+
+/* Nút mở menu — chỉ hiện khi màn hình hẹp */
+.dsb__toggle {
+  display: none;
+  align-items: center;
+  gap: var(--sp-2);
+  width: 100%;
+  margin-bottom: var(--sp-3);
+  padding: 10px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  color: var(--text-strong);
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--bg-muted);
+  }
+}
+
+@media (max-width: 991px) {
+  .dsb__toggle {
+    display: flex;
+  }
+
+  .dsb {
+    position: static;
+    width: 100%;
+    display: none;
+    margin-bottom: var(--sp-4);
+
+    &.is-open {
+      display: block;
+    }
+  }
+}
+
+/* ---------- khung bao quanh trang quản lý ---------- */
+.dash-shell {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: var(--sp-6) var(--sp-4) var(--sp-12);
+}
+
+.dash-main {
+  flex: 1 1 auto;
+  min-width: 0; /* cho phép bảng bên trong co lại thay vì tràn ngang */
+}
+
+@media (max-width: 991px) {
+  .dash-shell {
+    flex-direction: column;
+    gap: 0;
+    padding-top: var(--sp-4);
+  }
+}

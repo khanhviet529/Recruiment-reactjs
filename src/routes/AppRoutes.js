@@ -27,6 +27,7 @@ import AdminLoginPage from '../pages/auth/AdminLoginPage';
 import RegisterPage from '../pages/auth/RegisterPage';
 import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage';
 import ResetPasswordPage from '../pages/auth/ResetPasswordPage';
+import VerifyEmailPage from '../pages/auth/VerifyEmailPage';
 
 // Employer Pages
 import EmployerDashboardPage from '../pages/employer/DashboardPage';
@@ -50,19 +51,19 @@ import CandidateApplicationDetailPage from '../pages/candidate/ApplicationDetail
 import CVTemplatesPage from '../pages/candidate/CVTemplatesPage';
 import SavedJobsPage from '../pages/candidate/SavedJobsPage';
 import JobSearchPage from '../pages/candidate/JobSearchPage';
+
 // Admin Pages
 import AdminDashboardPage from '../pages/admin/DashboardPage';
 import AdminUsersPage from '../pages/admin/UsersPage';
 import AdminJobsPage from '../pages/admin/JobsPage';
+import AdminCategoriesPage from '../pages/admin/CategoriesPage';
+import AdminSkillsPage from '../pages/admin/SkillsPage';
 import AdminMessagesPage from '../pages/admin/MessagesPage';
 import AdminReportsPage from '../pages/admin/ReportsPage';
 import AdminSettingsPage from '../pages/admin/SettingsPage';
 
-// Admin Meeting Pages
-import AdminMeetingsPage from '../pages/admin/MeetingsPage';
-import MeetingDetailPage from '../pages/admin/meetings/MeetingDetailPage';
-import CreateMeetingPage from '../pages/admin/meetings/CreateMeetingPage';
-import EditMeetingPage from '../pages/admin/meetings/EditMeetingPage';
+
+
 
 // Custom Routes
 import PrivateRoute from './PrivateRoute';
@@ -70,14 +71,6 @@ import PublicRoute from './PublicRoute';
 import EmployerRoute from './EmployerRoute';
 import CandidateRoute from './CandidateRoute';
 import AdminRoute from './AdminRoute';
-import MeetingRoom from '../components/meeting/MeetingRoom';
-import CreateMeeting from '../components/meeting/CreateMeeting';
-import EmployerMeetingsPage from '../pages/employer/MeetingsPage';
-import CandidateMeetingsPage from '../pages/candidate/MeetingsPage';
-import EmployerMeetingDetailPage from '../pages/employer/MeetingDetailPage';
-import EmployerEditMeetingPage from '../pages/employer/EditMeetingPage';
-import CandidateMeetingDetailPage from '../pages/candidate/MeetingDetailPage';
-import MeetingsLayout from '../layouts/MeetingsLayout';
 
 const AppRoutes = () => {
   return (
@@ -126,6 +119,11 @@ const AppRoutes = () => {
         <Route path="reset-password/:token" element={<ResetPasswordPage />} />
       </Route>
 
+      {/* Email Verification Route - it should be public and use AuthLayout */}
+      <Route path="/verify-email" element={<AuthLayout />}>
+        <Route index element={<VerifyEmailPage />} />
+      </Route>
+
       {/* Role-specific Auth Routes */}
       <Route element={<AuthLayout />}>
         {/* Candidate Auth */}
@@ -164,14 +162,6 @@ const AppRoutes = () => {
         <Route path="applications/:id" element={<EmployerApplicationDetailPage />} />
         <Route path="recruitment-process" element={<EmployerRecruitmentProcessPage />} />
         
-        {/* Meetings routes inside EmployerLayout */}
-        <Route path="meetings" element={<MeetingsLayout><EmployerMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/upcoming" element={<MeetingsLayout><EmployerMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/ongoing" element={<MeetingsLayout><EmployerMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/past" element={<MeetingsLayout><EmployerMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/create" element={<MeetingsLayout><CreateMeeting /></MeetingsLayout>} />
-        <Route path="meetings/:meetingId" element={<MeetingsLayout><EmployerMeetingDetailPage /></MeetingsLayout>} />
-        <Route path="meetings/edit/:meetingId" element={<MeetingsLayout><EmployerEditMeetingPage /></MeetingsLayout>} />
       </Route>
 
       {/* Candidate Routes */}
@@ -186,21 +176,15 @@ const AppRoutes = () => {
         <Route index element={<Navigate to="/candidate/dashboard" replace />} />
         <Route path="dashboard" element={<CandidateDashboardPage />} />
         <Route path="profile" element={<CandidateProfilePage />} />
-        <Route path="jobs" element={<JobSearchPage />} />
+        <Route path="job-search" element={<CandidateJobSearchPage />} />
         <Route path="jobs/:id" element={<CandidateJobDetailPage />} />
-        <Route path="apply/:jobId" element={<CandidateApplicationFormPage />} />
+        <Route path="applications/new/:jobId" element={<CandidateApplicationFormPage />} />
         <Route path="applications" element={<CandidateApplicationsPage />} />
         <Route path="applications/:id" element={<CandidateApplicationDetailPage />} />
         <Route path="cv-templates" element={<CVTemplatesPage />} />
         <Route path="saved-jobs" element={<SavedJobsPage />} />
-        <Route path="job-search" element={<JobSearchPage />} />
+        <Route path="search" element={<JobSearchPage />} />
         
-        {/* Meetings routes inside CandidateLayout */}
-        <Route path="meetings" element={<MeetingsLayout><CandidateMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/upcoming" element={<MeetingsLayout><CandidateMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/ongoing" element={<MeetingsLayout><CandidateMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/past" element={<MeetingsLayout><CandidateMeetingsPage /></MeetingsLayout>} />
-        <Route path="meetings/:meetingId" element={<MeetingsLayout><CandidateMeetingDetailPage /></MeetingsLayout>} />
       </Route>
 
       {/* Admin Routes */}
@@ -216,29 +200,23 @@ const AppRoutes = () => {
         <Route path="dashboard" element={<AdminDashboardPage />} />
         <Route path="users" element={<AdminUsersPage />} />
         <Route path="jobs" element={<AdminJobsPage />} />
-        <Route path="meetings" element={<AdminMeetingsPage />} />
-        <Route path="meetings/:meetingId" element={<MeetingDetailPage />} />
-        <Route path="meetings/create" element={<CreateMeetingPage />} />
-        <Route path="meetings/edit/:meetingId" element={<EditMeetingPage />} />
+        <Route path="categories" element={<AdminCategoriesPage />} />
+        <Route path="skills" element={<AdminSkillsPage />} />
         <Route path="messages" element={<AdminMessagesPage />} />
         <Route path="reports" element={<AdminReportsPage />} />
         <Route path="settings" element={<AdminSettingsPage />} />
+        
       </Route>
 
-      {/* Protected Notification Route (accessible for all logged-in users) */}
-      <Route
-        path="/notifications"
-        element={
-          <PrivateRoute>
-            <MainLayout />
-          </PrivateRoute>
-        }
-      >
-        <Route index element={<NotificationsPage />} />
-      </Route>
+      {/* Notifications (for all authenticated users) */}
+      <Route path="/notifications" element={
+        <PrivateRoute>
+          <NotificationsPage />
+        </PrivateRoute>
+      } />
 
-      {/* Meeting Room Route */}
-      <Route path="/meeting/:meetingId" element={<PrivateRoute><MeetingRoom /></PrivateRoute>} />
+      {/* Global Fallback */}
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };

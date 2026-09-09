@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 
 const languageSchema = Yup.object({
   language: Yup.string().required('Ngôn ngữ là bắt buộc'),
@@ -12,16 +17,40 @@ const languageSchema = Yup.object({
 
 const LanguagesSection = ({ candidate, setCandidate }) => {
   const [editMode, setEditMode] = useState(null);
+  const [forceRender, setForceRender] = useState(0);
   const [editingItem, setEditingItem] = useState(null);
 
-  const handleLanguageSubmit = async (values) => {
+  // Debug effect to track candidate prop changes
+  useEffect(() => {
+    console.log('🔍 LanguagesSection - Candidate prop:', candidate);
+    if (candidate && candidate.languagess) {
+      console.log('🔍 LanguagesSection - Data:', candidate.languagess);
+      console.log('🔍 LanguagesSection - Count:', candidate.languagess?.length || 0);
+    }
+  }, [candidate]);
+    setForceRender(prev => prev + 1); // Force re-render
+
+
+const handleLanguageSubmit = async (values) => {
     try {
+      console.log('🔄 Updating section data...');
+      
+      // SAFETY CHECK: Get current candidate data first to preserve all fields
+      let currentCandidateData = {};
+      try {
+        const currentResponse = await axios.get(`http://localhost:5000/candidates/${candidate.id}`);
+        currentCandidateData = currentResponse.data;
+        console.log('📦 Current candidate data:', currentCandidateData);
+      } catch (error) {
+        console.warn('⚠️ Could not fetch current candidate data, using props:', error);
+        currentCandidateData = candidate;
+      }
       const updatedLanguages = editingItem
         ? candidate.languages.map(lang => lang.id === editingItem.id ? values : lang)
         : [...(candidate.languages || []), { ...values, id: Date.now().toString() }];
 
       const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, {
-        ...candidate,
+        ...currentCandidateData, // Keep all existing data
         languages: updatedLanguages,
       });
 
@@ -35,9 +64,21 @@ const LanguagesSection = ({ candidate, setCandidate }) => {
 
   const handleLanguageDelete = async (id) => {
     try {
+      console.log('🔄 Updating section data...');
+      
+      // SAFETY CHECK: Get current candidate data first to preserve all fields
+      let currentCandidateData = {};
+      try {
+        const currentResponse = await axios.get(`http://localhost:5000/candidates/${candidate.id}`);
+        currentCandidateData = currentResponse.data;
+        console.log('📦 Current candidate data:', currentCandidateData);
+      } catch (error) {
+        console.warn('⚠️ Could not fetch current candidate data, using props:', error);
+        currentCandidateData = candidate;
+      }
       const updatedLanguages = candidate.languages.filter(lang => lang.id !== id);
       const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, {
-        ...candidate,
+        ...currentCandidateData, // Keep all existing data
         languages: updatedLanguages,
       });
       setCandidate(response.data);
@@ -57,7 +98,7 @@ const LanguagesSection = ({ candidate, setCandidate }) => {
             setEditingItem(null);
           }}
         >
-          <i className="bi bi-plus me-1"></i> Thêm mới
+          <PlusOutlined className="me-1" /> Thêm mới
         </button>
       </div>
       <div className="card-body">
@@ -149,13 +190,13 @@ const LanguagesSection = ({ candidate, setCandidate }) => {
                         setEditingItem(lang);
                       }}
                     >
-                      <i className="bi bi-pencil"></i>
+                      <EditOutlined />
                     </button>
                     <button 
                       className="btn btn-sm btn-outline-danger"
                       onClick={() => handleLanguageDelete(lang.id)}
                     >
-                      <i className="bi bi-trash"></i>
+                      <DeleteOutlined />
                     </button>
                   </div>
                 </div>

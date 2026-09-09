@@ -1,0 +1,361 @@
+/* Job Detail Page Styles */
+.job-detail-page {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #333;
+  background-color: #f8fafc;
+}
+ 
+/* Header Section */
+.job-detail-header {
+  background-color: #fff;
+  padding: 24px 0;
+  border-bottom: 1px solid #eaeaea;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.job-header-content {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.company-logo {
+  width: 80px;
+  height: 80px;
+  margin-right: 20px;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.company-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.job-header-info {
+  flex: 1;
+}
+
+.job-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: #1a1a1a;
+}
+.ant-modal{
+  top: 35px !important;
+}
+.company-name {
+  font-size: 16px;
+  color: #4f46e5;
+  display: block;
+  margin-bottom: 12px;
+  text-decoration: none;
+}
+
+.company-name:hover {
+  text-decoration: underline;
+}
+
+.job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  margin-right: 24px;
+  margin-bottom: 8px;
+  color: #475569;
+  font-size: 14px;
+}
+
+.meta-item .anticon {
+  margin-right: 6px;
+  font-size: 16px;
+  color: #64748b;
+}
+
+.deadline {
+  display: flex;
+  align-items: center;
+  color: #e11d48;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.deadline .anticon {
+  margin-right: 6px;
+}
+
+.job-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.urgent-tag {
+  background-color: #fff1f2;
+  border-color: #ffa39e;
+  color: #cf1322;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.apply-button {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+.save-button {
+  display: flex;
+  align-items: center;
+}
+
+/* Content Section */
+.job-detail-content {
+  padding: 32px 0;
+}
+
+.job-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 24px;
+}
+
+@media (max-width: 992px) {
+  .job-detail-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.job-detail-section {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+}
+
+.section-title .anticon {
+  margin-right: 8px;
+  color: #4f46e5;
+}
+
+.section-content {
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.responsibility-list,
+.requirement-list {
+  padding-left: 20px;
+  margin-bottom: 0;
+}
+
+.responsibility-list li,
+.requirement-list li {
+  margin-bottom: 8px;
+}
+
+.benefits-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+}
+
+.benefit-icon {
+  color: #059669;
+  margin-right: 8px;
+  margin-top: 3px;
+}
+
+/* Sidebar */
+.job-detail-sidebar {
+  position: sticky;
+  top: 20px;
+}
+
+.sidebar-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+}
+
+.card-title .anticon {
+  margin-right: 8px;
+  color: #4f46e5;
+}
+
+.info-list {
+  margin-bottom: 16px;
+}
+
+.info-item {
+  margin-bottom: 12px;
+}
+
+.info-label {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.info-value .anticon {
+  margin-right: 6px;
+  color: #64748b;
+}
+
+.culture-info {
+  font-weight: normal;
+  line-height: 1.5;
+}
+
+.company-info-card {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.company-info-card .company-logo {
+  width: 60px;
+  height: 60px;
+  margin-right: 12px;
+}
+
+.company-details {
+  flex: 1;
+}
+
+.company-details .company-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.company-location {
+  font-size: 14px;
+  color: #475569;
+  display: flex;
+  align-items: center;
+}
+
+.company-location .anticon {
+  margin-right: 4px;
+  color: #64748b;
+}
+
+.sidebar-actions {
+  margin-top: 16px;
+}
+
+/* Application Modal */
+.application-modal .ant-modal-header {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.modal-job-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.steps-wrapper {
+  margin-bottom: 16px;
+}
+
+.application-step {
+  padding: 16px 0;
+}
+
+.step-actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.uploaded-cv {
+  border: 1px dashed #cbd5e1;
+  border-radius: 4px;
+  padding: 16px;
+  background-color: #f8fafc;
+}
+
+.file-preview {
+  margin-bottom: 12px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .job-header-content {
+    flex-direction: column;
+  }
+
+  .company-logo {
+    margin-bottom: 16px;
+  }
+
+  .job-meta {
+    flex-direction: column;
+  }
+
+  .meta-item {
+    margin-right: 0;
+  }
+
+  .benefits-list {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+}

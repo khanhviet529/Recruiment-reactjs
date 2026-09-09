@@ -310,6 +310,113 @@ server.use((req, res, next) => {
   next();
 });
 
+// Waiting candidates endpoints
+server.post('/meetings/:id/waiting-candidates', (req, res) => {
+  const meetingId = req.params.id;
+  const candidateData = req.body;
+  
+  console.log(`Candidate ${candidateData.candidateId} joining waiting room for meeting ${meetingId}`);
+  
+  const db = router.db;
+  
+  // Check if candidate already exists in waiting list
+  let waitingCandidates = db.get('waitingCandidates').value() || [];
+  const existingIndex = waitingCandidates.findIndex(
+    c => c.meetingId === meetingId && c.candidateId === candidateData.candidateId
+  );
+  
+  if (existingIndex >= 0) {
+    // Update existing entry
+    waitingCandidates[existingIndex] = {
+      ...waitingCandidates[existingIndex],
+      ...candidateData,
+      meetingId,
+      updatedAt: new Date().toISOString()
+    };
+  } else {
+    // Add new entry
+    waitingCandidates.push({
+      id: Date.now().toString(),
+      meetingId,
+      ...candidateData,
+      createdAt: new Date().toISOString()
+    });
+  }
+  
+  db.set('waitingCandidates', waitingCandidates).write();
+  
+  res.status(200).json({ success: true });
+});
+
+server.get('/meetings/:id/waiting-candidates', (req, res) => {
+  const meetingId = req.params.id;
+  const db = router.db;
+  
+  const waitingCandidates = db.get('waitingCandidates')
+    .filter(c => c.meetingId === meetingId)
+    .value() || [];
+  
+  res.json(waitingCandidates);
+});
+
+server.get('/meetings/:id/waiting-candidates/:candidateId', (req, res) => {
+  const { id: meetingId, candidateId } = req.params;
+  const db = router.db;
+  
+  const candidate = db.get('waitingCandidates')
+    .find(c => c.meetingId === meetingId && c.candidateId === candidateId)
+    .value();
+  
+  if (!candidate) {
+    return res.status(404).json({ error: 'Candidate not found in waiting list' });
+  }
+  
+  res.json(candidate);
+});
+
+server.patch('/meetings/:id/waiting-candidates/:candidateId', (req, res) => {
+  const { id: meetingId, candidateId } = req.params;
+  const updateData = req.body;
+  const db = router.db;
+  
+  const waitingCandidates = db.get('waitingCandidates').value() || [];
+  const candidateIndex = waitingCandidates.findIndex(
+    c => c.meetingId === meetingId && c.candidateId === candidateId
+  );
+  
+  if (candidateIndex === -1) {
+    return res.status(404).json({ error: 'Candidate not found in waiting list' });
+  }
+  
+  waitingCandidates[candidateIndex] = {
+    ...waitingCandidates[candidateIndex],
+    ...updateData,
+    updatedAt: new Date().toISOString()
+  };
+  
+  db.set('waitingCandidates', waitingCandidates).write();
+  
+  console.log(`Candidate ${candidateId} status updated to: ${updateData.status}`);
+  
+  res.json(waitingCandidates[candidateIndex]);
+});
+
+server.delete('/meetings/:id/waiting-candidates/:candidateId', (req, res) => {
+  const { id: meetingId, candidateId } = req.params;
+  const db = router.db;
+  
+  const waitingCandidates = db.get('waitingCandidates').value() || [];
+  const filteredCandidates = waitingCandidates.filter(
+    c => !(c.meetingId === meetingId && c.candidateId === candidateId)
+  );
+  
+  db.set('waitingCandidates', filteredCandidates).write();
+  
+  console.log(`Candidate ${candidateId} removed from waiting room for meeting ${meetingId}`);
+  
+  res.status(200).json({ success: true });
+});
+
 // Use default router (without /api prefix)
 server.use(router);
 

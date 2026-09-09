@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { Table, Tag, Button, Card, Input, DatePicker, Select, Space, message, Empty } from 'antd';
+import { Table, Tag, Button, Card, Input, DatePicker, Select, Space, message, Empty, Modal } from 'antd';
 import { 
   EyeOutlined, 
   ClockCircleOutlined, 
   CheckCircleOutlined, 
-  CloseCircleOutlined 
+  CloseCircleOutlined,
+  DeleteOutlined,
+  ExclamationCircleOutlined
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
+const { confirm } = Modal;
 
 const ApplicationsPage = () => {
   const { user } = useSelector((state) => state.auth);
@@ -60,19 +63,35 @@ const ApplicationsPage = () => {
         await Promise.all(jobIds.map(async (jobId) => {
           try {
             const jobResponse = await axios.get(`http://localhost:5000/jobs/${jobId}`);
+            console.log(`Job ${jobId} data:`, jobResponse.data);
+            
             if (jobResponse.data) {
               // Also fetch employer info
               const employerResponse = await axios.get(`http://localhost:5000/employers?userId=${jobResponse.data.employerId}`);
+              console.log(`Employer data for job ${jobId}:`, employerResponse.data);
+              
+              // Fix: Handle array response properly
+              let employerName = 'Unknown';
+              let employerLogo = null;
+              
+              if (employerResponse.data && employerResponse.data.length > 0) {
+                const employer = employerResponse.data[0];
+                employerName = employer.companyName || 'Unknown';
+                employerLogo = employer.logo || null;
+                console.log(`Employer name for job ${jobId}:`, employerName);
+              } else {
+                console.log(`No employer data found for job ${jobId}, employerId: ${jobResponse.data.employerId}`);
+              }
               
               jobsData[jobId] = {
                 ...jobResponse.data,
-                employerName: employerResponse.data?.companyName || 'Unknown',
-                employerLogo: employerResponse.data?.logo || null
+                employerName: employerName,
+                employerLogo: employerLogo
               };
             }
           } catch (err) {
             console.error(`Error fetching job ${jobId}:`, err);
-            jobsData[jobId] = { title: `Job #${jobId}`, location: 'Unknown' };
+            jobsData[jobId] = { title: `Job #${jobId}`, location: 'Unknown', employerName: 'Unknown' };
           }
         }));
         
@@ -189,6 +208,41 @@ const ApplicationsPage = () => {
     });
   };
 
+  // Handle withdraw application (cancel application)
+  const handleWithdrawApplication = (applicationId, jobTitle) => {
+    confirm({
+      title: 'Hủy đơn ứng tuyển',
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <div>
+          <p>Bạn có chắc chắn muốn hủy đơn ứng tuyển cho vị trí <strong>"{jobTitle}"</strong>?</p>
+          <p style={{ color: '#e11d48', fontSize: '14px' }}>
+            ⚠️ Lưu ý: Sau khi hủy, bạn có thể ứng tuyển lại vị trí này.
+          </p>
+        </div>
+      ),
+      okText: 'Hủy đơn ứng tuyển',
+      okType: 'danger',
+      cancelText: 'Không',
+      async onOk() {
+        try {
+          // Update application status to 'withdrawn'
+          await axios.patch(`http://localhost:5000/applications/${applicationId}`, {
+            status: 'withdrawn',
+            withdrawnAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+          
+          message.success('Đã hủy đơn ứng tuyển thành công');
+          fetchApplications(); // Refresh the list
+        } catch (error) {
+          console.error('Error withdrawing application:', error);
+          message.error('Không thể hủy đơn ứng tuyển. Vui lòng thử lại sau.');
+        }
+      },
+    });
+  };
+
   const columns = [
     {
       title: 'Vị trí',
@@ -255,13 +309,30 @@ const ApplicationsPage = () => {
     {
       title: 'Thao tác',
       key: 'action',
-      render: (_, record) => (
-        <Link to={`/candidate/applications/${record.id}`}>
-          <Button type="primary" icon={<EyeOutlined />} size="small">
-            Chi tiết
-          </Button>
-        </Link>
-      ),
+      render: (_, record) => {
+        const canWithdraw = ['pending', 'reviewing'].includes(record.status);
+        
+        return (
+          <Space size="small">
+            <Link to={`/candidate/applications/${record.id}`}>
+              <Button type="primary" icon={<EyeOutlined />} size="small">
+                Chi tiết
+              </Button>
+            </Link>
+            {canWithdraw && (
+              <Button 
+                type="default" 
+                danger 
+                icon={<DeleteOutlined />} 
+                size="small"
+                onClick={() => handleWithdrawApplication(record.id, record.jobTitle)}
+              >
+                Hủy đơn
+              </Button>
+            )}
+          </Space>
+        );
+      },
     },
   ];
 

@@ -7,6 +7,11 @@ import 'select2';
 import 'select2/dist/css/select2.min.css';
 import * as bootstrap from 'bootstrap';
 import '../styles/select2-custom.scss';
+import {
+  DownOutlined,
+  SearchOutlined,
+  UpOutlined,
+} from '@ant-design/icons';
 
 const CompaniesPage = () => {
   const navigate = useNavigate();
@@ -202,12 +207,12 @@ const CompaniesPage = () => {
                       >
                         {showAllLocations ? (
                           <>
-                            <i className="bi bi-chevron-up me-1"></i>
+                            <UpOutlined className="me-1" />
                             Thu gọn
                           </>
                         ) : (
                           <>
-                            <i className="bi bi-chevron-down me-1"></i>
+                            <DownOutlined className="me-1" />
                             Xem tất cả
                           </>
                         )}
@@ -256,7 +261,7 @@ const CompaniesPage = () => {
                 onChange={handleSearchChange}
               />
               <button className="btn btn-primary" type="button" onClick={handleSearch}>
-                <i className="bi bi-search"></i>
+                <SearchOutlined />
               </button>
             </div>
           </div>

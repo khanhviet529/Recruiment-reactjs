@@ -86,7 +86,7 @@ const ApplicationDetailPage = () => {
       setError(null);
       
       // Get application details
-      const applicationResponse = await axios.get(`http://localhost:5000/applications/${id}`);
+            const applicationResponse = await axios.get(`http://localhost:5000/applications/${id}`);
       
       if (!applicationResponse.data) {
         setError('Không tìm thấy thông tin ứng tuyển');
@@ -117,11 +117,17 @@ const ApplicationDetailPage = () => {
       setJob(jobData);
       
       // Get employer details
-      const employerResponse = await axios.get(`http://localhost:5000/employers?userId=${jobData.employerId}`);
-      if (!employerResponse.data) {
-        console.warn(`Employer not found for ID: ${jobData.employerId}`);
-      } else {
-        setEmployer(employerResponse.data);
+      try {
+        const employerResponse = await axios.get(`http://localhost:5000/employers?userId=${jobData.employerId}`);
+        if (employerResponse.data && employerResponse.data.length > 0) {
+          setEmployer(employerResponse.data[0]);
+        } else {
+          console.warn(`Employer not found for ID: ${jobData.employerId}`);
+          setEmployer(null);
+        }
+      } catch (err) {
+        console.error('Error fetching employer:', err);
+        setEmployer(null);
       }
       
       // Check for similar jobs
@@ -581,7 +587,7 @@ const ApplicationDetailPage = () => {
         <Row gutter={24} align="middle">
           <Col xs={24} md={6} className="text-center">
             <img 
-              src={employer?.logo || "https://via.placeholder.com/150"} 
+              src={employer?.logo || '/image/company-placeholder.svg'} 
               alt={employer?.companyName} 
               style={{ maxWidth: '100%', maxHeight: 120, objectFit: 'contain' }} 
             />
@@ -641,18 +647,22 @@ const ApplicationDetailPage = () => {
             <div className="mb-4">
               <Title level={5}>Yêu cầu</Title>
               <ul>
-                {job.requirements?.map((req, index) => (
+                {Array.isArray(job.requirements) ? job.requirements.map((req, index) => (
                   <li key={index}>{req}</li>
-                ))}
+                )) : (
+                  <li>Không có thông tin yêu cầu</li>
+                )}
               </ul>
             </div>
             
             <div>
               <Title level={5}>Quyền lợi</Title>
               <ul>
-                {job.benefits?.map((benefit, index) => (
+                {Array.isArray(job.benefits) ? job.benefits.map((benefit, index) => (
                   <li key={index}>{benefit}</li>
-                ))}
+                )) : (
+                  <li>Không có thông tin quyền lợi</li>
+                )}
               </ul>
             </div>
             
@@ -763,7 +773,7 @@ const ApplicationDetailPage = () => {
                   <div 
                     key={similarJob.id} 
                     className="similar-job-item mb-3 pb-3" 
-                    style={{ borderBottom: index < similarJobs.length - 1 ? '1px solid #f0f0f0' : 'none' }}
+                    style={{ borderBottom: index < similarJobs.length - 1 ? '1px solid #f1f5f9' : 'none' }}
                   >
                     <Title level={5} style={{ marginBottom: 4 }}>
                       {similarJob.title}
@@ -787,11 +797,11 @@ const ApplicationDetailPage = () => {
               )}
             </div>
             
-            <div className="text-center mt-3">
+            {/* <div className="text-center mt-3">
               <Link to="/candidate/jobs">
                 <Button type="primary">Xem thêm công việc</Button>
               </Link>
-            </div>
+            </div> */}
           </Card>
         </Col>
       </Row>

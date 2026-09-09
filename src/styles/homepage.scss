@@ -1,86 +1,528 @@
+/* Homepage Styles */
+
+// Variables
+$primary-color: #1e88e5;
+$secondary-color: #5e35b1;
+$accent-color: #ff4081;
+$light-bg: #f8fafc;
+$dark-bg: #001529;
+$text-light: #ffffff;
+$border-radius: 8px;
+$gray-100: #f8fafc;
+$gray-200: #f1f5f9;
+$gray-300: #e2e8f0;
+$gray-400: #cbd5e1;
+$gray-500: #94a3b8;
+$gray-600: #64748b;
+$gray-700: #334155;
+$gray-800: #1e293b;
+
 .home-page {
-  .hero-section {
-    // background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.85)), 
-    //             url('/images/hero-bg.jpg') no-repeat center center/cover;
-    padding: 80px 0;
-    
-    h1 {
-      color: #333;
-      margin-bottom: 1.5rem;
-    }
-    
-    .lead {
-      color: #555;
-      font-size: 1.2rem;
-    }
-  }
+  // Hero Banner
+  .hero-banner-container {
+    position: relative;
+    margin-bottom: 40px;
 
-  .search-box {
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    
-    .ant-input-affix-wrapper, .ant-select {
-      border-radius: 4px;
-    }
-  }
+    .hero-banner {
+      height: 500px;
+      overflow: hidden;
 
-  .jobs-section {
-    padding: 60px 0;
-    
-    .section-title {
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 2rem;
-      position: relative;
-      
-      &:after {
-        content: "";
-        display: block;
-        width: 50px;
-        height: 3px;
-        background: #1890ff;
-        margin-top: 10px;
+      .slide-item {
+        height: 500px;
+        position: relative;
+
+        .slide-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.3);
+        }
+      }
+
+      .slick-dots {
+        bottom: 20px;
+
+        li button:before {
+          color: $text-light;
+        }
       }
     }
     
-    .ant-card {
+    .search-form-overlay {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 400px;
+      z-index: 10;
+      transform: translateY(50%);
+
+  .search-box {
+        padding: 25px !important;
+    }
+  }
+  }
+
+  // Section Headers
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: $gray-800;
+      margin-bottom: 0;
+      position: relative;
+      
+      // &:after {
+      //   content: '';
+      //   display: block;
+      //   width: 50px;
+      //   height: 3px;
+      //   background-color: $primary-color;
+      //   margin-top: 8px;
+      // }
+    }
+
+    .see-all-link {
+      color: $primary-color;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+
+      .anticon {
+        margin-left: 5px;
+        font-size: 12px;
+      }
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  // Featured Jobs Section
+  .featured-jobs-section {
+    padding: 40px 0;
+    background-color: $light-bg;
+    margin-bottom: 40px;
+  }
+
+  // Category Section
+  .category-section {
+    padding: 60px 0;
+    background-color: white;
+    margin-bottom: 40px;
+
+    .category-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 20px 15px;
+      border-radius: $border-radius;
+      background-color: $light-bg;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
       height: 100%;
-      transition: all 0.3s ease;
+      border: 1px solid $gray-200;
+      text-decoration: none;
+      color: $gray-800;
       
       &:hover {
         transform: translateY(-5px);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-      }
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-color: $gray-300;
       
-      .ant-card-meta-title {
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
-        color: #333;
+        .category-name {
+          color: $primary-color;
+        }
       }
-      
-      .ant-card-meta-description {
-        color: #666;
+
+      .category-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+        background-color: rgba($primary-color, 0.1);
+        
+        img {
+          max-width: 30px;
+          max-height: 30px;
+        }
+      }
+
+      .category-name {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .job-count {
+        font-size: 14px;
+        color: $gray-600;
       }
     }
-    
-    .ant-tag {
-      margin-right: 5px;
-      margin-bottom: 5px;
+
+    // Category Slider Navigation
+    .slick-prev, .slick-next {
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      z-index: 1;
+
+      &:before {
+        color: $gray-700;
+        font-size: 20px;
+      }
+
+      &:hover {
+        background-color: $primary-color;
+        
+        &:before {
+          color: white;
+        }
+      }
+      }
+      
+    .slick-prev {
+      left: -20px;
+      padding-top: 5px;
+    }
+
+    .slick-next {
+      right: -20px;
+      padding-top: 5px;
     }
   }
 
-  // Mobile responsiveness
-  @media (max-width: 768px) {
-    .hero-section {
-      padding: 50px 0;
-      
-      h1 {
-        font-size: 2rem;
+  // Employers Section
+  .employers-section {
+    padding: 60px 0;
+    background-color: $light-bg;
+    margin-bottom: 40px;
+
+    .employer-card {
+      border-radius: $border-radius;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      background-color: white;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      height: 100%;
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+
+        .employer-name {
+          color: $primary-color;
       }
     }
     
-    .search-box {
-      padding: 15px !important;
+      .employer-logo-container {
+        height: 100px;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: #f9f9f9;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .employer-info {
+        padding: 15px;
+        text-align: center;
+
+        .employer-name {
+          font-size: 16px;
+          font-weight: 600;
+      margin-bottom: 5px;
+          color: $gray-800;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .employer-job-count {
+          font-size: 14px;
+          margin-bottom: 10px;
+          color: $gray-600;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          .ml-2 {
+            margin-left: 8px;
+          }
+        }
+
+        .employer-industry {
+          font-size: 13px;
+          color: $gray-600;
+          background-color: $gray-100;
+          padding: 3px 8px;
+          border-radius: 12px;
+          display: inline-block;
+        }
+      }
+  }
+
+    // Employer Slider Navigation
+    .slick-prev, .slick-next {
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      z-index: 1;
+
+      &:before {
+        color: $gray-700;
+        font-size: 20px;
+      }
+
+      &:hover {
+        background-color: $primary-color;
+        
+        &:before {
+          color: white;
+        }
+      }
+    }
+
+    .slick-prev {
+      left: -20px;
+      padding-top: 5px;
+    }
+
+    .slick-next {
+      right: -20px;
+      padding-top: 5px;
+    }
+  }
+
+  // Jobs Section
+  .jobs-section {
+    padding: 60px 0;
+    background-color: white;
+
+    .job-card {
+      height: 100%;
+    }
+  }
+
+  // Responsive styles
+  @media (max-width: 768px) {
+    .hero-banner-container {
+      .search-form-overlay {
+        position: relative;
+        transform: none;
+        margin-top: -50px;
+      }
+    }
+
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .see-all-link {
+        margin-top: 10px;
+      }
+    }
+
+    .category-section,
+    .employers-section {
+      .slick-prev {
+        left: 5px;
+        padding-top: 5px;
+      }
+
+      .slick-next {
+        right: 5px;
+        padding-top: 5px;
+      }
+    }
+  }
+}
+
+// Card styling
+.ant-card {
+  border-radius: $border-radius;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ant-card-meta-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: $dark-bg;
+      }
+    }
+    
+// Responsive Adjustments
+@media (max-width: 768px) {
+  // Search form overlay adjustments for mobile
+  .hero-banner-container {
+    .search-form-overlay {
+      position: relative;
+      top: 0;
+      z-index: 1;
+      padding: 15px 0;
+      background-color: $light-bg;
+      
+      .search-box {
+        margin-bottom: 0;
+      }
+    }
+  }
+  
+  .hero-banner {
+    .banner-carousel {
+      .carousel-item {
+        height: auto;
+        
+        .carousel-content {
+          padding-top: 0;
+        }
+      }
+    }
+    
+    .banner-content-text {
+      .banner-title {
+        font-size: 1.8rem;
+        
+        .text-highlight {
+          font-size: 2.2rem;
+        }
+      }
+    }
+    
+    .banner-image-container {
+      height: 250px;
+    }
+  }
+
+  .category-section,
+  .employers-section {
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .section-title {
+        margin-bottom: 5px;
+      }
     }
   }
 } 
+
+// Custom styles for location Select tags
+.home-page {
+  .search-form-overlay {
+    .search-box {
+      // Custom styling for location tags in Select
+      .ant-select {
+        .ant-select-selection-item {
+          display: inline-flex !important;
+          align-items: center !important;
+          height: auto !important;
+          padding: 4px 8px !important;
+          margin: 2px !important;
+          border-radius: 6px !important;
+          background-color: rgba($primary-color, 0.1) !important;
+          border: 1px solid rgba($primary-color, 0.2) !important;
+          color: $primary-color !important;
+          font-size: 13px !important;
+          line-height: 1.4 !important;
+          
+          .ant-select-selection-item-content {
+            display: inline-flex !important;
+            align-items: center !important;
+            line-height: 1.4 !important;
+            flex: 1;
+          }
+          
+          .ant-select-selection-item-remove {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin-left: 6px !important;
+            color: rgba($primary-color, 0.8) !important;
+            font-size: 12px !important;
+            width: 16px !important;
+            height: 16px !important;
+            border-radius: 50% !important;
+            transition: all 0.2s ease !important;
+            line-height: 1 !important;
+            
+            &:hover {
+              background-color: rgba($primary-color, 0.2) !important;
+              color: $primary-color !important;
+            }
+            
+            .anticon {
+              font-size: 10px !important;
+              line-height: 1 !important;
+              display: flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+            }
+          }
+        }
+        
+        // Override for tag render component
+        .ant-tag {
+          display: inline-flex !important;
+          align-items: center !important;
+          margin: 2px !important;
+          padding: 4px 8px !important;
+          border-radius: 6px !important;
+          background-color: rgba($primary-color, 0.1) !important;
+          border: 1px solid rgba($primary-color, 0.2) !important;
+          color: $primary-color !important;
+          font-size: 13px !important;
+          line-height: 1.4 !important;
+          
+          .anticon-close {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin-left: 6px !important;
+            font-size: 10px !important;
+            line-height: 1 !important;
+            width: 14px !important;
+            height: 14px !important;
+            border-radius: 50% !important;
+            transition: all 0.2s ease !important;
+            
+            &:hover {
+              background-color: rgba($primary-color, 0.2) !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}

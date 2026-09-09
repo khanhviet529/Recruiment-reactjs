@@ -2,25 +2,12 @@ import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import { Card, Button, Row, Col, Form as AntForm, Input, DatePicker, Select, Radio } from 'antd';
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 import moment from 'moment';
-
-const { TextArea } = Input;
-const { Option } = Select;
-
-const personalInfoSchema = Yup.object({
-  fullName: Yup.string().required('Họ tên là bắt buộc'),
-  email: Yup.string().email('Email không hợp lệ').required('Email là bắt buộc'),
-  phone: Yup.string().required('Số điện thoại là bắt buộc'),
-  address: Yup.string().required('Địa chỉ là bắt buộc'),
-  dateOfBirth: Yup.mixed().required('Ngày sinh là bắt buộc'),
-  gender: Yup.string().required('Giới tính là bắt buộc'),
-  maritalStatus: Yup.string().required('Tình trạng hôn nhân là bắt buộc'),
-  nationality: Yup.string().required('Quốc tịch là bắt buộc'),
-  summary: Yup.string().required('Tóm tắt bản thân là bắt buộc'),
-});
+import {
+  EditOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 
 const PersonalInfoSection = ({ candidate, setCandidate }) => {
   const [editMode, setEditMode] = useState(false);
@@ -31,7 +18,7 @@ const PersonalInfoSection = ({ candidate, setCandidate }) => {
     headline: candidate?.headline || '',
     summary: candidate?.summary || '',
     gender: candidate?.gender || 'male',
-    dateOfBirth: candidate?.dateOfBirth ? moment(candidate.dateOfBirth) : null,
+    dateOfBirth: candidate?.dateOfBirth || '',
     nationality: candidate?.nationality || '',
     maritalStatus: candidate?.maritalStatus || 'single',
     email: candidate?.email || '',
@@ -39,46 +26,41 @@ const PersonalInfoSection = ({ candidate, setCandidate }) => {
     address: candidate?.address || '',
     city: candidate?.city || '',
     country: candidate?.country || '',
-    socialLinks: candidate?.socialLinks || [
-      { platform: 'linkedin', url: '' },
-      { platform: 'facebook', url: '' },
-      { platform: 'github', url: '' }
-    ]
   };
 
   const validationSchema = Yup.object().shape({
     firstName: Yup.string().required('Vui lòng nhập họ'),
     lastName: Yup.string().required('Vui lòng nhập tên'),
-    headline: Yup.string().required('Vui lòng nhập tiêu đề hồ sơ'),
-    summary: Yup.string().required('Vui lòng nhập tóm tắt bản thân'),
-    gender: Yup.string().required('Vui lòng chọn giới tính'),
-    dateOfBirth: Yup.mixed().required('Vui lòng chọn ngày sinh'),
-    nationality: Yup.string().required('Vui lòng nhập quốc tịch'),
-    maritalStatus: Yup.string().required('Vui lòng chọn tình trạng hôn nhân'),
     email: Yup.string().email('Email không hợp lệ').required('Vui lòng nhập email'),
     phone: Yup.string().required('Vui lòng nhập số điện thoại'),
-    address: Yup.string().required('Vui lòng nhập địa chỉ'),
-    city: Yup.string().required('Vui lòng nhập thành phố'),
-    country: Yup.string().required('Vui lòng nhập quốc gia'),
-    socialLinks: Yup.array().of(
-      Yup.object().shape({
-        platform: Yup.string().required('Vui lòng chọn nền tảng'),
-        url: Yup.string().url('URL không hợp lệ').required('Vui lòng nhập URL')
-      })
-    )
   });
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      // Create a new object that maintains all existing candidate data while updating personal info
+      console.log('🔄 Updating personal info for candidate:', candidate.id);
+      console.log('📝 Form values:', values);
+      
+      // SAFETY CHECK: Get current candidate data first to preserve all fields
+      let currentCandidateData = {};
+      try {
+        const currentResponse = await axios.get(`http://localhost:5000/candidates/${candidate.id}`);
+        currentCandidateData = currentResponse.data;
+        console.log('📦 Current candidate data:', currentCandidateData);
+      } catch (error) {
+        console.warn('⚠️ Could not fetch current candidate data, using props:', error);
+        currentCandidateData = candidate;
+      }
+      
+      // Prepare updated data - preserve ALL existing fields, only update what's changed
       const updatedCandidate = {
-        ...candidate,
+        ...currentCandidateData, // Keep all existing data
+        // Only update the personal info fields
         firstName: values.firstName,
         lastName: values.lastName,
         headline: values.headline,
         summary: values.summary,
         gender: values.gender,
-        dateOfBirth: values.dateOfBirth ? values.dateOfBirth.format('YYYY-MM-DD') : null,
+        dateOfBirth: values.dateOfBirth,
         nationality: values.nationality,
         maritalStatus: values.maritalStatus,
         email: values.email,
@@ -86,14 +68,22 @@ const PersonalInfoSection = ({ candidate, setCandidate }) => {
         address: values.address,
         city: values.city,
         country: values.country,
-        socialLinks: values.socialLinks
+        updatedAt: new Date().toISOString()
       };
 
+      console.log('📝 Sending updated candidate data:', updatedCandidate);
+      
+      // Use PUT with complete data to ensure all fields are preserved
       const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, updatedCandidate);
-      setCandidate(response.data);
-      message.success('Cập nhật thông tin thành công');
+      
+      if (response.data) {
+        setCandidate(response.data);
+        message.success('Cập nhật thông tin thành công');
+        console.log('✅ Personal info updated successfully');
+        setEditMode(false); // Exit edit mode after successful update
+      }
     } catch (error) {
-      console.error('Error updating personal info:', error);
+      console.error('❌ Error updating personal info:', error);
       message.error('Có lỗi xảy ra khi cập nhật thông tin');
     } finally {
       setSubmitting(false);
@@ -101,237 +91,263 @@ const PersonalInfoSection = ({ candidate, setCandidate }) => {
   };
 
   return (
-    <Card title="Thông tin cá nhân" className="mb-4">
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ values, errors, touched, isSubmitting }) => (
-          <Form>
-            <Row gutter={16}>
-              <Col span={12}>
-                <AntForm.Item
-                  label="Họ"
-                  validateStatus={touched.firstName && errors.firstName ? 'error' : ''}
-                  help={touched.firstName && errors.firstName}
-                >
-                  <Field name="firstName" as={Input} />
-                </AntForm.Item>
-              </Col>
-              <Col span={12}>
-                <AntForm.Item
-                  label="Tên"
-                  validateStatus={touched.lastName && errors.lastName ? 'error' : ''}
-                  help={touched.lastName && errors.lastName}
-                >
-                  <Field name="lastName" as={Input} />
-                </AntForm.Item>
-              </Col>
-            </Row>
-
-            <Row gutter={16}>
-              <Col span={24}>
-                <AntForm.Item
-                  label="Tiêu đề hồ sơ"
-                  validateStatus={touched.headline && errors.headline ? 'error' : ''}
-                  help={touched.headline && errors.headline}
-                >
-                  <Field name="headline" as={Input} placeholder="VD: Frontend Developer với 5 năm kinh nghiệm" />
-                </AntForm.Item>
-              </Col>
-            </Row>
-
-            <Row gutter={16}>
-              <Col span={24}>
-                <AntForm.Item
-                  label="Tóm tắt bản thân"
-                  validateStatus={touched.summary && errors.summary ? 'error' : ''}
-                  help={touched.summary && errors.summary}
-                >
-                  <Field name="summary">
-                    {({ field }) => (
-                      <TextArea 
-                        {...field} 
-                        rows={4} 
-                        placeholder="Mô tả ngắn gọn về bản thân, kinh nghiệm và mục tiêu nghề nghiệp của bạn"
-                      />
-                    )}
-                  </Field>
-                </AntForm.Item>
-              </Col>
-            </Row>
-
-            <Row gutter={16}>
-              <Col span={8}>
-                <AntForm.Item
-                  label="Giới tính"
-                  validateStatus={touched.gender && errors.gender ? 'error' : ''}
-                  help={touched.gender && errors.gender}
-                >
-                  <Field name="gender">
-                    {({ field }) => (
-                      <Radio.Group {...field}>
-                        <Radio value="male">Nam</Radio>
-                        <Radio value="female">Nữ</Radio>
-                        <Radio value="other">Khác</Radio>
-                      </Radio.Group>
-                    )}
-                  </Field>
-                </AntForm.Item>
-              </Col>
-              <Col span={8}>
-                <AntForm.Item
-                  label="Ngày sinh"
-                  validateStatus={touched.dateOfBirth && errors.dateOfBirth ? 'error' : ''}
-                  help={touched.dateOfBirth && errors.dateOfBirth}
-                >
-                  <Field name="dateOfBirth">
-                    {({ field, form }) => (
-                      <DatePicker
-                        value={field.value}
-                        onChange={(date) => form.setFieldValue('dateOfBirth', date)}
-                        style={{ width: '100%' }}
-                      />
-                    )}
-                  </Field>
-                </AntForm.Item>
-              </Col>
-              <Col span={8}>
-                <AntForm.Item
-                  label="Quốc tịch"
-                  validateStatus={touched.nationality && errors.nationality ? 'error' : ''}
-                  help={touched.nationality && errors.nationality}
-                >
-                  <Field name="nationality" as={Input} />
-                </AntForm.Item>
-              </Col>
-            </Row>
-
-            <Row gutter={16}>
-              <Col span={8}>
-                <AntForm.Item
-                  label="Tình trạng hôn nhân"
-                  validateStatus={touched.maritalStatus && errors.maritalStatus ? 'error' : ''}
-                  help={touched.maritalStatus && errors.maritalStatus}
-                >
-                  <Field name="maritalStatus">
-                    {({ field }) => (
-                      <Select {...field} style={{ width: '100%' }}>
-                        <Option value="single">Độc thân</Option>
-                        <Option value="married">Đã kết hôn</Option>
-                        <Option value="divorced">Ly hôn</Option>
-                        <Option value="widowed">Góa</Option>
-                      </Select>
-                    )}
-                  </Field>
-                </AntForm.Item>
-              </Col>
-              <Col span={8}>
-                <AntForm.Item
-                  label="Email"
-                  validateStatus={touched.email && errors.email ? 'error' : ''}
-                  help={touched.email && errors.email}
-                >
-                  <Field name="email" as={Input} />
-                </AntForm.Item>
-              </Col>
-              <Col span={8}>
-                <AntForm.Item
-                  label="Số điện thoại"
-                  validateStatus={touched.phone && errors.phone ? 'error' : ''}
-                  help={touched.phone && errors.phone}
-                >
-                  <Field name="phone" as={Input} />
-                </AntForm.Item>
-              </Col>
-            </Row>
-
-            <Row gutter={16}>
-              <Col span={24}>
-                <AntForm.Item
-                  label="Địa chỉ"
-                  validateStatus={touched.address && errors.address ? 'error' : ''}
-                  help={touched.address && errors.address}
-                >
-                  <Field name="address" as={Input} />
-                </AntForm.Item>
-              </Col>
-            </Row>
-
-            <Row gutter={16}>
-              <Col span={12}>
-                <AntForm.Item
-                  label="Thành phố"
-                  validateStatus={touched.city && errors.city ? 'error' : ''}
-                  help={touched.city && errors.city}
-                >
-                  <Field name="city" as={Input} />
-                </AntForm.Item>
-              </Col>
-              <Col span={12}>
-                <AntForm.Item
-                  label="Quốc gia"
-                  validateStatus={touched.country && errors.country ? 'error' : ''}
-                  help={touched.country && errors.country}
-                >
-                  <Field name="country" as={Input} />
-                </AntForm.Item>
-              </Col>
-            </Row>
-
-            <FieldArray name="socialLinks">
-              {({ push, remove }) => (
-                <div>
-                  <h4>Liên kết mạng xã hội</h4>
-                  {values.socialLinks.map((link, index) => (
-                    <Row gutter={16} key={index} className="mb-2">
-                      <Col span={8}>
-                        <Field name={`socialLinks.${index}.platform`}>
-                          {({ field }) => (
-                            <Select {...field} style={{ width: '100%' }}>
-                              <Option value="linkedin">LinkedIn</Option>
-                              <Option value="facebook">Facebook</Option>
-                              <Option value="github">GitHub</Option>
-                              <Option value="twitter">Twitter</Option>
-                            </Select>
-                          )}
-                        </Field>
-                      </Col>
-                      <Col span={14}>
-                        <Field name={`socialLinks.${index}.url`} as={Input} />
-                      </Col>
-                      <Col span={2}>
-                        <Button
-                          type="text"
-                          danger
-                          icon={<DeleteOutlined />}
-                          onClick={() => remove(index)}
-                        />
-                      </Col>
-                    </Row>
-                  ))}
-                  <Button
-                    type="dashed"
-                    onClick={() => push({ platform: '', url: '' })}
-                    icon={<PlusOutlined />}
-                  >
-                    Thêm liên kết
-                  </Button>
-                </div>
-              )}
-            </FieldArray>
-
-            <AntForm.Item className="mt-4">
-              <Button type="primary" htmlType="submit" loading={isSubmitting}>
-                Lưu thông tin
-              </Button>
-            </AntForm.Item>
-          </Form>
+    <div className="card h-100">
+      <div className="card-header d-flex justify-content-between align-items-center">
+        <h5 className="mb-0">Thông tin cá nhân</h5>
+        {!editMode && (
+          <button 
+            className="btn btn-sm btn-primary"
+            onClick={() => setEditMode(true)}
+          >
+            <EditOutlined className="me-1" /> Chỉnh sửa
+          </button>
         )}
-      </Formik>
-    </Card>
+      </div>
+      <div className="card-body">
+        {editMode ? (
+          // Edit Mode - Show Form
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+            enableReinitialize
+          >
+            {({ values, errors, touched, isSubmitting }) => (
+              <Form>
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <label className="form-label">Họ</label>
+                    <Field type="text" name="firstName" className="form-control" />
+                    <ErrorMessage name="firstName" component="div" className="text-danger" />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Tên</label>
+                    <Field type="text" name="lastName" className="form-control" />
+                    <ErrorMessage name="lastName" component="div" className="text-danger" />
+                  </div>
+                </div>
+
+                <div className="row mb-3">
+                  <div className="col-md-12">
+                    <label className="form-label">Tiêu đề hồ sơ</label>
+                    <Field 
+                      type="text" 
+                      name="headline" 
+                      className="form-control" 
+                      placeholder="VD: Frontend Developer với 5 năm kinh nghiệm"
+                    />
+                    <ErrorMessage name="headline" component="div" className="text-danger" />
+                  </div>
+                </div>
+
+                <div className="row mb-3">
+                  <div className="col-md-12">
+                    <label className="form-label">Tóm tắt bản thân</label>
+                    <Field 
+                      as="textarea" 
+                      name="summary" 
+                      className="form-control" 
+                      rows="4"
+                      placeholder="Mô tả ngắn gọn về bản thân, kinh nghiệm và mục tiêu nghề nghiệp của bạn"
+                    />
+                    <ErrorMessage name="summary" component="div" className="text-danger" />
+                  </div>
+                </div>
+
+                <div className="row mb-3">
+                  <div className="col-md-4">
+                    <label className="form-label">Giới tính</label>
+                    <Field as="select" name="gender" className="form-select">
+                      <option value="male">Nam</option>
+                      <option value="female">Nữ</option>
+                      <option value="other">Khác</option>
+                    </Field>
+                    <ErrorMessage name="gender" component="div" className="text-danger" />
+                  </div>
+                  <div className="col-md-4">
+                    <label className="form-label">Ngày sinh</label>
+                    <Field type="date" name="dateOfBirth" className="form-control" />
+                    <ErrorMessage name="dateOfBirth" component="div" className="text-danger" />
+                  </div>
+                  <div className="col-md-4">
+                    <label className="form-label">Tình trạng hôn nhân</label>
+                    <Field as="select" name="maritalStatus" className="form-select">
+                      <option value="single">Độc thân</option>
+                      <option value="married">Đã kết hôn</option>
+                      <option value="divorced">Đã ly hôn</option>
+                    </Field>
+                    <ErrorMessage name="maritalStatus" component="div" className="text-danger" />
+                  </div>
+                </div>
+
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <label className="form-label">Email</label>
+                    <Field type="email" name="email" className="form-control" />
+                    <ErrorMessage name="email" component="div" className="text-danger" />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Số điện thoại</label>
+                    <Field type="text" name="phone" className="form-control" />
+                    <ErrorMessage name="phone" component="div" className="text-danger" />
+                  </div>
+                </div>
+
+                <div className="row mb-3">
+                  <div className="col-md-4">
+                    <label className="form-label">Địa chỉ</label>
+                    <Field type="text" name="address" className="form-control" />
+                    <ErrorMessage name="address" component="div" className="text-danger" />
+                  </div>
+                  <div className="col-md-4">
+                    <label className="form-label">Thành phố</label>
+                    <Field type="text" name="city" className="form-control" />
+                    <ErrorMessage name="city" component="div" className="text-danger" />
+                  </div>
+                  <div className="col-md-4">
+                    <label className="form-label">Quốc gia</label>
+                    <Field type="text" name="country" className="form-control" />
+                    <ErrorMessage name="country" component="div" className="text-danger" />
+                  </div>
+                </div>
+
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <label className="form-label">Quốc tịch</label>
+                    <Field type="text" name="nationality" className="form-control" />
+                    <ErrorMessage name="nationality" component="div" className="text-danger" />
+                  </div>
+                </div>
+
+                <div className="d-flex justify-content-end gap-2">
+                  <button 
+                    type="button" 
+                    className="btn btn-secondary" 
+                    onClick={() => setEditMode(false)}
+                  >
+                    Hủy
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary" 
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Đang cập nhật...' : 'Cập nhật thông tin'}
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        ) : (
+          // View Mode - Show Data
+          <div className="personal-info-view">
+            <div className="row mb-3">
+              <div className="col-md-6">
+                <div>
+                  <strong>Họ và tên:</strong> {candidate?.firstName} {candidate?.lastName}
+                </div>
+              </div>
+              <div className="col-md-6">
+                <div>
+                  <strong>Email:</strong> {candidate?.email || 'Chưa cập nhật'}
+                </div>
+              </div>
+            </div>
+            
+            <div className="row mb-3">
+              <div className="col-md-12">
+                <div>
+                  <strong>Tiêu đề:</strong> {candidate?.headline || 'Chưa cập nhật'}
+                </div>
+              </div>
+            </div>
+            
+            <div className="row mb-3">
+              <div className="col-md-12">
+                <div>
+                  <strong>Tóm tắt:</strong> {candidate?.summary || 'Chưa cập nhật'}
+                </div>
+              </div>
+            </div>
+
+            <div className="row mb-3">
+              <div className="col-md-4">
+                <div>
+                  <strong>Giới tính:</strong> {
+                    candidate?.gender === 'male' ? 'Nam' :
+                    candidate?.gender === 'female' ? 'Nữ' :
+                    candidate?.gender === 'other' ? 'Khác' : 'Chưa cập nhật'
+                  }
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div>
+                  <strong>Ngày sinh:</strong> {
+                    candidate?.dateOfBirth ? 
+                    new Date(candidate.dateOfBirth).toLocaleDateString('vi-VN') : 
+                    'Chưa cập nhật'
+                  }
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div>
+                  <strong>Tình trạng hôn nhân:</strong> {
+                    candidate?.maritalStatus === 'single' ? 'Độc thân' :
+                    candidate?.maritalStatus === 'married' ? 'Đã kết hôn' :
+                    candidate?.maritalStatus === 'divorced' ? 'Đã ly hôn' : 'Chưa cập nhật'
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div className="row mb-3">
+              <div className="col-md-6">
+                <div>
+                  <strong>Số điện thoại:</strong> {candidate?.phone || 'Chưa cập nhật'}
+                </div>
+              </div>
+              <div className="col-md-6">
+                <div>
+                  <strong>Quốc tịch:</strong> {candidate?.nationality || 'Chưa cập nhật'}
+                </div>
+              </div>
+            </div>
+
+            <div className="row mb-3">
+              <div className="col-md-4">
+                <div>
+                  <strong>Địa chỉ:</strong> {candidate?.address || 'Chưa cập nhật'}
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div>
+                  <strong>Thành phố:</strong> {candidate?.city || 'Chưa cập nhật'}
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div>
+                  <strong>Quốc gia:</strong> {candidate?.country || 'Chưa cập nhật'}
+                </div>
+              </div>
+            </div>
+
+            {!candidate?.firstName && !candidate?.lastName && !candidate?.email && (
+              <div className="text-center text-muted py-4">
+                <UserOutlined className="fs-1 d-block mb-2" />
+                <p>Chưa có thông tin cá nhân</p>
+                <button 
+                  className="btn btn-primary"
+                  onClick={() => setEditMode(true)}
+                >
+                  Cập nhật thông tin
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
-export default PersonalInfoSection; 
+export default PersonalInfoSection;

@@ -5,6 +5,7 @@ import { BellOutlined, CheckOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import './NotificationBell.scss';
 
 const { Text } = Typography;
 
@@ -119,11 +120,11 @@ const NotificationBell = () => {
   const getNotificationIcon = (type) => {
     switch (type) {
       case 'application_status_changed':
-        return <Avatar style={{ backgroundColor: '#1890ff' }} icon={<BellOutlined />} />;
+        return <Avatar style={{ backgroundColor: '#4f46e5' }} icon={<BellOutlined />} />;
       case 'application_received':
-        return <Avatar style={{ backgroundColor: '#52c41a' }} icon={<BellOutlined />} />;
+        return <Avatar style={{ backgroundColor: '#059669' }} icon={<BellOutlined />} />;
       case 'interview_scheduled':
-        return <Avatar style={{ backgroundColor: '#722ed1' }} icon={<BellOutlined />} />;
+        return <Avatar style={{ backgroundColor: '#6366f1' }} icon={<BellOutlined />} />;
       case 'new_message':
         return <Avatar style={{ backgroundColor: '#eb2f96' }} icon={<BellOutlined />} />;
       default:
@@ -132,8 +133,8 @@ const NotificationBell = () => {
   };
 
   const notificationMenu = (
-    <div className="notification-dropdown-menu" style={{ width: 360, maxHeight: 500, overflow: 'auto' }}>
-      <div style={{ padding: '10px 16px', display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f0f0f0' }}>
+    <div className="notif-panel">
+      <div style={{ padding: '10px 16px', display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)' }}>
         <Text strong>Thông báo ({notifications.length})</Text>
         {notifications.length > 0 && (
           <Button 
@@ -163,7 +164,7 @@ const NotificationBell = () => {
                   style={{ 
                     padding: '10px 16px', 
                     cursor: 'pointer',
-                    backgroundColor: '#f0f7ff'
+                    backgroundColor: 'var(--brand-soft)'
                   }}
                   className="notification-item"
                 >
@@ -173,7 +174,7 @@ const NotificationBell = () => {
                     description={
                       <div>
                         <div style={{ fontSize: '13px' }}>{item.message}</div>
-                        <div style={{ fontSize: '12px', color: '#8c8c8c', marginTop: 4 }}>
+                        <div style={{ fontSize: '12px', color: '#64748b', marginTop: 4 }}>
                           {moment(item.createdAt).fromNow()}
                         </div>
                       </div>
@@ -190,7 +191,7 @@ const NotificationBell = () => {
             />
           )}
           
-          <div style={{ padding: '10px 16px', textAlign: 'center', borderTop: '1px solid #f0f0f0' }}>
+          <div style={{ padding: '10px 16px', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
             <Button 
               type="link" 
               onClick={() => {
@@ -203,12 +204,6 @@ const NotificationBell = () => {
           </div>
         </>
       )}
-      
-      <style jsx>{`
-        .notification-item:hover {
-          background-color: #e6f7ff !important;
-        }
-      `}</style>
     </div>
   );
 
@@ -221,10 +216,11 @@ const NotificationBell = () => {
       placement="bottomRight"
     >
       <Badge count={notifications.length} overflowCount={99}>
-        <Button 
+        <Button
           type="text"
-          icon={<BellOutlined style={{ fontSize: '20px' }} />}
-          style={{ color: '#fff' }}
+          shape="circle"
+          aria-label="Thông báo"
+          icon={<BellOutlined style={{ fontSize: 18 }} />}
         />
       </Badge>
     </Dropdown>

@@ -171,7 +171,7 @@ const JobSearchPage = () => {
           company: {
             id: index % 10 + 1,
             name: `${['TechCorp', 'Digital Solutions', 'Web Masters', 'IT Innovations', 'Code Factory'][index % 5]}`,
-            logo: 'https://via.placeholder.com/100'
+            logo: '/image/company-placeholder.svg'
           },
           location: `${['Hà Nội', 'Hồ Chí Minh', 'Đà Nẵng', 'Nha Trang', 'Cần Thơ'][index % 5]}`,
           jobType: `${['Full-time', 'Part-time', 'Contract', 'Freelance', 'Internship'][index % 5]}`,
@@ -506,7 +506,7 @@ const JobSearchPage = () => {
             <Space direction="vertical">
               <Button 
                 type="text" 
-                icon={isSaved ? <HeartFilled style={{ color: '#ff4d4f' }} /> : <HeartOutlined />} 
+                icon={isSaved ? <HeartFilled style={{ color: '#e11d48' }} /> : <HeartOutlined />} 
                 onClick={() => handleToggleSaveJob(job.id)}
               >
                 {isSaved ? 'Đã lưu' : 'Lưu'}
@@ -865,7 +865,7 @@ const JobSearchPage = () => {
             <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap">
               <Title level={4} style={{ margin: 0 }}>
                 {pagination.total > 0 ? (
-                  <Badge count={pagination.total} overflowCount={9999} style={{ backgroundColor: '#52c41a' }}>
+                  <Badge count={pagination.total} overflowCount={9999} style={{ backgroundColor: '#059669' }}>
                     <span style={{ marginRight: '10px' }}>Kết quả tìm kiếm</span>
                   </Badge>
                 ) : (

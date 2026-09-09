@@ -34,15 +34,16 @@ const ApplicationForm = ({
       if (user && user.id) {
         try {
           // Get candidate profile
-          const response = await axios.get(`http://localhost:5000/candidates/${user.id}`);
-          if (response.data) {
-            setCandidateProfile(response.data);
+          const response = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
+          if (response.data && response.data.length > 0) {
+            const candidateData = response.data[0];
+            setCandidateProfile(candidateData);
             
             // Pre-fill form with candidate data
             form.setFieldsValue({
-              fullName: response.data.fullName || user.name,
-              email: response.data.email || user.email,
-              phone: response.data.phone || '',
+              fullName: candidateData.fullName || user.name,
+              email: candidateData.email || user.email,
+              phone: candidateData.phone || '',
             });
           }
         } catch (error) {
@@ -161,7 +162,7 @@ const ApplicationForm = ({
 
       // Create application data
       const applicationData = {
-        jobId: parseInt(jobId),
+        jobId: jobId || null,
         candidateId,
         appliedAt: new Date().toISOString(),
         status: 'pending',
@@ -188,7 +189,15 @@ const ApplicationForm = ({
         ...(withdrawnApplications.length > 0 ? { reappliedAt: new Date().toISOString() } : {})
       };
 
+      console.log('JobId received:', jobId, 'Type:', typeof jobId);
+      console.log('JobId after parseInt:', parseInt(jobId), 'Type:', typeof parseInt(jobId));
+      console.log('Final jobId value:', applicationData.jobId, 'Type:', typeof applicationData.jobId);
       console.log('Submitting application data:', applicationData);
+      
+      // Final validation before submission
+      if (!applicationData.jobId || applicationData.jobId === 'undefined' || applicationData.jobId === 'null') {
+        throw new Error('JobId is null or invalid');
+      }
 
       // Submit application
       const response = await axios.post('http://localhost:5000/applications', applicationData);

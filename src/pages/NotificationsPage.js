@@ -192,13 +192,13 @@ const NotificationsPage = () => {
       case 'application_received':
         return <Badge status="success" />;
       case 'interview_scheduled':
-        return <ClockCircleOutlined style={{ color: '#1890ff' }} />;
+        return <ClockCircleOutlined style={{ color: '#4f46e5' }} />;
       case 'new_message':
-        return <MessageOutlined style={{ color: '#722ed1' }} />;
+        return <MessageOutlined style={{ color: '#6366f1' }} />;
       case 'new_job_posting':
-        return <FileTextOutlined style={{ color: '#52c41a' }} />;
+        return <FileTextOutlined style={{ color: '#059669' }} />;
       case 'job_recommendation':
-        return <CheckCircleOutlined style={{ color: '#faad14' }} />;
+        return <CheckCircleOutlined style={{ color: '#d97706' }} />;
       default:
         return <BellOutlined />;
     }
@@ -395,7 +395,7 @@ const NotificationsPage = () => {
           {notifications.filter(n => !n.read).length > 0 && (
             <Badge 
               count={notifications.filter(n => !n.read).length} 
-              style={{ marginLeft: 8, backgroundColor: '#1890ff' }} 
+              style={{ marginLeft: 8, backgroundColor: '#4f46e5' }} 
             />
           )}
         </Title>
@@ -416,10 +416,10 @@ const NotificationsPage = () => {
 
       <style jsx>{`
         .notification-item:hover {
-          background: #f5f5f5 !important;
+          background: #f8fafc !important;
         }
         .notification-item.unread:hover {
-          background: #e6f7ff !important;
+          background: #eef2ff !important;
         }
       `}</style>
     </div>

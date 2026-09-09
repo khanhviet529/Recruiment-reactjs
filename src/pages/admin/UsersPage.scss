@@ -1,0 +1,31 @@
+.admin-users-page {
+  padding: 24px;
+  
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    
+    .page-title h2 {
+      margin: 0;
+      color: #4f46e5;
+    }
+  }
+  
+  .ant-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ant-table-wrapper {
+    .ant-table {
+      font-size: 14px;
+    }
+    
+    .ant-table-thead > tr > th {
+      background-color: #f8fafc;
+      font-weight: 600;
+    }
+  }
+} 

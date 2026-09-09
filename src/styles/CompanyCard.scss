@@ -12,7 +12,7 @@
     height: 60px;
     object-fit: contain;
     border-radius: 8px;
-    background-color: #f8f9fa;
+    background-color: #f8fafc;
     padding: 5px;
   }
 
@@ -20,8 +20,8 @@
     width: 60px;
     height: 60px;
     border-radius: 8px;
-    background-color: #e9ecef;
-    color: #495057;
+    background-color: #f1f5f9;
+    color: #334155;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -34,17 +34,17 @@
     margin-bottom: 0.5rem;
     
     a {
-      color: #212529;
+      color: #0f172a;
       
       &:hover {
-        color: #0d6efd;
+        color: #4f46e5;
       }
     }
   }
 
   .company-info {
     font-size: 0.9rem;
-    color: #6c757d;
+    color: #64748b;
   }
 
   .company-stats {
@@ -58,7 +58,7 @@
     }
 
     .fw-bold {
-      color: #0d6efd;
+      color: #4f46e5;
       font-size: 1.1rem;
     }
   }

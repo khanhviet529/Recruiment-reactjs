@@ -1,0 +1,35 @@
+/* Bảng thông báo trong Header.
+   Antd Dropdown dùng prop `overlay` KHÔNG tự vẽ nền panel (khác với prop
+   `menu`), nên trước đây nội dung thông báo bị trong suốt, nhìn xuyên
+   qua thấy cả trang phía sau. */
+
+.notif-panel {
+  width: 360px;
+  max-height: 480px;
+  overflow: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Mục thông báo chưa đọc */
+.notification-item {
+  transition: background-color var(--transition);
+
+  &:hover {
+    background-color: var(--brand-100) !important;
+  }
+}
+
+/* Chuông thông báo: badge nhỏ gọn hơn mặc định */
+.notif-panel + *,
+.ant-badge .ant-badge-count {
+  box-shadow: 0 0 0 2px var(--bg-surface);
+}
+
+@media (max-width: 575px) {
+  .notif-panel {
+    width: min(360px, calc(100vw - 32px));
+  }
+}

@@ -1,3 +1,399 @@
+/* Job Detail Styles */
+
+// Variables
+$primary-color: #1e88e5;
+$secondary-color: #5e35b1;
+$accent-color: #ff4081;
+$light-bg: #f8fafc;
+$dark-bg: #001529;
+$text-light: #ffffff;
+$border-radius: 8px;
+$gray-100: #f8fafc;
+$gray-200: #f1f5f9;
+$gray-300: #e2e8f0;
+$gray-400: #cbd5e1;
+$gray-500: #94a3b8;
+$gray-600: #64748b;
+$gray-700: #334155;
+$gray-800: #1e293b;
+
+// Job Header
+.job-detail-header {
+  background-color: $light-bg;
+  padding: 30px 0;
+  border-bottom: 1px solid $gray-300;
+
+  .company-logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    border: 1px solid $gray-300;
+    overflow: hidden;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .job-title {
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: $gray-800;
+  }
+
+  .company-name {
+    color: $primary-color;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .job-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      color: $gray-700;
+      
+      i {
+        margin-right: 5px;
+        color: $gray-600;
+      }
+    }
+  }
+
+  .deadline {
+    background-color: rgba($primary-color, 0.1);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: $primary-color;
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 20px;
+
+    i {
+      margin-right: 5px;
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+
+    .btn-apply {
+      padding: 10px 25px;
+      font-weight: 600;
+    }
+
+    .btn-save {
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 1px solid $gray-300;
+      background-color: white;
+
+      &:hover {
+        background-color: rgba($primary-color, 0.05);
+      }
+
+      &.saved {
+        color: #e11d48;
+        border-color: #e11d48;
+      }
+    }
+  }
+}
+
+// Job Content Sections
+.job-detail-section {
+  padding: 30px 0;
+  border-bottom: 1px solid $gray-200;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: $gray-800;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+
+    i {
+      color: $primary-color;
+      margin-right: 10px;
+    }
+  }
+
+  .section-content {
+    color: $gray-700;
+    line-height: 1.6;
+
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    ul, ol {
+      padding-left: 20px;
+      margin-bottom: 20px;
+
+      li {
+        margin-bottom: 8px;
+      }
+    }
+
+    // Benefit items
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 15px;
+
+      i {
+        margin-right: 10px;
+        color: $primary-color;
+        font-size: 18px;
+        margin-top: 3px;
+      }
+    }
+  }
+}
+
+// Sidebar
+.job-sidebar {
+  .sidebar-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    border-radius: $border-radius;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+    .section-header {
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid $gray-200;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+
+      i {
+        margin-right: 10px;
+        color: $primary-color;
+      }
+    }
+
+    .info-group {
+      margin-bottom: 15px;
+
+      .info-label {
+        color: $gray-600;
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+
+      .info-value {
+        color: $gray-800;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+
+        i {
+          margin-right: 8px;
+          color: $primary-color;
+        }
+      }
+    }
+
+    .company-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid $gray-200;
+
+      .company-logo {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid $gray-300;
+
+        img {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
+        }
+      }
+
+      .company-name {
+        font-weight: 600;
+        color: $gray-800;
+        margin-bottom: 5px;
+      }
+
+      .company-location {
+        color: $gray-600;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+
+        i {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+}
+
+// Job skills and tags
+.job-tags {
+  margin: 20px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  .tag {
+    background-color: $light-bg;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    color: $gray-700;
+    border: 1px solid $gray-300;
+  }
+}
+
+// Application Modal
+.application-modal {
+  .modal-header {
+    background-color: $light-bg;
+    border-bottom: none;
+    padding: 20px;
+
+    .modal-title {
+      font-weight: 700;
+      color: $gray-800;
+    }
+  }
+
+  .steps-wrapper {
+    margin-bottom: 20px;
+    padding: 0 20px;
+  }
+
+  .application-step {
+    padding: 20px;
+
+    h4 {
+      font-weight: 700;
+      color: $gray-800;
+      margin-bottom: 10px;
+    }
+
+    .step-description {
+      color: $gray-600;
+      margin-bottom: 20px;
+    }
+
+    .step-actions {
+      margin-top: 30px;
+    }
+  }
+
+  .success-icon {
+    font-size: 60px;
+    color: #059669;
+    margin-bottom: 20px;
+  }
+}
+
+// CV Uploader
+.cv-uploader {
+  border: 2px dashed $gray-300;
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  background-color: $light-bg;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    background-color: rgba($primary-color, 0.02);
+  }
+
+  .upload-icon {
+    font-size: 40px;
+    color: $gray-500;
+    margin-bottom: 15px;
+  }
+
+  .upload-text {
+    color: $gray-700;
+    margin-bottom: 5px;
+  }
+
+  .upload-hint {
+    color: $gray-500;
+    font-size: 14px;
+  }
+}
+
+.uploaded-cv {
+  background-color: rgba(#059669, 0.05);
+  border: 1px solid rgba(#059669, 0.2);
+  border-radius: 8px;
+  padding: 15px;
+
+  .file-preview {
+    margin-bottom: 15px;
+  }
+}
+
+// Responsive Styles
+@media (max-width: 768px) {
+  .job-detail-header {
+    .action-buttons {
+      flex-direction: column;
+      
+      .btn-apply {
+        width: 100%;
+      }
+      
+      .btn-save {
+        width: 100%;
+        height: 46px;
+      }
+    }
+  }
+  
+  .job-sidebar {
+    margin-top: 30px;
+  }
+}
+
 .job-detail-page {
   // ... existing styles ...
 
@@ -9,7 +405,7 @@
       transform: translateX(5px);
       
       h6 {
-        color: #0d6efd;
+        color: #4f46e5;
       }
     }
   }

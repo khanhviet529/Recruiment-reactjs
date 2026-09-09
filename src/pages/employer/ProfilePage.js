@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
+import { updateUserProfile } from '../../redux/slices/authSlice';
 import { 
   Row, 
   Col, 
@@ -19,19 +20,26 @@ import {
   Space,
   notification
 } from 'antd';
-import { 
-  UploadOutlined, 
-  SaveOutlined, 
-  EditOutlined, 
-  LoadingOutlined,
-  PlusOutlined,
+import {
+  CheckCircleOutlined,
+  EditOutlined,
   EnvironmentOutlined,
+  FacebookOutlined,
+  GlobalOutlined,
+  LinkedinOutlined,
+  LoadingOutlined,
   MailOutlined,
   PhoneOutlined,
-  GlobalOutlined,
-  CheckCircleOutlined
+  PlusOutlined,
+  SaveOutlined,
+  TwitterOutlined,
+  UploadOutlined,
 } from '@ant-design/icons';
 import { useForm } from 'antd/lib/form/Form';
+import ImageViewer from '../../components/common/ImageViewer';
+import ImageUploader from '../../components/common/ImageUploader';
+import ImageUploaderNoView from '../../components/common/ImageUploaderNoView';
+import { getImageWithFallback } from '../../utils/imageUtils';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -40,14 +48,13 @@ const { TextArea } = Input;
 
 const EmployerProfilePage = () => {
   const { user } = useSelector(state => state.auth || {});
+  const dispatch = useDispatch();
   const [form] = useForm();
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState(null);
   const [logoUrl, setLogoUrl] = useState('');
   const [coverUrl, setCoverUrl] = useState('');
-  const [logoFile, setLogoFile] = useState(null);
-  const [coverFile, setCoverFile] = useState(null);
 
   useEffect(() => {
     if (user && user.id) {
@@ -113,8 +120,8 @@ const EmployerProfilePage = () => {
         email: user?.email || 'employer1@company.com',
         phone: '0901234567',
         companyName: 'Tech Solutions Inc.',
-        logo: 'https://via.placeholder.com/150?text=TSI',
-        coverImage: 'https://via.placeholder.com/1200x300?text=TechSolutionsInc',
+        logo: '/image/company-placeholder.svg',
+        coverImage: '/image/default-cover.jpg',
         description: 'Tech Solutions Inc. là công ty công nghệ hàng đầu chuyên cung cấp giải pháp phần mềm sáng tạo cho doanh nghiệp toàn cầu.',
         industry: 'Công nghệ thông tin',
         companySize: '51-200',
@@ -205,67 +212,40 @@ const EmployerProfilePage = () => {
         verified: profile?.verified || false
       };
 
-      // Handle logo file upload first if exists
-      if (logoFile) {
-        const logoFormData = new FormData();
-        logoFormData.append('file', logoFile);
-        logoFormData.append('type', 'logo');
-        
-        try {
-          // For development with mock API
-          if (logoUrl && logoUrl.startsWith('data:')) {
-            employerData.logo = logoUrl; // Use the base64 data directly for now
-          } else {
-            const logoResponse = await axios.post('http://localhost:5000/upload', logoFormData);
-            employerData.logo = logoResponse.data.url;
-          }
-        } catch (error) {
-          console.error('Error uploading logo:', error);
-          // Use base64 data if API fails
-          if (logoUrl && logoUrl.startsWith('data:')) {
-            employerData.logo = logoUrl;
-          } else {
-            message.error('Không thể tải lên logo.');
-          }
-        }
-      } else if (logoUrl) {
+      // Set logo and cover image URLs (already uploaded via ImageUploader)
+      if (logoUrl) {
         employerData.logo = logoUrl;
       }
       
-      // Handle cover image file upload if exists
-      if (coverFile) {
-        const coverFormData = new FormData();
-        coverFormData.append('file', coverFile);
-        coverFormData.append('type', 'cover');
-        
-        try {
-          // For development with mock API
-          if (coverUrl && coverUrl.startsWith('data:')) {
-            employerData.coverImage = coverUrl; // Use the base64 data directly for now
-          } else {
-            const coverResponse = await axios.post('http://localhost:5000/upload', coverFormData);
-            employerData.coverImage = coverResponse.data.url;
-          }
-        } catch (error) {
-          console.error('Error uploading cover image:', error);
-          // Use base64 data if API fails
-          if (coverUrl && coverUrl.startsWith('data:')) {
-            employerData.coverImage = coverUrl;
-          } else {
-            message.error('Không thể tải lên ảnh bìa.');
-          }
-        }
-      } else if (coverUrl) {
+      if (coverUrl) {
         employerData.coverImage = coverUrl;
       }
       
-      // Update user data
+      // SAFETY CHECK: Get current user data first to preserve important fields
+      let currentUserData = {};
+      try {
+        const currentUserResponse = await axios.get(`http://localhost:5000/users/${user.id}`);
+        currentUserData = currentUserResponse.data;
+        console.log('Current user data before update:', currentUserData);
+      } catch (error) {
+        console.warn('Could not fetch current user data, using Redux state:', error);
+        currentUserData = user; // Fallback to Redux state
+      }
+      
+      // Update user data - ONLY update specific fields, preserve critical data
       const userData = {
+        // Preserve all existing critical fields
+        ...currentUserData,
+        // Only update the fields we actually want to change
         email: values.email,
-        phone: values.phone
+        phone: values.phone,
+        updatedAt: new Date().toISOString()
       };
       
-      await axios.put(`http://localhost:5000/users/${user.id}`, userData);
+      console.log('Updated user data to be saved:', userData);
+      
+      // Use PATCH to only update specific fields, preserving role, googleId, etc.
+      await axios.patch(`http://localhost:5000/users/${user.id}`, userData);
       
       // Update employer profile
       if (profile && profile.id) {
@@ -285,10 +265,9 @@ const EmployerProfilePage = () => {
     } catch (error) {
       console.error('Error saving employer profile:', error);
       
-      // For development
-      notification.success({
-        message: 'Cập nhật thành công (chế độ thử nghiệm)',
-        description: 'Thông tin công ty đã được cập nhật (giả lập thành công)!',
+      notification.error({
+        message: 'Lỗi cập nhật',
+        description: 'Có lỗi xảy ra khi cập nhật thông tin. Vui lòng thử lại.',
         placement: 'topRight'
       });
       
@@ -298,31 +277,121 @@ const EmployerProfilePage = () => {
     }
   };
 
-  const handleLogoChange = (info) => {
-    if (info.file) {
-      setLogoFile(info.file.originFileObj);
-      // Preview image immediately
-      getBase64(info.file.originFileObj, url => {
-        setLogoUrl(url);
-      });
+  // Handle logo upload success
+  const handleLogoUploadSuccess = async (uploadResult) => {
+    try {
+      console.log('Logo upload success:', uploadResult.url);
+      setLogoUrl(uploadResult.url);
+      
+      // Update database
+      if (profile && profile.id) {
+        await updateEmployerImage(profile.id, 'logo', uploadResult.url);
+        // message.success('Cập nhật logo thành công!');
+      }
+    } catch (error) {
+      console.error('Error updating logo:', error);
+      message.error('Có lỗi xảy ra khi cập nhật logo');
     }
   };
 
-  const handleCoverChange = (info) => {
-    if (info.file) {
-      setCoverFile(info.file.originFileObj);
-      // Preview image immediately
-      getBase64(info.file.originFileObj, url => {
-        setCoverUrl(url);
-      });
+  // Handle cover image upload success
+  const handleCoverUploadSuccess = async (uploadResult) => {
+    try {
+      console.log('Cover upload success:', uploadResult.url);
+      setCoverUrl(uploadResult.url);
+      
+      // Update database
+      if (profile && profile.id) {
+        await updateEmployerImage(profile.id, 'coverImage', uploadResult.url);
+        // message.success('Cập nhật ảnh bìa thành công!');
+      }
+    } catch (error) {
+      console.error('Error updating cover image:', error);
+      message.error('Có lỗi xảy ra khi cập nhật ảnh bìa');
     }
   };
 
-  // Helper function to convert file to base64
-  const getBase64 = (file, callback) => {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(file);
+  // Handle upload errors
+  const handleUploadError = (error) => {
+    console.error('Upload error:', error);
+    message.error('Không thể tải ảnh lên. Vui lòng thử lại sau.');
+  };
+
+  // Handle logo deletion
+  const handleLogoDeleteSuccess = async () => {
+    try {
+      console.log('Deleting logo from database...');
+      setLogoUrl('');
+      
+      // Update database
+      if (profile && profile.id) {
+        await updateEmployerImage(profile.id, 'logo', null);
+        message.success('Xóa logo thành công!');
+      }
+    } catch (error) {
+      console.error('Error deleting logo:', error);
+      message.error('Có lỗi xảy ra khi xóa logo');
+    }
+  };
+
+  // Handle cover image deletion
+  const handleCoverDeleteSuccess = async () => {
+    try {
+      console.log('Deleting cover image from database...');
+      setCoverUrl('');
+      
+      // Update database
+      if (profile && profile.id) {
+        await updateEmployerImage(profile.id, 'coverImage', null);
+        message.success('Xóa ảnh bìa thành công!');
+      }
+    } catch (error) {
+      console.error('Error deleting cover image:', error);
+      message.error('Có lỗi xảy ra khi xóa ảnh bìa');
+    }
+  };
+
+  // Update employer image in database
+  const updateEmployerImage = async (employerId, field, imageUrl) => {
+    try {
+      // Get current employer data
+      const getCurrentResponse = await axios.get(`http://localhost:5000/employers/${employerId}`);
+      const currentEmployer = getCurrentResponse.data;
+
+      const updatedEmployer = {
+        ...currentEmployer,
+        [field]: imageUrl,
+        updatedAt: new Date().toISOString()
+      };
+
+      const response = await axios.put(`http://localhost:5000/employers/${employerId}`, updatedEmployer);
+      
+      if (response.data) {
+        console.log(`Employer ${field} updated successfully:`, response.data);
+        // Update local profile state
+        setProfile(prev => ({ ...prev, [field]: imageUrl }));
+        return true;
+      }
+    } catch (error) {
+      console.error(`Error updating employer ${field}:`, error);
+      
+      // Try PATCH method
+      try {
+        const patchResponse = await axios.patch(`http://localhost:5000/employers/${employerId}`, {
+          [field]: imageUrl,
+          updatedAt: new Date().toISOString()
+        });
+        if (patchResponse.data) {
+          console.log(`Employer ${field} updated with PATCH:`, patchResponse.data);
+          setProfile(prev => ({ ...prev, [field]: imageUrl }));
+          return true;
+        }
+      } catch (patchError) {
+        console.error(`PATCH method also failed for employer ${field}:`, patchError);
+        throw patchError;
+      }
+    }
+    return false;
   };
 
   const renderProfileView = () => {
@@ -331,12 +400,12 @@ const EmployerProfilePage = () => {
     return (
       <div className="company-profile">
         <div className="cover-image-container position-relative mb-4" style={{ height: '250px', overflow: 'hidden' }}>
-          {coverUrl ? (
+          {getImageWithFallback(coverUrl, 'cover') ? (
             <Image
-              src={coverUrl}
+              src={getImageWithFallback(coverUrl, 'cover')}
               alt={profile.companyName}
               style={{ width: '100%', objectFit: 'cover', height: '250px' }}
-              fallback="https://via.placeholder.com/1200x300?text=No+Cover+Image"
+              fallback='/image/default-cover.jpg'
             />
           ) : (
             <div className="no-cover" style={{ width: '100%', height: '250px', background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -344,33 +413,77 @@ const EmployerProfilePage = () => {
             </div>
           )}
           
+          <div className="position-absolute" style={{ top: '10px', right: '10px' }}>
+            <Space>
+              {/* <div style={{ background: 'rgba(255,255,255,0.9)', padding: '8px', borderRadius: '8px' }}>
+                <ImageUploader
+                  currentImageUrl={coverUrl}
+                  onUploadSuccess={handleCoverUploadSuccess}
+                  onUploadError={handleUploadError}
+                  isProfilePicture={false}
+                  size={40}
+                  shape="square"
+                  placeholder="📷"
+                />
+              </div> */}
           <Button 
             type="primary"
             icon={<EditOutlined />}
-            className="position-absolute"
-            style={{ top: '10px', right: '10px' }}
             onClick={() => setIsEditing(true)}
           >
             Chỉnh sửa
           </Button>
+            </Space>
+          </div>
         </div>
         
         <Row gutter={[24, 24]}>
           <Col xs={24} md={8} lg={6}>
             <Card className="text-center">
-              <div className="company-logo mb-3">
-                <Image
-                  src={logoUrl}
-                  alt={profile.companyName}
-                  style={{ width: '150px', height: '150px', objectFit: 'contain' }}
-                  fallback="https://via.placeholder.com/150?text=No+Logo"
-                />
+              <div className="company-logo mb-3" style={{ 
+                width: '100%', 
+                height: '200px', 
+                overflow: 'hidden',
+                borderRadius: '8px',
+                cursor: 'pointer'
+              }}>
+                {getImageWithFallback(logoUrl, 'company-logo') ? (
+                  <Image
+                    src={getImageWithFallback(logoUrl, 'company-logo')}
+                    alt={profile.companyName}
+                    style={{ 
+                      width: '100%', 
+                      height: '200px',
+                      objectFit: 'cover',
+                      objectPosition: 'center'
+                    }}
+                    fallback='/image/company-placeholder.svg'
+                  />
+                ) : (
+                  <div 
+                    className="no-logo" 
+                    style={{ 
+                      width: '100%', 
+                      height: '200px', 
+                      background: '#f0f2f5', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      borderRadius: '8px'
+                    }}
+                  >
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '48px', marginBottom: '8px' }}>🏢</div>
+                      <Text type="secondary">Chưa có logo công ty</Text>
+                    </div>
+                  </div>
+                )}
               </div>
               
               <Title level={4}>{profile.companyName}</Title>
               {profile.verified && (
                 <div className="verified-badge mb-2">
-                  <CheckCircleOutlined style={{ color: '#52c41a' }} /> <Text type="success">Đã xác thực</Text>
+                  <CheckCircleOutlined style={{ color: '#059669' }} /> <Text type="success">Đã xác thực</Text>
                 </div>
               )}
               
@@ -410,17 +523,17 @@ const EmployerProfilePage = () => {
               <div className="social-links">
                 {profile.socialLinks?.linkedin && (
                   <Button type="link" href={profile.socialLinks.linkedin} target="_blank">
-                    <i className="bi bi-linkedin"></i>
+                    <LinkedinOutlined />
                   </Button>
                 )}
                 {profile.socialLinks?.facebook && (
                   <Button type="link" href={profile.socialLinks.facebook} target="_blank">
-                    <i className="bi bi-facebook"></i>
+                    <FacebookOutlined />
                   </Button>
                 )}
                 {profile.socialLinks?.twitter && (
                   <Button type="link" href={profile.socialLinks.twitter} target="_blank">
-                    <i className="bi bi-twitter"></i>
+                    <TwitterOutlined />
                   </Button>
                 )}
               </div>
@@ -490,47 +603,43 @@ const EmployerProfilePage = () => {
               <Row gutter={16}>
                 <Col md={12}>
                   <Form.Item label="Logo công ty">
-                    <Upload
-                      name="logo"
-                      listType="picture-card"
-                      showUploadList={false}
-                      beforeUpload={() => false}
-                      onChange={handleLogoChange}
-                      maxCount={1}
-                    >
-                      {logoUrl ? (
-                        <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                      ) : (
-                        <div>
-                          <PlusOutlined />
-                          <div style={{ marginTop: 8 }}>Tải lên</div>
-                        </div>
-                      )}
-                    </Upload>
-                    <Text type="secondary">Nên sử dụng ảnh vuông, kích thước tối thiểu 200x200px</Text>
+                    <div style={{ textAlign: 'center' }}>
+                      <ImageUploaderNoView
+                        currentImageUrl={getImageWithFallback(logoUrl, 'company-logo')}
+                        onUploadSuccess={handleLogoUploadSuccess}
+                        onUploadError={handleUploadError}
+                        onDeleteSuccess={handleLogoDeleteSuccess}
+                        isProfilePicture={false}
+                        size={200}
+                        shape="square"
+                        placeholder="LOGO"
+                        displayStyle="image"
+                      />
+                    </div>
+                    <Text type="secondary" style={{ display: 'block', textAlign: 'center', marginTop: '8px' }}>
+                      Nên sử dụng ảnh vuông, kích thước tối thiểu 200x200px
+                    </Text>
                   </Form.Item>
                 </Col>
                 
                 <Col md={12}>
                   <Form.Item label="Ảnh bìa">
-                    <Upload
-                      name="coverImage"
-                      listType="picture-card"
-                      showUploadList={false}
-                      beforeUpload={() => false}
-                      onChange={handleCoverChange}
-                      maxCount={1}
-                    >
-                      {coverUrl ? (
-                        <img src={coverUrl} alt="Cover" style={{ width: '100%', height: '100px', objectFit: 'cover' }} />
-                      ) : (
-                        <div>
-                          <PlusOutlined />
-                          <div style={{ marginTop: 8 }}>Tải lên</div>
-                        </div>
-                      )}
-                    </Upload>
-                    <Text type="secondary">Nên sử dụng ảnh kích thước 1200x300px</Text>
+                    <div style={{ textAlign: 'center' }}>
+                      <ImageUploaderNoView
+                        currentImageUrl={getImageWithFallback(coverUrl, 'cover')}
+                        onUploadSuccess={handleCoverUploadSuccess}
+                        onUploadError={handleUploadError}
+                        onDeleteSuccess={handleCoverDeleteSuccess}
+                        isProfilePicture={false}
+                        size={200}
+                        shape="square"
+                        placeholder="COVER"
+                        displayStyle="image"
+                      />
+                    </div>
+                    <Text type="secondary" style={{ display: 'block', textAlign: 'center', marginTop: '8px' }}>
+                      Nên sử dụng ảnh kích thước 1200x300px
+                    </Text>
                   </Form.Item>
                 </Col>
               </Row>
@@ -629,7 +738,7 @@ const EmployerProfilePage = () => {
               <Form.Item name="benefits" label="Phúc lợi">
                 <TextArea rows={4} placeholder="Nhập danh sách phúc lợi (mỗi dòng một phúc lợi)" />
               </Form.Item>
-              <Text type="secondary">Mỗi dòng là một phúc lợi. Ví dụ: Bảo hiểm sức khỏe</Text>
+              {/* <Text type="secondary">Mỗi dòng là một phúc lợi. Ví dụ: Bảo hiểm sức khỏe</Text> */}
             </Col>
             
             <Divider>Mạng xã hội</Divider>

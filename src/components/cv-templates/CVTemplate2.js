@@ -398,7 +398,7 @@
 //           flex: 1 !important;
 //           max-width: 30% !important;
 //           margin-right: 5mm !important;
-//           background-color: #f5f5f5 !important;
+//           background-color: #f8fafc !important;
 //         }
         
 //         /* CV Main */
@@ -831,11 +831,11 @@ const CVTemplate2 = ({ candidate, activeSections = [] }) => {
             border-radius: 50%;
             margin-bottom: 15px;
             overflow: hidden;
-            border: 5px solid #f0f0f0;
+            border: 5px solid #f1f5f9;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #2980b9;
+            background-color: #4338ca;
             color: white;
             font-size: 48px;
             font-weight: bold;
@@ -845,7 +845,7 @@ const CVTemplate2 = ({ candidate, activeSections = [] }) => {
             margin: 0 0 8px 0;
             font-size: 32px;
             font-weight: 700;
-            color: #2c3e50;
+            color: #1e293b;
             letter-spacing: 1px;
           }
           
@@ -882,7 +882,7 @@ const CVTemplate2 = ({ candidate, activeSections = [] }) => {
             bottom: 0;
             left: 0;
             width: 2px;
-            background-color: #3498db;
+            background-color: #4f46e5;
             transform: translateX(-50%);
           }
           
@@ -902,7 +902,7 @@ const CVTemplate2 = ({ candidate, activeSections = [] }) => {
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background-color: #3498db;
+            background-color: #4f46e5;
             transform: translateX(-50%);
           }
           
@@ -920,7 +920,7 @@ const CVTemplate2 = ({ candidate, activeSections = [] }) => {
             font-size: 22px;
             font-weight: 600;
             margin: 0 0 15mm 0;
-            color: #2c3e50;
+            color: #1e293b;
             break-after: avoid;
             page-break-after: avoid;
             position: relative;
@@ -934,14 +934,14 @@ const CVTemplate2 = ({ candidate, activeSections = [] }) => {
             left: 0;
             width: 80px;
             height: 3px;
-            background-color: #3498db;
+            background-color: #4f46e5;
           }
           
           h3 {
             margin: 0 0 5px 0;
             font-size: 20px;
             font-weight: 600;
-            color: #2c3e50;
+            color: #1e293b;
             break-after: avoid;
             page-break-after: avoid;
           }
@@ -961,7 +961,7 @@ const CVTemplate2 = ({ candidate, activeSections = [] }) => {
           }
           
           .duration, .date {
-            color: #3498db;
+            color: #4f46e5;
             font-weight: 500;
             font-size: 14px;
             margin: 5px 0;
@@ -995,14 +995,14 @@ const CVTemplate2 = ({ candidate, activeSections = [] }) => {
           
           .skill-bar {
             height: 8px;
-            background-color: #f0f0f0;
+            background-color: #f1f5f9;
             border-radius: 4px;
             overflow: hidden;
           }
           
           .skill-progress {
             height: 100%;
-            background-color: #3498db;
+            background-color: #4f46e5;
           }
           
           .skills, .interests, .technologies {
@@ -1013,7 +1013,7 @@ const CVTemplate2 = ({ candidate, activeSections = [] }) => {
           }
           
           .skill-tag, .interest-tag {
-            background-color: #f0f0f0;
+            background-color: #f1f5f9;
             border-radius: 20px;
             padding: 5px 15px;
             font-size: 14px;
@@ -1044,14 +1044,14 @@ const CVTemplate2 = ({ candidate, activeSections = [] }) => {
           
           .language-bar {
             height: 6px;
-            background-color: #f0f0f0;
+            background-color: #f1f5f9;
             border-radius: 3px;
             overflow: hidden;
           }
           
           .language-progress {
             height: 100%;
-            background-color: #3498db;
+            background-color: #4f46e5;
           }
         </style>
       </head>

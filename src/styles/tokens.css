@@ -1,0 +1,380 @@
+/* ============================================================
+   HỆ THỐNG THIẾT KẾ — NGUỒN DUY NHẤT CHO MÀU SẮC & KÍCH THƯỚC
+   ------------------------------------------------------------
+   Trước đây dự án dùng lẫn 4 màu primary khác nhau
+   (#1890ff của Ant Design, #0d6efd của Bootstrap, #3498db, #4a90e2)
+   và 2 thang màu xám. File này thống nhất lại thành một bộ.
+
+   Muốn đổi toàn bộ tông màu của web: chỉ sửa --brand-* bên dưới.
+   ============================================================ */
+
+:root {
+  /* ---------- Màu thương hiệu: Indigo ---------- */
+  --brand-50: #eef2ff;
+  --brand-100: #e0e7ff;
+  --brand-200: #c7d2fe;
+  --brand-300: #a5b4fc;
+  --brand-400: #818cf8;
+  --brand-500: #6366f1;
+  --brand-600: #4f46e5; /* màu chính */
+  --brand-700: #4338ca;
+  --brand-800: #3730a3;
+  --brand-900: #312e81;
+
+  --brand: var(--brand-600);
+  --brand-hover: var(--brand-700);
+  --brand-active: var(--brand-800);
+  --brand-soft: var(--brand-50);
+
+  /* ---------- Màu nhấn: Emerald (lương, thành công) ---------- */
+  --accent-50: #ecfdf5;
+  --accent-100: #d1fae5;
+  --accent-500: #10b981;
+  --accent-600: #059669;
+  --accent-700: #047857;
+  --accent: var(--accent-600);
+
+  /* ---------- Thang xám: Slate (thay cả 2 thang cũ) ---------- */
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+
+  /* ---------- Màu trạng thái ---------- */
+  --success: #059669;
+  --success-soft: #ecfdf5;
+  --warning: #d97706;
+  --warning-soft: #fffbeb;
+  --danger: #e11d48;
+  --danger-soft: #fff1f2;
+  --info: #0284c7;
+  --info-soft: #f0f9ff;
+
+  /* ---------- Nền & chữ ---------- */
+  --bg-body: #f6f7fb;
+  --bg-surface: #ffffff;
+  --bg-subtle: var(--gray-50);
+  --bg-muted: var(--gray-100);
+
+  --text-strong: var(--gray-900);
+  --text-body: var(--gray-700);
+  --text-muted: var(--gray-500);
+  --text-faint: var(--gray-400);
+  --text-on-brand: #ffffff;
+
+  --border: var(--gray-200);
+  --border-strong: var(--gray-300);
+
+  /* ---------- Bo góc ---------- */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-full: 999px;
+
+  /* ---------- Khoảng cách (thang 4px) ---------- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+
+  /* ---------- Đổ bóng: nhẹ, nhiều lớp ---------- */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.07), 0 1px 3px rgba(15, 23, 42, 0.05);
+  --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.10), 0 2px 6px rgba(15, 23, 42, 0.05);
+  --shadow-brand: 0 6px 16px rgba(79, 70, 229, 0.22);
+
+  /* ---------- Chữ ---------- */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-base: 14px;
+  --fs-md: 16px;
+  --fs-lg: 18px;
+  --fs-xl: 22px;
+  --fs-2xl: 28px;
+  --fs-3xl: 36px;
+
+  --lh-tight: 1.25;
+  --lh-normal: 1.55;
+
+  /* ---------- Khác ---------- */
+  --header-h: 64px;
+  --sidebar-w: 248px;
+  --container-max: 1200px;
+  --transition: 160ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ============================================================
+     GHI ĐÈ BIẾN CỦA BOOTSTRAP 5
+     Bootstrap dùng các biến --bs-*, nên chỉ cần trỏ chúng sang
+     token của mình là toàn bộ component react-bootstrap
+     (Button, Card, Nav, Form...) sẽ đổi theo, không cần sửa code.
+     ============================================================ */
+  --bs-primary: var(--brand);
+  --bs-primary-rgb: 79, 70, 229;
+  --bs-secondary: var(--gray-500);
+  --bs-secondary-rgb: 100, 116, 139;
+  --bs-success: var(--success);
+  --bs-success-rgb: 5, 150, 105;
+  --bs-danger: var(--danger);
+  --bs-danger-rgb: 225, 29, 72;
+  --bs-warning: var(--warning);
+  --bs-warning-rgb: 217, 119, 6;
+  --bs-info: var(--info);
+  --bs-info-rgb: 2, 132, 199;
+  --bs-light: var(--gray-50);
+  --bs-dark: var(--gray-900);
+
+  --bs-body-color: var(--text-body);
+  --bs-body-bg: var(--bg-body);
+  --bs-body-font-family: var(--font-sans);
+  --bs-body-font-size: var(--fs-base);
+  --bs-border-color: var(--border);
+  --bs-border-radius: var(--r-md);
+  --bs-link-color: var(--brand);
+  --bs-link-hover-color: var(--brand-hover);
+}
+
+/* ============================================================
+   NỀN TẢNG
+   ============================================================ */
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+  color: var(--text-body);
+  background: var(--bg-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-strong);
+  font-weight: 650;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: var(--brand);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+a:hover {
+  color: var(--brand-hover);
+}
+
+/* Viền focus rõ ràng — cần cho khả năng truy cập bằng bàn phím */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* ============================================================
+   ĐỒNG BỘ BOOTSTRAP  (chỉ những chỗ Bootstrap hardcode màu)
+   ============================================================ */
+
+.btn-primary {
+  --bs-btn-bg: var(--brand);
+  --bs-btn-border-color: var(--brand);
+  --bs-btn-hover-bg: var(--brand-hover);
+  --bs-btn-hover-border-color: var(--brand-hover);
+  --bs-btn-active-bg: var(--brand-active);
+  --bs-btn-active-border-color: var(--brand-active);
+  --bs-btn-disabled-bg: var(--brand-300);
+  --bs-btn-disabled-border-color: var(--brand-300);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--brand);
+  --bs-btn-border-color: var(--brand);
+  --bs-btn-hover-bg: var(--brand);
+  --bs-btn-hover-border-color: var(--brand);
+  --bs-btn-active-bg: var(--brand-hover);
+}
+
+.btn {
+  --bs-btn-border-radius: var(--r-md);
+  font-weight: 550;
+}
+
+.card {
+  --bs-card-border-color: var(--border);
+  --bs-card-border-radius: var(--r-lg);
+  --bs-card-bg: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-control,
+.form-select {
+  --bs-border-radius: var(--r-md);
+  border-color: var(--border-strong);
+  font-size: var(--fs-base);
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--brand-400);
+  box-shadow: 0 0 0 3px var(--brand-100);
+}
+
+.badge {
+  font-weight: 550;
+  border-radius: var(--r-full);
+}
+
+/* Bootstrap hardcode #0d6efd trong CSS bien dich san cua no,
+   khong doc bien --bs-primary. Phai ghi de rieng cac cho nay. */
+.form-check-input:checked {
+  background-color: var(--brand);
+  border-color: var(--brand);
+}
+.form-check-input:focus {
+  border-color: var(--brand-400);
+  box-shadow: 0 0 0 3px var(--brand-100);
+}
+.form-check-input:focus:not(:checked) {
+  background-image: none;
+}
+
+.form-range::-webkit-slider-thumb { background-color: var(--brand); }
+.form-range::-moz-range-thumb { background-color: var(--brand); }
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  background-color: var(--brand);
+  border-radius: var(--r-md);
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--brand);
+  border-bottom-color: var(--bg-surface);
+}
+.nav-tabs .nav-link:hover {
+  color: var(--brand-hover);
+}
+
+.page-link {
+  color: var(--brand);
+  border-radius: var(--r-sm);
+}
+.page-item.active .page-link {
+  background-color: var(--brand);
+  border-color: var(--brand);
+}
+
+.dropdown-item.active,
+.dropdown-item:active {
+  background-color: var(--brand);
+}
+.dropdown-item:focus,
+.dropdown-item:hover {
+  background-color: var(--brand-soft);
+  color: var(--brand-hover);
+}
+.dropdown-menu {
+  border-color: var(--border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-md);
+  padding: var(--sp-1);
+}
+
+.list-group-item.active {
+  background-color: var(--brand);
+  border-color: var(--brand);
+}
+
+.progress-bar {
+  background-color: var(--brand);
+}
+
+.spinner-border,
+.spinner-grow {
+  color: var(--brand);
+}
+
+.accordion-button:not(.collapsed) {
+  color: var(--brand);
+  background-color: var(--brand-soft);
+}
+.accordion-button:focus {
+  border-color: var(--brand-300);
+  box-shadow: 0 0 0 3px var(--brand-100);
+}
+
+.text-primary { color: var(--brand) !important; }
+.bg-primary { background-color: var(--brand) !important; }
+.border-primary { border-color: var(--brand) !important; }
+.link-primary { color: var(--brand) !important; }
+
+/* ============================================================
+   TIỆN ÍCH DÙNG CHUNG
+   ============================================================ */
+
+.app-container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--sp-4);
+}
+
+.surface {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.text-muted-2 {
+  color: var(--text-muted);
+}
+
+/* Thanh cuộn mảnh, đỡ thô so với mặc định của Windows */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-300) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: var(--r-full);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-400);
+  background-clip: content-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

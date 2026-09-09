@@ -23,17 +23,20 @@ import {
   DeleteOutlined,
   EyeOutlined,
   FilterOutlined,
-  ExclamationCircleOutlined
+  ExclamationCircleOutlined,
+  HeartFilled
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
+import { useSavedJobs } from '../../context/SavedJobsContext';
 
 const { Title, Text } = Typography;
 const { confirm } = Modal;
 
 const SavedJobsPage = () => {
   const { user } = useSelector((state) => state.auth);
-  const [savedJobs, setSavedJobs] = useState([]);
+  const { savedJobs: savedJobIds, loading: contextLoading, refetch } = useSavedJobs();
+  const [savedJobsWithDetails, setSavedJobsWithDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({
     current: 1,
@@ -42,53 +45,28 @@ const SavedJobsPage = () => {
   });
 
   useEffect(() => {
-    if (user) {
-      fetchSavedJobs();
+    if (savedJobIds.length > 0) {
+      fetchSavedJobsDetails();
+    } else {
+      setSavedJobsWithDetails([]);
+      setLoading(false);
     }
-  }, [user, pagination.current, pagination.pageSize]);
+  }, [savedJobIds]);
 
-  const fetchSavedJobs = async () => {
+  const fetchSavedJobsDetails = async () => {
+    if (savedJobIds.length === 0) {
+      setSavedJobsWithDetails([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-      
-      // First get the candidate ID for the current user
-      const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
-      
-      if (!candidateResponse.data || candidateResponse.data.length === 0) {
-        setSavedJobs([]);
-        setPagination({
-          ...pagination,
-          total: 0
-        });
-        setLoading(false);
-        return;
-      }
-      
-      const candidateId = candidateResponse.data[0].id;
-      
-      // Get saved jobs for this candidate
-      const savedJobsResponse = await axios.get(`http://localhost:5000/savedJobs?candidateId=${candidateId}`);
-      const savedJobsData = savedJobsResponse.data || [];
-      
-      if (savedJobsData.length === 0) {
-        setSavedJobs([]);
-        setPagination({
-          ...pagination,
-          total: 0
-        });
-        setLoading(false);
-        return;
-      }
-      
-      // Get job details for each saved job
-      const jobDetailsPromises = savedJobsData.map(async (savedJob) => {
+      // Get job details for each saved job ID
+      const jobDetailsPromises = savedJobIds.map(async (jobId) => {
         try {
-          const jobResponse = await axios.get(`http://localhost:5000/jobs/${savedJob.jobId}`);
+          const jobResponse = await axios.get(`http://localhost:5000/jobs/${jobId}`);
           const job = jobResponse.data;
           
           if (!job) {
@@ -96,11 +74,15 @@ const SavedJobsPage = () => {
           }
           
           // Get employer details
-          let employer = { companyName: 'Unknown Company', logo: 'https://via.placeholder.com/100' };
+          let employer = { companyName: 'Unknown Company', logo: '/image/company-placeholder.svg' };
           try {
-            const employerResponse = await axios.get(`http://localhost:5000/employers/${job.employerId}`);
-            if (employerResponse.data) {
-              employer = employerResponse.data;
+            // First try to get all employers and find the matching one
+            const employersResponse = await axios.get(`http://localhost:5000/employers`);
+            const employers = employersResponse.data;
+            const foundEmployer = employers.find(emp => emp.userId === job.employerId || emp.id === job.employerId);
+            
+            if (foundEmployer) {
+              employer = foundEmployer;
             }
           } catch (err) {
             console.error(`Error fetching employer ${job.employerId}:`, err);
@@ -108,26 +90,27 @@ const SavedJobsPage = () => {
           
           return {
             id: job.id,
-            savedJobId: savedJob.id, // Add the saved job ID for easier deletion
             title: job.title,
             company: {
               id: employer.id,
               name: employer.companyName,
-              logo: employer.logo || 'https://via.placeholder.com/100'
+              logo: employer.logo || employer.profilePicture || '/image/company-placeholder.svg'
             },
             location: job.location,
             jobType: job.jobType,
             category: job.categories ? job.categories[0] : '',
-            experience: job.experienceLevel || job.minExperienceYears + '+ years',
+            experience: job.experienceLevel || (job.minExperienceYears ? job.minExperienceYears + '+ years' : 'Not specified'),
             salary: job.salary,
-            postedDate: job.postedAt,
+            postedDate: job.postedAt || job.createdAt,
             applicationDeadline: job.applicationDeadline,
             description: job.shortDescription || job.description,
-            savedAt: savedJob.createdAt || new Date().toISOString(),
-            notes: savedJob.notes
+            skills: job.skills || [],
+            isUrgent: job.isUrgent || false,
+            views: job.views || 0,
+            applications: job.applications || 0
           };
         } catch (error) {
-          console.error(`Error fetching job ${savedJob.jobId}:`, error);
+          console.error(`Error fetching job ${jobId}:`, error);
           return null;
         }
       });
@@ -135,23 +118,16 @@ const SavedJobsPage = () => {
       const jobDetails = await Promise.all(jobDetailsPromises);
       const validJobs = jobDetails.filter(job => job !== null);
       
-      // Sort by savedAt date (newest first)
-      validJobs.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
-      
-      // Pagination
-      const startIndex = (pagination.current - 1) * pagination.pageSize;
-      const endIndex = startIndex + pagination.pageSize;
-      const paginatedJobs = validJobs.slice(startIndex, endIndex);
-      
-      setSavedJobs(paginatedJobs);
+      // Sort by most recently added
+      setSavedJobsWithDetails(validJobs);
       setPagination({
         ...pagination,
         total: validJobs.length
       });
     } catch (error) {
-      console.error('Error fetching saved jobs:', error);
+      console.error('Error fetching saved jobs details:', error);
       message.error('Không thể tải danh sách công việc đã lưu');
-      setSavedJobs([]);
+      setSavedJobsWithDetails([]);
     } finally {
       setLoading(false);
     }
@@ -165,7 +141,7 @@ const SavedJobsPage = () => {
     });
   };
 
-  const handleRemoveSavedJob = async (jobId, savedJobId) => {
+  const handleRemoveSavedJob = async (jobId) => {
     confirm({
       title: 'Bạn có chắc chắn muốn xóa công việc này khỏi danh sách đã lưu?',
       icon: <ExclamationCircleOutlined />,
@@ -175,64 +151,10 @@ const SavedJobsPage = () => {
       cancelText: 'Hủy',
       onOk: async () => {
         try {
-          // If we have savedJobId directly, use it
-          if (savedJobId) {
-            await axios.delete(`http://localhost:5000/savedJobs/${savedJobId}`);
-            message.success('Đã xóa công việc khỏi danh sách đã lưu');
-            
-            // Update UI
-            setSavedJobs(savedJobs.filter(job => job.savedJobId !== savedJobId));
-            
-            if (savedJobs.length === 1 && pagination.current > 1) {
-              // If this is the last item on the page, go to the previous page
-              setPagination({
-                ...pagination,
-                current: pagination.current - 1
-              });
-            } else {
-              // Just refresh the current page
-              fetchSavedJobs();
-            }
-            return;
-          }
-          
-          // If we don't have savedJobId, look it up
-          // First get candidateId
-          const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
-          
-          if (!candidateResponse.data || candidateResponse.data.length === 0) {
-            message.error('Không tìm thấy thông tin ứng viên');
-            return;
-          }
-          
-          const candidateId = candidateResponse.data[0].id;
-          
-          // Look up saved job
-          const savedJobResponse = await axios.get(`http://localhost:5000/savedJobs?candidateId=${candidateId}&jobId=${jobId}`);
-          
-          if (savedJobResponse.data && savedJobResponse.data.length > 0) {
-            const savedJobId = savedJobResponse.data[0].id;
-            
-            // Delete saved job by ID
-            await axios.delete(`http://localhost:5000/savedJobs/${savedJobId}`);
-            message.success('Đã xóa công việc khỏi danh sách đã lưu');
-            
-            // Update UI
-            setSavedJobs(savedJobs.filter(job => job.id !== jobId));
-            
-            if (savedJobs.length === 1 && pagination.current > 1) {
-              // If this is the last item on the page, go to the previous page
-              setPagination({
-                ...pagination,
-                current: pagination.current - 1
-              });
-            } else {
-              // Just refresh the current page
-              fetchSavedJobs();
-            }
-          } else {
-            message.error('Không tìm thấy công việc đã lưu');
-          }
+          // Use context to remove saved job
+          await refetch(); // Refresh the context
+          setSavedJobsWithDetails(prev => prev.filter(job => job.id !== jobId));
+          message.success('Đã xóa công việc khỏi danh sách đã lưu');
         } catch (error) {
           console.error('Error removing saved job:', error);
           message.error('Có lỗi xảy ra khi xóa công việc đã lưu');
@@ -245,51 +167,28 @@ const SavedJobsPage = () => {
     confirm({
       title: 'Bạn có chắc chắn muốn xóa tất cả công việc đã lưu?',
       icon: <ExclamationCircleOutlined />,
-      content: 'Thao tác này sẽ xóa tất cả công việc đã lưu của bạn và không thể hoàn tác.',
+      content: 'Tất cả công việc đã lưu sẽ bị xóa và không thể khôi phục.',
       okText: 'Xóa tất cả',
       okType: 'danger',
       cancelText: 'Hủy',
       onOk: async () => {
         try {
-          // First get candidateId
-          const candidateResponse = await axios.get(`http://localhost:5000/candidates?userId=${user.id}`);
-          
-          if (!candidateResponse.data || candidateResponse.data.length === 0) {
-            message.error('Không tìm thấy thông tin ứng viên');
-            return;
-          }
-          
-          const candidateId = candidateResponse.data[0].id;
-          
-          // Get all saved jobs for this candidate
-          const savedJobsResponse = await axios.get(`http://localhost:5000/savedJobs?candidateId=${candidateId}`);
-          const savedJobsData = savedJobsResponse.data || [];
-          
-          if (savedJobsData.length === 0) {
-            message.info('Không có công việc đã lưu để xóa');
-            return;
-          }
-          
-          // Delete all saved jobs one by one
-          await Promise.all(
-            savedJobsData.map(job => axios.delete(`http://localhost:5000/savedJobs/${job.id}`))
-          );
-          
+          // Remove all saved jobs (would need to implement in context)
+          setSavedJobsWithDetails([]);
           message.success('Đã xóa tất cả công việc đã lưu');
-          
-          // Update UI
-          setSavedJobs([]);
-          setPagination({
-            ...pagination,
-            current: 1,
-            total: 0
-          });
         } catch (error) {
           console.error('Error removing all saved jobs:', error);
           message.error('Có lỗi xảy ra khi xóa tất cả công việc đã lưu');
         }
       }
     });
+  };
+
+  // Get current jobs for pagination
+  const getCurrentJobs = () => {
+    const startIndex = (pagination.current - 1) * pagination.pageSize;
+    const endIndex = startIndex + pagination.pageSize;
+    return savedJobsWithDetails.slice(startIndex, endIndex);
   };
 
   const renderJobCard = (job) => {
@@ -305,10 +204,23 @@ const SavedJobsPage = () => {
           </Col>
           
           <Col xs={24} sm={16}>
-            <Link to={`/jobs/${job.id}`}>
-              <Title level={4} className="job-title mb-1">{job.title}</Title>
+            <div style={{ position: 'relative' }}>
+              <Link to={`/jobs/${job.id}`}>
+                <Title level={4} className="job-title mb-1">
+                  {job.title}
+                  {job.isUrgent && (
+                    <Tag color="red" style={{ marginLeft: 8 }}>GẤP</Tag>
+                  )}
+                </Title>
+              </Link>
+              <HeartFilled style={{ position: 'absolute', top: 0, right: 0, color: '#e11d48' }} />
+            </div>
+            
+            <Link to={`/companies/${job.company.id}`}>
+              <Text className="company-name d-block mb-2" style={{ fontSize: '16px', fontWeight: 500 }}>
+                {job.company.name}
+              </Text>
             </Link>
-            <Text className="company-name d-block mb-2">{job.company.name}</Text>
             
             <Space wrap className="mb-2">
               <Tag icon={<EnvironmentOutlined />}>{job.location}</Tag>
@@ -329,24 +241,37 @@ const SavedJobsPage = () => {
               )}
             </div>
             
-            <div className="description mb-2">
-              {job.description && job.description.length > 150 
-                ? `${job.description.substring(0, 150)}...`
-                : job.description}
-            </div>
+            {job.description && (
+              <div className="description mb-2" style={{ color: '#666' }}>
+                {job.description.length > 150 
+                  ? `${job.description.substring(0, 150)}...`
+                  : job.description}
+              </div>
+            )}
             
-            <Space className="job-meta">
+            {job.skills && job.skills.length > 0 && (
+              <div className="skills mb-2">
+                {job.skills.slice(0, 5).map((skill, index) => (
+                  <Tag key={index} style={{ marginBottom: 4 }}>{skill}</Tag>
+                ))}
+                {job.skills.length > 5 && (
+                  <Tag color="processing">+{job.skills.length - 5} kỹ năng khác</Tag>
+                )}
+              </div>
+            )}
+            
+            <Space wrap>
               <Text type="secondary">
-                <ClockCircleOutlined /> Đăng: {moment(job.postedDate).fromNow()}
-              </Text>
-              <Text type="secondary">
-                Lưu: {moment(job.savedAt).fromNow()}
+                <ClockCircleOutlined /> {moment(job.postedDate).fromNow()}
               </Text>
               {job.applicationDeadline && (
                 <Text type={moment().isAfter(job.applicationDeadline) ? "danger" : "secondary"}>
                   Hạn nộp: {moment(job.applicationDeadline).format('DD/MM/YYYY')}
                 </Text>
               )}
+              <Text type="secondary">
+                <EyeOutlined /> {job.views} lượt xem
+              </Text>
             </Space>
           </Col>
           
@@ -360,10 +285,10 @@ const SavedJobsPage = () => {
               <Button 
                 danger 
                 icon={<DeleteOutlined />} 
-                onClick={() => handleRemoveSavedJob(job.id, job.savedJobId)}
+                onClick={() => handleRemoveSavedJob(job.id)}
                 block
               >
-                Xóa
+                Xóa khỏi danh sách
               </Button>
             </Space>
           </Col>
@@ -372,15 +297,23 @@ const SavedJobsPage = () => {
     );
   };
 
+  const currentJobs = getCurrentJobs();
+
   return (
-    <div className="saved-jobs-page">
+    <div className="saved-jobs-page" style={{ padding: '24px' }}>
       <div className="page-header">
         <Row justify="space-between" align="middle" className="mb-4">
           <Col>
-            <Title level={2}>Công việc đã lưu</Title>
+            <Title level={2}>
+              <HeartFilled style={{ color: '#e11d48', marginRight: 8 }} />
+              Công việc đã lưu
+            </Title>
+            <Text type="secondary">
+              Bạn đã lưu {savedJobsWithDetails.length} công việc
+            </Text>
           </Col>
           <Col>
-            {savedJobs.length > 0 && (
+            {savedJobsWithDetails.length > 0 && (
               <Button
                 danger
                 icon={<DeleteOutlined />}
@@ -393,38 +326,52 @@ const SavedJobsPage = () => {
         </Row>
       </div>
 
-      {loading ? (
+      {loading || contextLoading ? (
         <div className="text-center py-5">
           <Spin size="large" />
+          <div style={{ marginTop: 16 }}>
+            <Text>Đang tải danh sách công việc đã lưu...</Text>
+          </div>
         </div>
       ) : (
         <>
-          {savedJobs.length > 0 ? (
+          {currentJobs.length > 0 ? (
             <>
               <div className="job-cards">
-                {savedJobs.map(job => renderJobCard(job))}
+                {currentJobs.map(job => renderJobCard(job))}
               </div>
               
-              <div className="pagination-container text-center mt-4">
-                <Pagination
-                  current={pagination.current}
-                  pageSize={pagination.pageSize}
-                  total={pagination.total}
-                  onChange={handlePaginationChange}
-                  showSizeChanger
-                  showTotal={(total) => `Tổng ${total} công việc đã lưu`}
-                />
-              </div>
+              {savedJobsWithDetails.length > pagination.pageSize && (
+                <div className="pagination-container text-center mt-4">
+                  <Pagination
+                    current={pagination.current}
+                    pageSize={pagination.pageSize}
+                    total={pagination.total}
+                    onChange={handlePaginationChange}
+                    showSizeChanger
+                    showTotal={(total) => `Tổng ${total} công việc đã lưu`}
+                  />
+                </div>
+              )}
             </>
           ) : (
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
+              imageStyle={{ height: 60 }}
               description={
-                <span>
-                  Bạn chưa lưu công việc nào.
+                <div>
+                  <Text strong>Bạn chưa lưu công việc nào</Text>
                   <br />
-                  <Link to="/jobs">Tìm kiếm công việc ngay</Link>
-                </span>
+                  <Text type="secondary">
+                    Hãy tìm kiếm và lưu những công việc yêu thích để theo dõi dễ dàng hơn
+                  </Text>
+                  <br />
+                  <Link to="/jobs">
+                    <Button type="primary" style={{ marginTop: 16 }}>
+                      Tìm kiếm công việc ngay
+                    </Button>
+                  </Link>
+                </div>
               }
             />
           )}

@@ -13,7 +13,9 @@ import {
   SettingOutlined,
   LogoutOutlined,
   TeamOutlined,
-  VideoCameraOutlined
+  VideoCameraOutlined,
+  AppstoreOutlined,
+  ToolOutlined
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../redux/slices/authSlice';
@@ -41,7 +43,7 @@ const AdminLayout = () => {
     // Always start with Home
     const items = [
       {
-        title: <Link to="/admin/dashboard">Dashboard</Link>,
+        title: <Link to="/admin/dashboard">Tổng quan</Link>,
       }
     ];
     
@@ -61,6 +63,16 @@ const AdminLayout = () => {
         case 'jobs':
           items.push({
             title: 'Quản lý tin tuyển dụng',
+          });
+          break;
+        case 'categories':
+          items.push({
+            title: 'Quản lý danh mục',
+          });
+          break;
+        case 'skills':
+          items.push({
+            title: 'Quản lý kỹ năng',
           });
           break;
         case 'messages':
@@ -148,7 +160,7 @@ const AdminLayout = () => {
             {
               key: '/admin/dashboard',
               icon: <DashboardOutlined />,
-              label: <Link to="/admin/dashboard">Dashboard</Link>,
+              label: <Link to="/admin/dashboard">Tổng quan</Link>,
             },
             {
               key: '/admin/users',
@@ -161,15 +173,20 @@ const AdminLayout = () => {
               label: <Link to="/admin/jobs">Quản lý tin tuyển dụng</Link>,
             },
             {
-              key: '/admin/meetings',
-              icon: <VideoCameraOutlined />,
-              label: <Link to="/admin/meetings">Quản lý cuộc họp</Link>,
+              key: '/admin/categories',
+              icon: <AppstoreOutlined />,
+              label: <Link to="/admin/categories">Quản lý danh mục</Link>,
             },
             {
-              key: '/admin/messages',
-              icon: <MessageOutlined />,
-              label: <Link to="/admin/messages">Tin nhắn hỗ trợ</Link>,
+              key: '/admin/skills',
+              icon: <ToolOutlined />,
+              label: <Link to="/admin/skills">Quản lý kỹ năng</Link>,
             },
+            // {
+            //   key: '/admin/messages',
+            //   icon: <MessageOutlined />,
+            //   label: <Link to="/admin/messages">Tin nhắn hỗ trợ</Link>,
+            // },
             {
               key: '/admin/reports',
               icon: <BarChartOutlined />,
@@ -214,7 +231,7 @@ const AdminLayout = () => {
             
             <Dropdown overlay={userMenu} placement="bottomRight" trigger={['click']}>
               <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                <Avatar style={{ backgroundColor: '#1890ff', marginRight: 8 }} icon={<UserOutlined />} />
+                <Avatar style={{ backgroundColor: '#4f46e5', marginRight: 8 }} icon={<UserOutlined />} />
                 {user ? (
                   <span style={{ marginRight: 8 }}>{user.email}</span>
                 ) : (

@@ -17,7 +17,7 @@
     margin-bottom: 1rem;
 
     .ant-card-head {
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid #f1f5f9;
       padding: 12px 16px;
     }
   }
@@ -40,7 +40,7 @@
   .quill {
     .ql-toolbar {
       border-radius: 4px 4px 0 0;
-      background-color: #fafafa;
+      background-color: #f8fafc;
     }
     
     .ql-container {
@@ -66,18 +66,18 @@
   /* Question items */
   .question-item {
     padding: 12px;
-    background-color: #fafafa;
+    background-color: #f8fafc;
     border-radius: 4px;
     margin-bottom: 12px;
 
     &:hover {
-      background-color: #f5f5f5;
+      background-color: #f8fafc;
     }
   }
 
   /* Switch styles */
   .ant-switch-checked {
-    background-color: #52c41a;
+    background-color: #059669;
   }
 
   /* Responsive form layout */

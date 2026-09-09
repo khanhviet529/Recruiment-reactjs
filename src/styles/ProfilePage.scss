@@ -5,40 +5,65 @@
       
       .profile-avatar {
         border: 3px solid #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+          transform: translateY(-2px);
+        }
+      }
+      
+      .ant-btn {
+        min-width: 100px;
+        
+        &:disabled {
+          cursor: not-allowed;
+        }
+      }
+      
+      // Loading overlay styles
+      .spinner-border {
+        border-width: 3px;
+      }
+      
+      // Success message styles
+      small.text-success {
+        font-weight: 500;
+        animation: fadeIn 0.3s ease-in;
       }
     }
 
     .profile-info {
       h2 {
-        font-size: 1.75rem;
+        color: #4f46e5;
         font-weight: 600;
       }
 
       .text-muted {
-        color: #6c757d;
+        color: #64748b !important;
       }
     }
   }
 
   .nav-tabs {
-    border-bottom: 2px solid #dee2e6;
+    border-bottom: 2px solid #e2e8f0;
     
     .nav-link {
-      color: #6c757d;
+      color: #64748b;
       border: none;
       padding: 0.75rem 1.25rem;
       font-weight: 500;
       
       &:hover {
-        color: #0d6efd;
+        color: #4f46e5;
         border: none;
       }
       
       &.active {
-        color: #0d6efd;
+        color: #4f46e5;
         border: none;
-        border-bottom: 2px solid #0d6efd;
+        border-bottom: 2px solid #4f46e5;
         margin-bottom: -2px;
       }
     }
@@ -46,11 +71,13 @@
 
   .card {
     border: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
     
     .card-header {
       background-color: #fff;
-      border-bottom: 1px solid #dee2e6;
+      border-bottom: 1px solid #e2e8f0;
       padding: 1rem 1.25rem;
       
       h5 {
@@ -60,17 +87,17 @@
     }
     
     .card-body {
-      padding: 1.25rem;
+      padding: 2rem;
     }
   }
 
   .skills-list {
     .progress {
       height: 8px;
-      background-color: #e9ecef;
+      background-color: #f1f5f9;
       
       .progress-bar {
-        background-color: #0d6efd;
+        background-color: #4f46e5;
         font-size: 0.75rem;
         line-height: 8px;
       }
@@ -80,7 +107,7 @@
   .education-item,
   .experience-item {
     padding-bottom: 1rem;
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid #e2e8f0;
     
     &:last-child {
       border-bottom: none;
@@ -94,7 +121,7 @@
     }
     
     .text-muted {
-      color: #6c757d;
+      color: #64748b;
       font-size: 0.9rem;
     }
   }
@@ -104,8 +131,8 @@
     
     .form-check-input {
       &:checked {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
+        background-color: #4f46e5;
+        border-color: #4f46e5;
       }
     }
     
@@ -122,12 +149,52 @@
   @media (max-width: 768px) {
     .profile-header {
       .profile-avatar-container {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.5rem !important;
+        
+        .profile-avatar {
+          width: 100px !important;
+          height: 100px !important;
+        }
       }
     }
     
-    .card {
-      margin-bottom: 1rem;
+    .card-body {
+      padding: 1.5rem;
+    }
+  }
+}
+
+// Animation for success message
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Upload button hover effects
+.ant-upload {
+  .ant-btn-primary {
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
+    border: none;
+    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+    
+    &:hover {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+    
+    &.ant-btn-loading {
+      background: linear-gradient(135deg, #a5b4fc, #818cf8);
     }
   }
 } 

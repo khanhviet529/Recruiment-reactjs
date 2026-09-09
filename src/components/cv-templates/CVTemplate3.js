@@ -1,6 +1,11 @@
 import React from 'react';
 import { Card, Button } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
+import {
+  DownloadOutlined,
+  EnvironmentOutlined,
+  MailOutlined,
+  PhoneOutlined,
+} from '@ant-design/icons';
 import './CVTemplate3.scss';
 
 const CVTemplate3 = ({ candidate, activeSections = [] }) => {
@@ -101,17 +106,17 @@ const CVTemplate3 = ({ candidate, activeSections = [] }) => {
             <div className="cv-contact">
               {safeCandidate.email && (
                 <span className="contact-item">
-                  <i className="bi bi-envelope"></i> {safeCandidate.email}
+                  <MailOutlined /> {safeCandidate.email}
                 </span>
               )}
               {safeCandidate.phone && (
                 <span className="contact-item">
-                  <i className="bi bi-telephone"></i> {safeCandidate.phone}
+                  <PhoneOutlined /> {safeCandidate.phone}
                 </span>
               )}
               {(safeCandidate.address || safeCandidate.city || safeCandidate.country) && (
                 <span className="contact-item">
-                  <i className="bi bi-geo-alt"></i> 
+                  <EnvironmentOutlined /> 
                   {[
                     safeCandidate.address,
                     safeCandidate.city,

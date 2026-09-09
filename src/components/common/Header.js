@@ -1,47 +1,63 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { Dropdown, Avatar, Button } from 'antd';
+import {
+  UserOutlined,
+  DashboardOutlined,
+  LogoutOutlined,
+  BookOutlined,
+  FileTextOutlined,
+  TeamOutlined,
+  ShopOutlined,
+  IdcardOutlined,
+  MenuOutlined,
+  CloseOutlined,
+} from '@ant-design/icons';
+
 import { logout } from '../../redux/slices/authSlice';
+import { fetchUserAvatar } from '../../utils/avatarUtils';
+import NotificationBell from '../NotificationBell';
+import './Header.scss';
+
+const NAV = [
+  { to: '/', label: 'Trang chủ' },
+  { to: '/jobs', label: 'Việc làm' },
+  { to: '/companies', label: 'Công ty' },
+  { to: '/about', label: 'Về chúng tôi' },
+  { to: '/contact', label: 'Liên hệ' },
+];
 
 const Header = () => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [navbarCollapsed, setNavbarCollapsed] = useState(true);
-  const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(null);
+
+  const loadAvatar = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      setAvatarUrl(await fetchUserAvatar(user));
+    } catch {
+      setAvatarUrl(null);
+    }
+  }, [user]);
+
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false);
-      }
-    };
+    if (isAuthenticated) loadAvatar();
+    else setAvatarUrl(null);
+  }, [isAuthenticated, loadAvatar]);
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  // Close navbar collapse when route changes
+  // Đóng menu mobile mỗi khi chuyển trang
   useEffect(() => {
-    setNavbarCollapsed(true);
+    setMobileOpen(false);
   }, [location.pathname]);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate('/');
-    setShowDropdown(false);
-  };
-
-  // Get profile route based on user role
-  const getProfileRoute = () => {
-    if (!user) return '/profile';
-    
-    switch (user.role) {
+  const profileRoute = () => {
+    switch (user?.role) {
       case 'admin':
         return '/admin/profile';
       case 'employer':
@@ -53,221 +69,173 @@ const Header = () => {
     }
   };
 
-  // Check if the link is active
-  const isActive = (path) => {
-    return location.pathname === path || location.pathname.startsWith(`${path}/`);
+  const dashboardRoute = () => {
+    switch (user?.role) {
+      case 'admin':
+        return '/admin/dashboard';
+      case 'employer':
+        return '/employer/dashboard';
+      default:
+        return '/candidate/dashboard';
+    }
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/');
+  };
+
+  const isActive = (path) =>
+    path === '/'
+      ? location.pathname === '/'
+      : location.pathname === path || location.pathname.startsWith(`${path}/`);
+
+  /* ---------- menu người dùng ---------- */
+  const userMenuItems = () => {
+    const items = [
+      {
+        key: 'head',
+        label: (
+          <div className="hd-usercard">
+            <div className="hd-usercard__name">{user?.name || user?.email}</div>
+            <div className="hd-usercard__mail">{user?.email}</div>
+          </div>
+        ),
+        disabled: true,
+      },
+      { type: 'divider' },
+      { key: 'dash', icon: <DashboardOutlined />, label: <Link to={dashboardRoute()}>Bảng điều khiển</Link> },
+    ];
+
+    if (user?.role === 'employer') {
+      items.push(
+        { key: 'jobs', icon: <ShopOutlined />, label: <Link to="/employer/jobs">Tin tuyển dụng</Link> },
+        { key: 'apps', icon: <TeamOutlined />, label: <Link to="/employer/applications">Đơn ứng tuyển</Link> },
+      );
+    }
+
+    if (user?.role === 'applicant') {
+      items.push(
+        { key: 'myapps', icon: <FileTextOutlined />, label: <Link to="/candidate/applications">Đơn đã nộp</Link> },
+        { key: 'saved', icon: <BookOutlined />, label: <Link to="/candidate/saved-jobs">Việc đã lưu</Link> },
+        { key: 'cv', icon: <IdcardOutlined />, label: <Link to="/candidate/cv-templates">Mẫu CV</Link> },
+      );
+    }
+
+    items.push(
+      { type: 'divider' },
+      { key: 'profile', icon: <UserOutlined />, label: <Link to={profileRoute()}>Thông tin cá nhân</Link> },
+      { key: 'logout', icon: <LogoutOutlined />, label: 'Đăng xuất', danger: true, onClick: handleLogout },
+    );
+
+    return items;
+  };
+
+  const registerMenu = {
+    items: [
+      { key: 'r1', icon: <UserOutlined />, label: <Link to="/candidate/register">Tôi là ứng viên</Link> },
+      { key: 'r2', icon: <ShopOutlined />, label: <Link to="/employer/register">Tôi là nhà tuyển dụng</Link> },
+    ],
+  };
+
+  const loginMenu = {
+    items: [
+      { key: 'l1', icon: <UserOutlined />, label: <Link to="/candidate/login">Ứng viên</Link> },
+      { key: 'l2', icon: <ShopOutlined />, label: <Link to="/employer/login">Nhà tuyển dụng</Link> },
+    ],
   };
 
   return (
-    <header className="main-header">
-      <nav className="navbar navbar-expand-lg navbar-light bg-white">
-        <div className="container">
-          {/* Logo */}
-          <Link to="/" className="navbar-brand">
-            <span className="text-primary fw-bold">JobConnect</span>
-          </Link>
+    <header className="hd">
+      <div className="hd__inner app-container">
+        {/* Thương hiệu */}
+        <Link to="/" className="hd__brand" aria-label="ProHire - về trang chủ">
+          <img src="/image/logo-256.png" alt="" className="hd__logo" width="34" height="34" />
+          <span className="hd__word">ProHire</span>
+        </Link>
 
-          {/* Mobile toggle */}
-          <button
-            className="navbar-toggler"
-            type="button"
-            onClick={() => setNavbarCollapsed(!navbarCollapsed)}
-            aria-controls="navbarContent"
-            aria-expanded={!navbarCollapsed}
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
+        {/* Điều hướng chính */}
+        <nav className="hd__nav" aria-label="Điều hướng chính">
+          {NAV.map((it) => (
+            <Link
+              key={it.to}
+              to={it.to}
+              className={`hd__link ${isActive(it.to) ? 'is-active' : ''}`}
+              aria-current={isActive(it.to) ? 'page' : undefined}
+            >
+              {it.label}
+            </Link>
+          ))}
+        </nav>
 
-          {/* Navbar items */}
-          <div className={`collapse navbar-collapse ${navbarCollapsed ? '' : 'show'}`} id="navbarContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`}>
-                  Home
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/jobs" className={`nav-link ${isActive('/jobs') ? 'active' : ''}`}>
-                  Find Jobs
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/companies" className={`nav-link ${isActive('/companies') ? 'active' : ''}`}>
-                  Companies
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/about" className={`nav-link ${isActive('/about') ? 'active' : ''}`}>
-                  About
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/contact" className={`nav-link ${isActive('/contact') ? 'active' : ''}`}>
-                  Contact
-                </Link>
-              </li>
-            </ul>
-
-            {/* Auth buttons */}
-            <div className="d-flex align-items-center">
-              {isAuthenticated ? (
-                <div className="d-flex align-items-center">
-                  {/* Notification icon */}
-                  <Link to="/notifications" className="notification-badge me-3">
-                    <i className="bi bi-bell-fill fs-5"></i>
-                    <span className="badge bg-danger">
-                      3
-                    </span>
-                  </Link>
-
-                  {/* User dropdown */}
-                  <div className="dropdown" ref={dropdownRef}>
-                    <div 
-                      className="d-flex align-items-center cursor-pointer" 
-                      onClick={() => setShowDropdown(!showDropdown)}
-                    >
-                      {user?.avatar ? (
-                        <Link to={getProfileRoute()}>
-                          <img 
-                            src={user.avatar} 
-                            alt={user.name} 
-                            className="user-avatar avatar-image me-2"
-                          />
-                        </Link>
-                      ) : (
-                        <Link to={getProfileRoute()}>
-                          <div className="user-avatar bg-primary text-white me-2">
-                            {user?.name?.charAt(0).toUpperCase() || 'U'}
-                          </div>
-                        </Link>
-                      )}
-                      <span className="d-none d-md-inline me-1">{user?.name || 'User'}</span>
-                      <i className="bi bi-caret-down-fill small ms-1"></i>
-                    </div>
-                    
-                    {showDropdown && (
-                      <div className="dropdown-menu position-absolute mt-2 show">
-                        {/* Admin */}
-                        {user?.role === 'admin' && (
-                          <Link to="/admin/dashboard" className="dropdown-item">
-                            <i className="bi bi-speedometer2 me-2"></i> Admin Dashboard
-                          </Link>
-                        )}
-
-                        {/* Employer */}
-                        {user?.role === 'employer' && (
-                          <>
-                            <Link to="/employer/dashboard" className="dropdown-item">
-                              <i className="bi bi-speedometer2 me-2"></i> Dashboard
-                            </Link>
-                            <Link to="/employer/jobs" className="dropdown-item">
-                              <i className="bi bi-briefcase me-2"></i> Manage Jobs
-                            </Link>
-                            <Link to="/employer/applications" className="dropdown-item">
-                              <i className="bi bi-people me-2"></i> Applications
-                            </Link>
-                          </>
-                        )}
-
-                        {/* Applicant */}
-                        {user?.role === 'applicant' && (
-                          <>
-                            <Link to="/candidate/dashboard" className="dropdown-item">
-                              <i className="bi bi-speedometer2 me-2"></i> Dashboard
-                            </Link>
-                            <Link to="/candidate/applications" className="dropdown-item">
-                              <i className="bi bi-file-earmark-text me-2"></i> My Applications
-                            </Link>
-                            <Link to="/candidate/jobs" className="dropdown-item">
-                              <i className="bi bi-search me-2"></i> Find Jobs
-                            </Link>
-                            <Link to="/candidate/saved-jobs" className="dropdown-item">
-                              <i className="bi bi-bookmark me-2"></i> Saved Jobs
-                            </Link>
-                            <Link to="/candidate/cv-templates" className="dropdown-item">
-                              <i className="bi bi-file-earmark-text me-2"></i> Mẫu CV
-                            </Link>
-                          </>
-                        )}
-
-                        {/* Common items */}
-                        <div className="dropdown-divider"></div>
-                        <Link to={getProfileRoute()} className="dropdown-item">
-                          <i className="bi bi-person me-2"></i> My Profile
-                        </Link>
-                        <Link to="/settings" className="dropdown-item">
-                          <i className="bi bi-gear me-2"></i> Settings
-                        </Link>
-                        <div className="dropdown-divider"></div>
-                        <button onClick={handleLogout} className="dropdown-item text-danger d-flex align-items-center">
-                          <i className="bi bi-box-arrow-right me-2"></i>
-                          <span className="fw-medium">Đăng xuất</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <div className="d-flex align-items-center gap-2">
-                  <div className="btn-group">
-                    <Link 
-                      to="/candidate/login" 
-                      className="btn btn-outline-primary px-3 py-2 rounded-start-pill fw-medium d-flex align-items-center"
-                      data-role="candidate"
-                      onClick={() => localStorage.setItem('intended_role', 'candidate')}
-                    >
-                      <i className="bi bi-person me-2"></i>
-                      Ứng viên
-                    </Link>
-                    <Link 
-                      to="/employer/login" 
-                      className="btn btn-outline-primary px-3 py-2 rounded-end-pill fw-medium d-flex align-items-center"
-                      data-role="employer"
-                      onClick={() => localStorage.setItem('intended_role', 'employer')}
-                    >
-                      <i className="bi bi-building me-2"></i>
-                      Nhà tuyển dụng
-                    </Link>
-                  </div>
-                  
-                  <div className="dropdown">
-                    <button 
-                      className="btn btn-primary px-4 py-2 rounded-pill fw-medium dropdown-toggle"
-                      type="button"
-                      onClick={() => setShowDropdown(!showDropdown)}
-                    >
-                      <i className="bi bi-person-plus me-2"></i>
-                      Đăng ký
-                    </button>
-                    
-                    {showDropdown && (
-                      <div className="dropdown-menu position-absolute mt-2 show">
-                        <Link 
-                          to="/candidate/register" 
-                          className="dropdown-item"
-                          data-role="candidate"
-                          onClick={() => localStorage.setItem('intended_role', 'candidate')}
-                        >
-                          <i className="bi bi-person me-2"></i> Đăng ký Ứng viên
-                        </Link>
-                        <Link 
-                          to="/employer/register" 
-                          className="dropdown-item"
-                          data-role="employer"
-                          onClick={() => localStorage.setItem('intended_role', 'employer')}
-                        >
-                          <i className="bi bi-building me-2"></i> Đăng ký Nhà tuyển dụng
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+        {/* Khu vực bên phải */}
+        <div className="hd__right">
+          {isAuthenticated ? (
+            <>
+              <NotificationBell />
+              <Dropdown
+                menu={{ items: userMenuItems() }}
+                trigger={['click']}
+                placement="bottomRight"
+                overlayClassName="hd__usermenu"
+              >
+                <button className="hd__user" type="button">
+                  <Avatar
+                    size={32}
+                    src={avatarUrl || undefined}
+                    style={!avatarUrl ? { background: 'var(--brand)' } : undefined}
+                  >
+                    {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
+                  </Avatar>
+                  <span className="hd__username">{user?.name || user?.email?.split('@')[0]}</span>
+                </button>
+              </Dropdown>
+            </>
+          ) : (
+            <div className="hd__auth">
+              <Dropdown menu={loginMenu} trigger={['click']} placement="bottomRight">
+                <Button type="text" className="hd__btn-ghost">Đăng nhập</Button>
+              </Dropdown>
+              <Dropdown menu={registerMenu} trigger={['click']} placement="bottomRight">
+                <Button type="primary">Đăng ký</Button>
+              </Dropdown>
             </div>
-          </div>
+          )}
+
+          {/* Nút mở menu trên mobile */}
+          <button
+            className="hd__burger"
+            type="button"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-expanded={mobileOpen}
+            aria-label={mobileOpen ? 'Đóng menu' : 'Mở menu'}
+          >
+            {mobileOpen ? <CloseOutlined /> : <MenuOutlined />}
+          </button>
         </div>
-      </nav>
+      </div>
+
+      {/* Menu mobile */}
+      {mobileOpen && (
+        <nav className="hd__mobile" aria-label="Điều hướng trên di động">
+          {NAV.map((it) => (
+            <Link
+              key={it.to}
+              to={it.to}
+              className={`hd__mobile-link ${isActive(it.to) ? 'is-active' : ''}`}
+            >
+              {it.label}
+            </Link>
+          ))}
+          {!isAuthenticated && (
+            <div className="hd__mobile-auth">
+              <Link to="/candidate/login" className="hd__mobile-link">Đăng nhập ứng viên</Link>
+              <Link to="/employer/login" className="hd__mobile-link">Đăng nhập nhà tuyển dụng</Link>
+              <Link to="/candidate/register" className="hd__mobile-link">Đăng ký</Link>
+            </div>
+          )}
+        </nav>
+      )}
     </header>
   );
 };

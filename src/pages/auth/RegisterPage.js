@@ -6,10 +6,15 @@ import { ClipLoader } from 'react-spinners';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-// import jwt_decode from 'jwt-decode';
 import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
 
 import '../../assets/scss/main.scss';
+import {
+  MailOutlined,
+} from '@ant-design/icons';
+
+const API_URL = 'http://localhost:5000';
 
 const RegisterPage = () => {
   const dispatch = useDispatch();
@@ -22,6 +27,11 @@ const RegisterPage = () => {
   
   // Set active tab based on URL path
   const [activeTab, setActiveTab] = useState(isEmployerRegister ? 'employer' : 'candidate');
+  
+  // State for verification status
+  const [verificationSent, setVerificationSent] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState('');
+  const [verificationMessage, setVerificationMessage] = useState('');
 
   const { user, isAuthenticated, loading, error, success } = useSelector(
     (state) => state.auth
@@ -47,13 +57,44 @@ const RegisterPage = () => {
     };
   }, [isAuthenticated, user, navigate, dispatch]);
 
+  // Check if the URL contains verification token
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const token = queryParams.get('token');
+    const email = queryParams.get('email');
+    
+    if (token && email) {
+      // Verify email with token
+      verifyEmail(email, token);
+    }
+  }, [location]);
+
+  // Function to verify email with token
+  const verifyEmail = async (email, token) => {
+    try {
+      const response = await axios.post(`${API_URL}/users/verify-email`, { email, token });
+      if (response.data.success) {
+        setVerificationMessage('Email xác thực thành công! Bạn có thể đăng nhập ngay bây giờ.');
+      } else {
+        setVerificationMessage('Liên kết xác thực không hợp lệ hoặc đã hết hạn.');
+      }
+    } catch (error) {
+      setVerificationMessage('Đã xảy ra lỗi khi xác thực email.');
+      console.error('Email verification error:', error);
+    }
+  };
+
   // Validation schema for candidate registration
   const candidateValidationSchema = Yup.object({
     firstName: Yup.string().required('Họ là bắt buộc'),
     lastName: Yup.string().required('Tên là bắt buộc'),
     email: Yup.string()
+      .required('Email là bắt buộc')
       .email('Email không hợp lệ')
-      .required('Email là bắt buộc'),
+      .matches(
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        'Email phải có định dạng hợp lệ (example@domain.com)'
+      ),
     password: Yup.string()
       .min(6, 'Mật khẩu phải có ít nhất 6 ký tự')
       .required('Mật khẩu là bắt buộc'),
@@ -67,8 +108,12 @@ const RegisterPage = () => {
   const employerValidationSchema = Yup.object({
     name: Yup.string().required('Tên công ty là bắt buộc'),
     email: Yup.string()
+      .required('Email là bắt buộc')
       .email('Email không hợp lệ')
-      .required('Email là bắt buộc'),
+      .matches(
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        'Email phải có định dạng hợp lệ (example@domain.com)'
+      ),
     password: Yup.string()
       .min(6, 'Mật khẩu phải có ít nhất 6 ký tự')
       .required('Mật khẩu là bắt buộc'),
@@ -94,14 +139,47 @@ const RegisterPage = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (values, { setSubmitting, resetForm }) => {
+  const handleSubmit = async (values, { setSubmitting, resetForm, setErrors }) => {
     const { confirmPassword, ...userData } = values;
+
+    // Additional email validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(userData.email)) {
+      setErrors({ email: 'Email không hợp lệ. Vui lòng nhập đúng định dạng email.' });
+      setSubmitting(false);
+      return;
+    }
 
     // Set role based on active tab or URL path
     userData.role = activeTab === 'candidate' ? 'applicant' : 'employer';
-
-    dispatch(register(userData));
-    setSubmitting(false);
+    
+    try {
+      // Add isVerified: false for email verification
+      userData.isVerified = false;
+      
+      // Dispatch register action (store in redux)
+      dispatch(register(userData));
+      
+      // Send verification email
+      const emailData = {
+        email: userData.email,
+        name: userData.firstName ? `${userData.firstName} ${userData.lastName}` : userData.name,
+        role: userData.role
+      };
+      
+      await axios.post(`${API_URL}/users/send-verification-email`, emailData);
+      
+      // Update state to show verification sent message
+      setVerificationSent(true);
+      setVerificationEmail(userData.email);
+      
+      // Reset form after successful submission
+      resetForm();
+    } catch (error) {
+      console.error('Registration error:', error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   // Handle Google login/register
@@ -112,7 +190,8 @@ const RegisterPage = () => {
     const googleData = {
       ...decoded,
       isAdmin: false, // Register is never for admin
-      role: activeTab === 'candidate' ? 'applicant' : 'employer'
+      role: activeTab === 'candidate' ? 'applicant' : 'employer',
+      isVerified: true // Google accounts are pre-verified through OAuth
     };
     
     dispatch(loginWithGoogle(googleData));
@@ -121,6 +200,54 @@ const RegisterPage = () => {
   const handleGoogleError = () => {
     console.error('Google login failed');
   };
+
+  // Handle resend verification email
+  const handleResendVerification = async () => {
+    if (!verificationEmail) return;
+    
+    try {
+      await axios.post(`${API_URL}/users/resend-verification-email`, { email: verificationEmail });
+      setVerificationMessage('Email xác thực mới đã được gửi. Vui lòng kiểm tra hộp thư của bạn.');
+    } catch (error) {
+      setVerificationMessage('Không thể gửi lại email xác thực. Vui lòng thử lại sau.');
+      console.error('Resend verification error:', error);
+    }
+  };
+
+  // If verification sent, show success message
+  if (verificationSent) {
+    return (
+      <div className="register-page">
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-md-8 col-lg-6">
+              <div className="card shadow-sm">
+                <div className="card-body p-4 text-center">
+                  <MailOutlined style={{ fontSize: '3rem', color: '#059669', marginBottom: '1rem' }} />
+                  <h2 className="mb-3">Xác thực email của bạn</h2>
+                  <p className="mb-3">
+                    Chúng tôi đã gửi một email xác thực đến <strong>{verificationEmail}</strong>.
+                    Vui lòng kiểm tra hộp thư đến của bạn và nhấp vào liên kết để hoàn tất quá trình đăng ký.
+                  </p>
+                  <p className="text-muted mb-4">
+                    Nếu bạn không nhận được email trong vài phút tới, hãy kiểm tra thư mục spam hoặc nhấn vào nút bên dưới để gửi lại.
+                  </p>
+                  <div className="d-grid gap-2">
+                    <button className="btn btn-outline-primary" onClick={handleResendVerification}>
+                      Gửi lại email xác thực
+                    </button>
+                    <Link to={getLoginLink()} className="btn btn-link">
+                      Quay lại trang đăng nhập
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="register-page">
@@ -140,6 +267,12 @@ const RegisterPage = () => {
                 {success && (
                   <div className="alert alert-success" role="alert">
                     Đăng ký thành công! Đang chuyển hướng...
+                  </div>
+                )}
+                
+                {verificationMessage && (
+                  <div className={`alert ${verificationMessage.includes('thành công') ? 'alert-success' : 'alert-warning'}`} role="alert">
+                    {verificationMessage}
                   </div>
                 )}
 
@@ -252,6 +385,9 @@ const RegisterPage = () => {
                             placeholder="Nhập email của bạn"
                           />
                           <ErrorMessage name="email" component="div" className="text-danger" />
+                          <small className="text-muted">
+                            Email này sẽ được sử dụng để xác thực tài khoản của bạn.
+                          </small>
                         </div>
 
                         <div className="mb-3">
@@ -354,6 +490,9 @@ const RegisterPage = () => {
                             placeholder="Nhập email công ty"
                           />
                           <ErrorMessage name="email" component="div" className="text-danger" />
+                          <small className="text-muted">
+                            Email này sẽ được sử dụng để xác thực tài khoản của công ty.
+                          </small>
                         </div>
 
                         <div className="mb-3">

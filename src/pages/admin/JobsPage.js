@@ -228,12 +228,6 @@ const JobsPage = () => {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: 60
-    },
-    {
       title: 'Tiêu đề',
       dataIndex: 'title',
       key: 'title',
@@ -411,7 +405,7 @@ const JobsPage = () => {
             <Statistic
               title="Bản nháp"
               value={stats.draft}
-              valueStyle={{ color: '#1890ff' }}
+              valueStyle={{ color: '#4f46e5' }}
               prefix={<BarChartOutlined />}
             />
           </Card>
@@ -421,7 +415,7 @@ const JobsPage = () => {
             <Statistic
               title="Tạm dừng"
               value={stats.paused}
-              valueStyle={{ color: '#faad14' }}
+              valueStyle={{ color: '#d97706' }}
               prefix={<CloseCircleOutlined />}
             />
           </Card>
@@ -441,7 +435,7 @@ const JobsPage = () => {
             <Statistic
               title="Bị báo cáo"
               value={stats.reported}
-              valueStyle={{ color: '#faad14' }}
+              valueStyle={{ color: '#d97706' }}
               prefix={<ExclamationCircleOutlined />}
             />
           </Card>

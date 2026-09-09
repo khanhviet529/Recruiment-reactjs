@@ -141,9 +141,6 @@ const NewJobPage = () => {
         title: values.title,
         description: values.description,
         shortDescription: values.shortDescription,
-        responsibilities: Array.isArray(values.responsibilities) 
-          ? values.responsibilities 
-          : values.responsibilities.split('\n').filter(item => item.trim() !== ''),
         requirements: Array.isArray(values.requirements) 
           ? values.requirements 
           : values.requirements.split('\n').filter(item => item.trim() !== ''),
@@ -170,7 +167,7 @@ const NewJobPage = () => {
         isRemote,
         workType: isRemote ? 'remote' : values.workType || 'onsite',
         industryIds: values.industryIds || ["1"],
-        skills: selectedSkills,
+        skills: values.skills || [],
         categories: selectedCategories.map(id => {
           const category = categories.find(cat => cat.id === id);
           return category ? category.name : id;
@@ -178,7 +175,7 @@ const NewJobPage = () => {
         positions: values.positions || 1,
         applicationDeadline: deadlineISO,
         postedAt: postedAtISO,
-        status: values.status || 'active',
+        status: 'active',
         isFeatured,
         isUrgent,
         pauseReason: values.status === 'paused' ? pauseReason : '',
@@ -199,7 +196,7 @@ const NewJobPage = () => {
         allowSearch: true,
         premium: false,
         companyName: user.companyName || "Digital Enterprise",
-        companyLogo: user.companyLogo || "https://via.placeholder.com/150?text=DE",
+        companyLogo: user.companyLogo || '/image/company-placeholder.svg',
         createdAt: moment().format(),
         updatedAt: moment().format()
       };
@@ -208,6 +205,10 @@ const NewJobPage = () => {
 
       // Submit to API
       await axios.post('http://localhost:5000/jobs', jobData);
+      
+      // Update job counts for categories and skills
+      await updateJobCounts(jobData);
+      
       message.success('Đăng tin tuyển dụng thành công');
       navigate('/employer/jobs');
     } catch (error) {
@@ -215,6 +216,38 @@ const NewJobPage = () => {
       message.error('Có lỗi xảy ra khi đăng tin');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Function to update job counts for categories
+  const updateJobCounts = async (jobData) => {
+    try {
+      // Update category counts
+      if (jobData.industryIds && jobData.industryIds.length > 0) {
+        const jobFiltersRes = await axios.get('http://localhost:5000/jobFilters');
+        const jobFilters = jobFiltersRes.data;
+        
+        // Update industry counts
+        const updatedIndustries = jobFilters.industries.map(industry => {
+          if (jobData.industryIds.includes(industry.id)) {
+            return {
+              ...industry,
+              count: (industry.count || 0) + 1
+            };
+          }
+          return industry;
+        });
+        
+        await axios.put('http://localhost:5000/jobFilters', {
+          ...jobFilters,
+          industries: updatedIndustries
+        });
+      }
+      
+      console.log('Category counts updated successfully');
+    } catch (error) {
+      console.error('Error updating category counts:', error);
+      // Don't throw error to avoid breaking the job creation flow
     }
   };
 
@@ -419,14 +452,14 @@ const NewJobPage = () => {
 
                   <Form.Item
                     name="description"
-                    label="Mô tả công việc chi tiết"
-                    rules={[{ required: true, message: 'Vui lòng nhập mô tả chi tiết' }]}
+                    label="Mô tả công việc"
+                    rules={[{ required: true, message: 'Vui lòng nhập mô tả công việc' }]}
                   >
                     <ReactQuill 
                       theme="snow" 
                       modules={modules}
                       formats={formats}
-                      placeholder="Mô tả chi tiết về công việc, nhiệm vụ, trách nhiệm..."
+                      placeholder="Mô tả chi tiết về công việc..."
                     />
                   </Form.Item>
                 </div>
@@ -527,20 +560,9 @@ const NewJobPage = () => {
               key="details"
             >
               <div className="row">
-                <div className="col-md-6">
-                  <Form.Item
-                    name="responsibilities"
-                    label="Trách nhiệm công việc"
-                    rules={[{ required: true, message: 'Vui lòng nhập trách nhiệm công việc' }]}
-                  >
-                    <ReactQuill 
-                      theme="snow" 
-                      modules={modules}
-                      formats={formats}
-                      placeholder="Liệt kê các trách nhiệm chính của vị trí này..."
-                    />
-                  </Form.Item>
-                </div>
+                {/* <div className="col-md-6">
+
+                </div> */}
                 
                 <div className="col-md-6">
                   <Form.Item
@@ -557,7 +579,7 @@ const NewJobPage = () => {
                   </Form.Item>
                 </div>
 
-                <div className="col-md-12">
+                <div className="col-md-6">
                   <Form.Item
                     name="benefits"
                     label="Quyền lợi"

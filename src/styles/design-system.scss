@@ -1,0 +1,166 @@
+/**
+ * LỚP TƯƠNG THÍCH
+ * ---------------------------------------------------------------
+ * File này TRƯỚC ĐÂY là một bộ token riêng (primary = #1890ff của
+ * Ant Design, thang xám riêng), tách biệt với Bootstrap và với
+ * tokens.css -> web có tới 5 bảng màu chạy song song.
+ *
+ * Nay nguồn duy nhất là `src/styles/tokens.css`.
+ * File này chỉ còn nhiệm vụ: giữ lại các TÊN BIẾN CŨ và trỏ chúng
+ * sang token mới, để ~175 chỗ trong code cũ vẫn chạy và tự động
+ * mang màu mới mà không phải sửa từng component.
+ *
+ * Khi viết code mới: dùng trực tiếp biến trong tokens.css
+ * (--brand, --gray-500, --sp-4 ...), không dùng các biến ở đây.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ---- primary-* : nay tro sang mau thuong hieu (indigo) ---- */
+  --primary-50: #eef2ff;
+  --primary-100: #e0e7ff;
+  --primary-200: #c7d2fe;
+  --primary-300: #a5b4fc;
+  --primary-400: #818cf8;
+  --primary-500: #4f46e5; /* truoc la #1890ff */
+  --primary-600: #4338ca;
+  --primary-700: #3730a3;
+  --primary-800: #312e81;
+  --primary-900: #1e1b4b;
+
+  /* ---- secondary-* : nay la mau nhan emerald ---- */
+  --secondary-50: #ecfdf5;
+  --secondary-100: #d1fae5;
+  --secondary-200: #a7f3d0;
+  --secondary-300: #6ee7b7;
+  --secondary-400: #34d399;
+  --secondary-500: #10b981;
+  --secondary-600: #059669;
+  --secondary-700: #047857;
+  --secondary-800: #065f46;
+  --secondary-900: #064e3b;
+
+  /* ---- trang thai ---- */
+  --success-500: #059669;
+  --warning-500: #d97706;
+  --error-500: #e11d48;
+
+  /* ---- neutral-* : dong bo voi thang slate ---- */
+  --neutral-0: #ffffff;
+  --neutral-50: #f8fafc;
+  --neutral-100: #f1f5f9;
+  --neutral-200: #e2e8f0;
+  --neutral-300: #cbd5e1;
+  --neutral-400: #94a3b8;
+  --neutral-500: #64748b;
+  --neutral-600: #475569;
+  --neutral-700: #334155;
+  --neutral-800: #1e293b;
+  --neutral-900: #0f172a;
+
+  /* ---- nen & chu ---- */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-link: #4f46e5;
+
+  /* ---- khoang cach: bo sung ca cac muc truoc day BI THIEU ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px; /* truoc day chua dinh nghia -> cac dong dung no bi mat tac dung */
+  --space-4: 16px;
+  --space-5: 20px; /* truoc day chua dinh nghia */
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* ---- bo goc ---- */
+  --radius-sm: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+
+  /* ---- do bong: dong bo voi tokens.css ---- */
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.07), 0 1px 3px rgba(15, 23, 42, 0.05);
+  --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.10), 0 2px 6px rgba(15, 23, 42, 0.05);
+
+  /* ---- co chu & do dam: truoc day BI THIEU hoan toan ---- */
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 30px;
+
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+}
+
+/* ===============================================================
+   THANH ĐIỀU HƯỚNG
+   Giữ lại vì Header đang dựa vào các class này, nhưng đã đổi sang
+   token mới. Các phần ghi đè body/.btn/.card/.form-control cũ đã
+   bỏ — tokens.css lo phần đó, tránh 2 file tranh nhau.
+   =============================================================== */
+.navbar {
+  background: var(--bg-surface, #fff);
+  border-bottom: 1px solid var(--border, #e2e8f0);
+  box-shadow: var(--shadow-xs, 0 1px 2px rgba(15, 23, 42, 0.05));
+
+  &-brand {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--brand, #4f46e5);
+    letter-spacing: -0.02em;
+
+    &:hover {
+      color: var(--brand-hover, #4338ca);
+    }
+  }
+
+  &-nav {
+    .nav-link {
+      padding: var(--space-2) var(--space-3);
+      color: var(--text-body, #334155);
+      font-weight: var(--font-medium);
+      border-radius: var(--radius-lg);
+      transition: background-color 160ms ease, color 160ms ease;
+
+      &:hover {
+        color: var(--brand, #4f46e5);
+        background-color: var(--brand-soft, #eef2ff);
+      }
+
+      &.active {
+        color: var(--brand, #4f46e5);
+        background-color: var(--brand-soft, #eef2ff);
+        font-weight: var(--font-semibold);
+      }
+    }
+  }
+}
+
+/* ===============================================================
+   HIỆU ỨNG
+   =============================================================== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
+}
+
+.fade-in { animation: fadeIn 0.25s ease; }
+.slide-up { animation: slideUp 0.35s ease; }
+.pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }

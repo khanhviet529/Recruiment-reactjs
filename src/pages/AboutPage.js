@@ -8,17 +8,17 @@ const AboutPage = () => {
         <div className="row">
           <div className="col-lg-8">
             <p className="lead">
-              JobConnect là nền tảng kết nối nhà tuyển dụng và ứng viên tài năng hàng đầu Việt Nam.
+              ProHire là nền tảng kết nối nhà tuyển dụng và ứng viên tài năng hàng đầu Việt Nam.
             </p>
             <p>
               Được thành lập vào năm 2023, chúng tôi đã và đang không ngừng phát triển để trở thành đối tác tin cậy 
               trong lĩnh vực tuyển dụng trực tuyến. Với sứ mệnh "Kết nối đúng người, đúng việc", 
-              JobConnect cung cấp các giải pháp tuyển dụng hiệu quả cho cả nhà tuyển dụng và người tìm việc.
+              ProHire cung cấp các giải pháp tuyển dụng hiệu quả cho cả nhà tuyển dụng và người tìm việc.
             </p>
             <p>
               Chúng tôi tin rằng mỗi người đều xứng đáng có một công việc phù hợp với đam mê và kỹ năng của mình. 
               Đồng thời, các doanh nghiệp cũng cần tìm được những nhân tài phù hợp để phát triển. 
-              JobConnect ra đời để biến điều đó thành hiện thực.
+              ProHire ra đời để biến điều đó thành hiện thực.
             </p>
           </div>
           <div className="col-lg-4">
