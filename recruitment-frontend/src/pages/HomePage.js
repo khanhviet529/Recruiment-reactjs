@@ -334,11 +334,18 @@ const HomePage = () => {
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
   const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
 
-  // Change page
+  // Doi trang: cuon ve dau DANH SACH viec lam, khong nhay len dau trang.
+  // Truoc day dung window.scrollTo(0, 0) nen moi lan bam so trang la
+  // man hinh nhay het len banner, nguoi dung phai cuon xuong lai.
+  const jobsListRef = useRef(null);
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    // Scroll to top when changing page
-    window.scrollTo(0, 0);
+    const el = jobsListRef.current;
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 90;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
   };
 
   // Save job functionality
@@ -584,7 +591,7 @@ const HomePage = () => {
       </section>
 
       {/* 4. Gợi ý việc làm Section */}
-      <div className="jobs-section py-5">
+      <div className="jobs-section py-5" ref={jobsListRef}>
         <div className="container">
           <div className="section-header">
             <h2 className="section-title">Gợi ý việc làm</h2>

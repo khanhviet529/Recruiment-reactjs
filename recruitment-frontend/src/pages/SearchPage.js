@@ -450,10 +450,12 @@ const SearchPage = () => {
   const handlePaginationChange = (page, pageSizeValue) => {
     setCurrentPage(page);
     setPageSize(pageSizeValue);
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    // Cuon ve dau danh sach ket qua thay vi dau trang
+    const el = document.querySelector('.job-search-page .ant-col-lg-18');
+    const top = el
+      ? el.getBoundingClientRect().top + window.scrollY - 90
+      : 0;
+    window.scrollTo({ top, behavior: 'smooth' });
   };
 
   // Reset all filters

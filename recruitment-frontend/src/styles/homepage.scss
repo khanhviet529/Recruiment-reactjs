@@ -1,11 +1,11 @@
 /* Homepage Styles */
 
 // Variables
-$primary-color: #1e88e5;
-$secondary-color: #5e35b1;
-$accent-color: #ff4081;
+$primary-color: #4f46e5;
+$secondary-color: #4338ca;
+$accent-color: #e11d48;
 $light-bg: #f8fafc;
-$dark-bg: #001529;
+$dark-bg: #0f172a;
 $text-light: #ffffff;
 $border-radius: 8px;
 $gray-100: #f8fafc;
@@ -183,35 +183,56 @@ $gray-800: #1e293b;
 
     // Category Slider Navigation
     .slick-prev, .slick-next {
+      /* Nen mau thuong hieu, icon trang, can giua bang flex.
+         Truoc day dung padding-top:5px de "can giua" nen icon bi lech. */
       width: 40px;
       height: 40px;
-      background-color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--brand);
       border-radius: 50%;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      z-index: 1;
+      box-shadow: var(--shadow-md);
+      z-index: 2;
+      transition: background-color 160ms ease;
 
       &:before {
-        color: $gray-700;
-        font-size: 20px;
+        color: #fff;
+        font-size: 18px;
+        line-height: 1;
+        opacity: 1;
       }
 
-      &:hover {
-        background-color: $primary-color;
-        
+      &:hover, &:focus {
+        background-color: var(--brand-hover);
+
         &:before {
-          color: white;
+          color: #fff;
+        }
+      }
+
+      /* Het slide: slick them class .slick-disabled (khi infinite: false).
+         Truoc day slick-theme chi giam opacity nen nut van xanh mo mo,
+         nhin khong ro la da tat. */
+      &.slick-disabled {
+        background-color: var(--gray-200);
+        box-shadow: none;
+        cursor: not-allowed;
+        pointer-events: none;
+
+        &:before {
+          color: var(--gray-400);
+          opacity: 1;
         }
       }
       }
       
     .slick-prev {
       left: -20px;
-      padding-top: 5px;
     }
 
     .slick-next {
       right: -20px;
-      padding-top: 5px;
     }
   }
 
@@ -290,35 +311,56 @@ $gray-800: #1e293b;
 
     // Employer Slider Navigation
     .slick-prev, .slick-next {
+      /* Nen mau thuong hieu, icon trang, can giua bang flex.
+         Truoc day dung padding-top:5px de "can giua" nen icon bi lech. */
       width: 40px;
       height: 40px;
-      background-color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--brand);
       border-radius: 50%;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      z-index: 1;
+      box-shadow: var(--shadow-md);
+      z-index: 2;
+      transition: background-color 160ms ease;
 
       &:before {
-        color: $gray-700;
-        font-size: 20px;
+        color: #fff;
+        font-size: 18px;
+        line-height: 1;
+        opacity: 1;
       }
 
-      &:hover {
-        background-color: $primary-color;
-        
+      &:hover, &:focus {
+        background-color: var(--brand-hover);
+
         &:before {
-          color: white;
+          color: #fff;
+        }
+      }
+
+      /* Het slide: slick them class .slick-disabled (khi infinite: false).
+         Truoc day slick-theme chi giam opacity nen nut van xanh mo mo,
+         nhin khong ro la da tat. */
+      &.slick-disabled {
+        background-color: var(--gray-200);
+        box-shadow: none;
+        cursor: not-allowed;
+        pointer-events: none;
+
+        &:before {
+          color: var(--gray-400);
+          opacity: 1;
         }
       }
     }
 
     .slick-prev {
       left: -20px;
-      padding-top: 5px;
     }
 
     .slick-next {
       right: -20px;
-      padding-top: 5px;
     }
   }
 
@@ -355,13 +397,11 @@ $gray-800: #1e293b;
     .employers-section {
       .slick-prev {
         left: 5px;
-        padding-top: 5px;
-      }
+        }
 
       .slick-next {
         right: 5px;
-        padding-top: 5px;
-      }
+        }
     }
   }
 }
