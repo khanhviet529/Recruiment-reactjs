@@ -1,520 +1,356 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { message } from 'antd';
+import axios from 'axios';
 import {
-  IdcardOutlined,
+  Button, Input, Form, Row, Col, Modal, Spin, Empty, Tag, Avatar, message,
+} from 'antd';
+import {
   UserOutlined,
   BookOutlined,
   BankOutlined,
   TrophyOutlined,
   PlusOutlined,
   EditOutlined,
-  SaveOutlined,
   DeleteOutlined,
-  LoadingOutlined,
-  DownloadOutlined,
-  EyeInvisibleOutlined,
-  CloseOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  EnvironmentOutlined,
 } from '@ant-design/icons';
-import axios from 'axios';
+
+const API = 'http://localhost:5000';
+
+/* Định nghĩa 3 nhóm mục lặp lại (học vấn / kinh nghiệm / chứng chỉ).
+   Gom chung để không phải viết 3 lần cùng một khối form và danh sách. */
+const SECTIONS = {
+  educations: {
+    label: 'Học vấn',
+    icon: <BookOutlined />,
+    titleOf: (x) => x.school,
+    metaOf: (x) => [x.degree, x.major].filter(Boolean).join(' · '),
+    fields: [
+      { name: 'school', label: 'Trường', required: true, span: 24 },
+      { name: 'degree', label: 'Bằng cấp', span: 12 },
+      { name: 'major', label: 'Chuyên ngành', span: 12 },
+      { name: 'startDate', label: 'Từ ngày', type: 'date', span: 8 },
+      { name: 'endDate', label: 'Đến ngày', type: 'date', span: 8 },
+      { name: 'gpa', label: 'Điểm trung bình', span: 8 },
+      { name: 'description', label: 'Mô tả', type: 'area', span: 24 },
+    ],
+  },
+  workExperiences: {
+    label: 'Kinh nghiệm làm việc',
+    icon: <BankOutlined />,
+    titleOf: (x) => x.position,
+    metaOf: (x) => x.company,
+    fields: [
+      { name: 'position', label: 'Vị trí', required: true, span: 12 },
+      { name: 'company', label: 'Công ty', required: true, span: 12 },
+      { name: 'startDate', label: 'Từ ngày', type: 'date', span: 12 },
+      { name: 'endDate', label: 'Đến ngày (để trống nếu đang làm)', type: 'date', span: 12 },
+      { name: 'description', label: 'Mô tả công việc', type: 'area', span: 24 },
+    ],
+  },
+  certifications: {
+    label: 'Chứng chỉ',
+    icon: <TrophyOutlined />,
+    titleOf: (x) => x.name,
+    metaOf: (x) => x.organization,
+    fields: [
+      { name: 'name', label: 'Tên chứng chỉ', required: true, span: 24 },
+      { name: 'organization', label: 'Tổ chức cấp', span: 24 },
+      { name: 'issueDate', label: 'Ngày cấp', type: 'date', span: 12 },
+      { name: 'expiryDate', label: 'Ngày hết hạn', type: 'date', span: 12 },
+    ],
+  },
+};
+
+const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('vi-VN') : '');
+
+const period = (a, b) => {
+  const from = fmtDate(a);
+  if (!from) return '';
+  return `${from} – ${fmtDate(b) || 'nay'}`;
+};
 
 const CandidateProfilePage = () => {
   const { user } = useSelector((state) => state.auth);
-  const [showProfile, setShowProfile] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [candidate, setCandidate] = useState(null);
-  const [editMode, setEditMode] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-  // Load real data
-  const handleShowProfile = async () => {
+  // { key: 'educations' | ..., index: number | null }  -> null nghĩa là thêm mới
+  const [editing, setEditing] = useState(null);
+  const [editPersonal, setEditPersonal] = useState(false);
+
+  const [form] = Form.useForm();
+  const [personalForm] = Form.useForm();
+
+  /* Trước đây hàm này gọi thẳng `candidates/cc0d` - id cố định của một hồ sơ
+     cụ thể, nên ai đăng nhập cũng xem đúng hồ sơ đó, va khi ho so do bi xoa
+     thi trang bao loi. Nay tra cuu theo user dang dang nhap. */
+  const load = useCallback(async () => {
+    if (!user?.id) return;
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:5000/candidates/cc0d');
-      setCandidate(response.data);
-      setShowProfile(true);
-      // message.success('Tải hồ sơ thành công!');
-    } catch (error) {
-      message.error('Lỗi tải dữ liệu: ' + error.message);
+      const res = await axios.get(`${API}/candidates?userId=${user.id}`);
+      setCandidate(res.data?.[0] || null);
+    } catch (e) {
+      message.error('Không tải được hồ sơ: ' + e.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
-  // Update API helper
-  const updateCandidate = async (updatedData) => {
+  useEffect(() => { load(); }, [load]);
+
+  const save = async (data) => {
+    setSaving(true);
     try {
-      setLoading(true);
-      const response = await axios.put(`http://localhost:5000/candidates/${candidate.id}`, updatedData);
-      setCandidate(response.data);
+      const res = await axios.put(`${API}/candidates/${candidate.id}`, data);
+      setCandidate(res.data);
       return true;
-    } catch (error) {
-      message.error('Lỗi cập nhật: ' + error.message);
+    } catch (e) {
+      message.error('Lưu không thành công: ' + e.message);
       return false;
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
-  // Personal Info
-  const updatePersonalInfo = async (updatedInfo) => {
-    const updated = { ...candidate, ...updatedInfo };
-    if (await updateCandidate(updated)) {
-      setEditMode(null);
-      message.success('Cập nhật thông tin thành công!');
+  /* ---------- thông tin cá nhân ---------- */
+  const savePersonal = async (values) => {
+    if (await save({ ...candidate, ...values })) {
+      setEditPersonal(false);
+      message.success('Đã cập nhật thông tin cá nhân');
     }
   };
 
-  // Education CRUD
-  const updateEducation = async (index, updatedEdu) => {
-    const educations = [...(candidate.educations || [])];
-    educations[index] = updatedEdu;
-    const updated = { ...candidate, educations };
-    if (await updateCandidate(updated)) {
-      setEditMode(null);
-      message.success('Cập nhật học vấn thành công!');
+  /* ---------- các mục lặp lại ---------- */
+  const openEntry = (key, index = null) => {
+    const item = index === null ? {} : (candidate[key] || [])[index];
+    setEditing({ key, index });
+    form.setFieldsValue(item || {});
+  };
+
+  const saveEntry = async (values) => {
+    const { key, index } = editing;
+    const list = [...(candidate[key] || [])];
+    if (index === null) {
+      list.push({ ...values, id: `${key}-${Date.now()}` });
+    } else {
+      list[index] = { ...list[index], ...values };
+    }
+    if (await save({ ...candidate, [key]: list })) {
+      setEditing(null);
+      form.resetFields();
+      message.success(index === null ? 'Đã thêm' : 'Đã cập nhật');
     }
   };
 
-  const deleteEducation = async (index) => {
-    if (window.confirm('Bạn có chắc muốn xóa học vấn này?')) {
-      const educations = [...(candidate.educations || [])];
-      educations.splice(index, 1);
-      const updated = { ...candidate, educations };
-      if (await updateCandidate(updated)) {
-        message.success('Xóa học vấn thành công!');
-      }
-    }
+  const removeEntry = (key, index) => {
+    Modal.confirm({
+      title: 'Xác nhận xoá',
+      content: `Xoá mục này khỏi ${SECTIONS[key].label.toLowerCase()}?`,
+      okText: 'Xoá',
+      okButtonProps: { danger: true },
+      cancelText: 'Huỷ',
+      onOk: async () => {
+        const list = [...(candidate[key] || [])];
+        list.splice(index, 1);
+        if (await save({ ...candidate, [key]: list })) message.success('Đã xoá');
+      },
+    });
   };
 
-  // Experience CRUD
-  const updateExperience = async (index, updatedExp) => {
-    const workExperiences = [...(candidate.workExperiences || [])];
-    workExperiences[index] = updatedExp;
-    const updated = { ...candidate, workExperiences };
-    if (await updateCandidate(updated)) {
-      setEditMode(null);
-      message.success('Cập nhật kinh nghiệm thành công!');
-    }
-  };
-
-  const deleteExperience = async (index) => {
-    if (window.confirm('Bạn có chắc muốn xóa kinh nghiệm này?')) {
-      const workExperiences = [...(candidate.workExperiences || [])];
-      workExperiences.splice(index, 1);
-      const updated = { ...candidate, workExperiences };
-      if (await updateCandidate(updated)) {
-        message.success('Xóa kinh nghiệm thành công!');
-      }
-    }
-  };
-
-  // Certifications CRUD
-  const updateCertification = async (index, updatedCert) => {
-    const certifications = [...(candidate.certifications || [])];
-    certifications[index] = updatedCert;
-    const updated = { ...candidate, certifications };
-    if (await updateCandidate(updated)) {
-      setEditMode(null);
-      message.success('Cập nhật chứng chỉ thành công!');
-    }
-  };
-
-  const deleteCertification = async (index) => {
-    if (window.confirm('Bạn có chắc muốn xóa chứng chỉ này?')) {
-      const certifications = [...(candidate.certifications || [])];
-      certifications.splice(index, 1);
-      const updated = { ...candidate, certifications };
-      if (await updateCandidate(updated)) {
-        message.success('Xóa chứng chỉ thành công!');
-      }
-    }
-  };
-
+  /* ---------- hiển thị ---------- */
   if (loading) {
-    return <div style={{textAlign: 'center', padding: '50px', background: '#f8fafc', minHeight: '100vh'}}><LoadingOutlined /> Đang xử lý...</div>;
+    return (
+      <div className="empty-box">
+        <Spin size="large" />
+        <div style={{ marginTop: 'var(--sp-4)' }}>Đang tải hồ sơ…</div>
+      </div>
+    );
   }
 
+  if (!candidate) {
+    return (
+      <div className="panel">
+        <Empty
+          image="/image/empty-state.jpg"
+          imageStyle={{ height: 180, objectFit: 'contain' }}
+          description="Chưa có hồ sơ ứng viên cho tài khoản này"
+        />
+      </div>
+    );
+  }
+
+  const fullName = [candidate.firstName, candidate.lastName].filter(Boolean).join(' ');
+
+  const renderField = (f) => (
+    <Col span={f.span} xs={24} sm={f.span} key={f.name}>
+      <Form.Item
+        name={f.name}
+        label={f.label}
+        rules={f.required ? [{ required: true, message: `Vui lòng nhập ${f.label.toLowerCase()}` }] : []}
+      >
+        {f.type === 'area'
+          ? <Input.TextArea rows={3} />
+          : <Input type={f.type === 'date' ? 'date' : 'text'} />}
+      </Form.Item>
+    </Col>
+  );
+
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto', background: '#f8fafc', minHeight: '100vh' }}>
-      {/* Header */}
-      <div style={{background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '20px', border: '1px solid #e2e8f0'}}>
-        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          <h2 style={{color: '#334155', margin: 0}}><IdcardOutlined /> Hồ sơ ứng viên</h2>
-          {!showProfile ? (
-            <button onClick={handleShowProfile} style={{background: '#64748b', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer'}}>
-              <DownloadOutlined /> Tải hồ sơ
-            </button>
-          ) : (
-            <button onClick={() => setShowProfile(false)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer'}}>
-              <EyeInvisibleOutlined /> Ẩn hồ sơ
-            </button>
-          )}
+    <>
+      {/* ---------- đầu trang ---------- */}
+      <div className="page-head">
+        <div className="row-3">
+          <Avatar size={56} src={candidate.avatar || undefined} icon={<UserOutlined />} />
+          <div>
+            <h1 className="page-title">{fullName || 'Hồ sơ ứng viên'}</h1>
+            <p className="page-desc">{candidate.headline || 'Chưa có tiêu đề nghề nghiệp'}</p>
+          </div>
         </div>
       </div>
 
-      {showProfile && candidate && (
-        <div>
-          {/* Personal Info */}
-          <div style={{background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '20px', border: '1px solid #e2e8f0'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
-              <h3 style={{color: '#334155', margin: 0}}><UserOutlined /> Thông tin cá nhân</h3>
-              <button onClick={() => setEditMode(editMode === 'personal' ? null : 'personal')} style={{background: '#64748b', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer'}}>
-                {editMode === 'personal' ? <><SaveOutlined /> Lưu</> : <><EditOutlined /> Sửa</>}
-              </button>
-            </div>
-            
-            {editMode === 'personal' ? (
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                updatePersonalInfo({
-                  firstName: formData.get('firstName'),
-                  lastName: formData.get('lastName'),
-                  email: formData.get('email'),
-                  phone: formData.get('phone'),
-                  address: formData.get('address'),
-                  headline: formData.get('headline'),
-                  summary: formData.get('summary')
-                });
-              }}>
-                <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px'}}>
-                  <input name='firstName' defaultValue={candidate.firstName} placeholder='Tên' style={{padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
-                  <input name='lastName' defaultValue={candidate.lastName} placeholder='Họ' style={{padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
-                  <input name='email' defaultValue={candidate.email} placeholder='Email' style={{padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
-                  <input name='phone' defaultValue={candidate.phone} placeholder='Điện thoại' style={{padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
-                </div>
-                <input name='address' defaultValue={candidate.address} placeholder='Địa chỉ' style={{width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px', marginBottom: '15px'}} />
-                <input name='headline' defaultValue={candidate.headline} placeholder='Tiêu đề' style={{width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px', marginBottom: '15px'}} />
-                <textarea name='summary' defaultValue={candidate.summary} placeholder='Giới thiệu' style={{width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px', minHeight: '80px', marginBottom: '15px'}} />
-                <button type='submit' style={{background: '#64748b', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', marginRight: '10px', cursor: 'pointer'}}>
-                  <SaveOutlined /> Lưu thông tin
-                </button>
-                <button type='button' onClick={() => setEditMode(null)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer'}}>
-                  <CloseOutlined /> Hủy
-                </button>
-              </form>
-            ) : (
-              <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
-                <div><strong>Tên:</strong> {candidate.firstName} {candidate.lastName}</div>
-                <div><strong>Email:</strong> {candidate.email}</div>
-                <div><strong>Điện thoại:</strong> {candidate.phone || 'Chưa cập nhật'}</div>
-                <div><strong>Địa chỉ:</strong> {candidate.address || 'Chưa cập nhật'}</div>
-                <div style={{gridColumn: '1 / -1'}}><strong>Tiêu đề:</strong> {candidate.headline || 'Chưa cập nhật'}</div>
-                <div style={{gridColumn: '1 / -1'}}><strong>Giới thiệu:</strong> {candidate.summary || 'Chưa cập nhật'}</div>
-              </div>
-            )}
-          </div>
-
-          {/* Education */}
-          <div style={{background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '20px', border: '1px solid #e2e8f0'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
-              <h3 style={{color: '#334155', margin: 0}}><BookOutlined /> Học vấn ({(candidate.educations || []).length})</h3>
-              <button onClick={() => setEditMode(editMode === 'new-education' ? null : 'new-education')} style={{background: '#64748b', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer'}}>
-                {editMode === 'new-education' ? <><CloseOutlined /> Hủy</> : <><PlusOutlined /> Thêm mới</>}
-              </button>
-            </div>
-            
-            {/* New Education Form */}
-            {editMode === 'new-education' && (
-              <div style={{background: '#f8fafc', padding: '15px', borderRadius: '6px', marginBottom: '15px', border: '2px dashed #e2e8f0'}}>
-                <h4 style={{color: '#334155', marginBottom: '10px'}}><PlusOutlined /> Thêm học vấn mới</h4>
-                <form onSubmit={(e) => {
-                  e.preventDefault();
-                  const formData = new FormData(e.target);
-                  const newEdu = {
-                    school: formData.get('school'),
-                    degree: formData.get('degree'),
-                    major: formData.get('major'),
-                    startDate: formData.get('startDate'),
-                    endDate: formData.get('endDate'),
-                    id: Date.now().toString()
-                  };
-                  const updated = { ...candidate, educations: [...(candidate.educations || []), newEdu] };
-                  updateCandidate(updated).then(success => {
-                    if (success) {
-                      setEditMode(null);
-                      message.success('Thêm học vấn thành công!');
-                    }
-                  });
-                }}>
-                  <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px'}}>
-                    <input name='school' placeholder='Tên trường *' required style={{padding: '8px', border: '1px solid #64748b', borderRadius: '4px'}} />
-                    <input name='degree' placeholder='Bằng cấp *' required style={{padding: '8px', border: '1px solid #64748b', borderRadius: '4px'}} />
-                    <input name='major' placeholder='Chuyên ngành *' required style={{padding: '8px', border: '1px solid #64748b', borderRadius: '4px'}} />
-                    <div style={{display: 'flex', gap: '5px'}}>
-                      <input name='startDate' type='date' required style={{padding: '8px', border: '1px solid #64748b', borderRadius: '4px', flex: 1}} />
-                      <input name='endDate' type='date' style={{padding: '8px', border: '1px solid #64748b', borderRadius: '4px', flex: 1}} />
-                    </div>
-                  </div>
-                  <button type='submit' style={{background: '#64748b', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', marginRight: '10px', cursor: 'pointer'}}>
-                    <SaveOutlined /> Lưu học vấn
-                  </button>
-                  <button type='button' onClick={() => setEditMode(null)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer'}}>
-                    <CloseOutlined /> Hủy
-                  </button>
-                </form>
-              </div>
-            )}
-
-            {(candidate.educations || []).map((edu, index) => (
-              <div key={edu.id || index} style={{background: '#f8fafc', padding: '15px', borderRadius: '6px', marginBottom: '10px', border: '1px solid #e2e8f0'}}>
-                {editMode === `education-${index}` ? (
-                  <form onSubmit={(e) => {
-                    e.preventDefault();
-                    const formData = new FormData(e.target);
-                    updateEducation(index, {
-                      ...edu,
-                      school: formData.get('school'),
-                      degree: formData.get('degree'),
-                      major: formData.get('major'),
-                      startDate: formData.get('startDate'),
-                      endDate: formData.get('endDate')
-                    });
-                  }}>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px'}}>
-                      <input name='school' defaultValue={edu.school} placeholder='Trường' style={{padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
-                      <input name='degree' defaultValue={edu.degree} placeholder='Bằng cấp' style={{padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
-                      <input name='major' defaultValue={edu.major} placeholder='Chuyên ngành' style={{padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
-                      <div style={{display: 'flex', gap: '5px'}}>
-                        <input name='startDate' type='date' defaultValue={edu.startDate} style={{padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px', flex: 1}} />
-                        <input name='endDate' type='date' defaultValue={edu.endDate} style={{padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px', flex: 1}} />
-                      </div>
-                    </div>
-                    <button type='submit' style={{background: '#64748b', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', marginRight: '5px', cursor: 'pointer'}}>
-                      <SaveOutlined /> Lưu
-                    </button>
-                    <button type='button' onClick={() => setEditMode(null)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer'}}>
-                      <CloseOutlined /> Hủy
-                    </button>
-                  </form>
-                ) : (
-                  <div>
-                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start'}}>
-                      <div>
-                        <div><strong>{edu.school}</strong></div>
-                        <div>{edu.degree} - {edu.major}</div>
-                        <div style={{fontSize: '12px', color: '#64748b'}}>{edu.startDate} - {edu.endDate || 'Hiện tại'}</div>
-                      </div>
-                      <div>
-                        <button onClick={() => setEditMode(`education-${index}`)} style={{background: '#64748b', color: 'white', border: 'none', padding: '3px 8px', borderRadius: '4px', marginRight: '5px', fontSize: '12px', cursor: 'pointer'}}>
-                          <EditOutlined /> Sửa
-                        </button>
-                        <button onClick={() => deleteEducation(index)} style={{background: '#e11d48', color: 'white', border: 'none', padding: '3px 8px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer'}}>
-                          <DeleteOutlined /> Xóa
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Work Experience */}
-          <div style={{background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '20px', border: '1px solid #e2e8f0'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
-              <h3 style={{color: '#334155', margin: 0}}><BankOutlined /> Kinh nghiệm ({(candidate.workExperiences || []).length})</h3>
-              <button onClick={() => setEditMode(editMode === 'new-experience' ? null : 'new-experience')} style={{background: '#64748b', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer'}}>
-                {editMode === 'new-experience' ? <><CloseOutlined /> Hủy</> : <><PlusOutlined /> Thêm mới</>}
-              </button>
-            </div>
-            
-            {/* New Experience Form */}
-            {editMode === 'new-experience' && (
-              <div style={{background: '#f8fafc', padding: '15px', borderRadius: '6px', marginBottom: '15px', border: '2px dashed #e2e8f0'}}>
-                <h4 style={{color: '#334155', marginBottom: '10px'}}><PlusOutlined /> Thêm kinh nghiệm mới</h4>
-                <form onSubmit={(e) => {
-                  e.preventDefault();
-                  const formData = new FormData(e.target);
-                  const newExp = {
-                    company: formData.get('company'),
-                    position: formData.get('position'),
-                    startDate: formData.get('startDate'),
-                    endDate: formData.get('endDate'),
-                    description: formData.get('description'),
-                    id: Date.now().toString()
-                  };
-                  const updated = { ...candidate, workExperiences: [...(candidate.workExperiences || []), newExp] };
-                  updateCandidate(updated).then(success => {
-                    if (success) {
-                      setEditMode(null);
-                      message.success('Thêm kinh nghiệm thành công!');
-                    }
-                  });
-                }}>
-                  <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px'}}>
-                    <input name='company' placeholder='Tên công ty *' required style={{padding: '8px', border: '1px solid #64748b', borderRadius: '4px'}} />
-                    <input name='position' placeholder='Vị trí công việc *' required style={{padding: '8px', border: '1px solid #64748b', borderRadius: '4px'}} />
-                    <input name='startDate' type='date' required style={{padding: '8px', border: '1px solid #64748b', borderRadius: '4px'}} />
-                    <input name='endDate' type='date' style={{padding: '8px', border: '1px solid #64748b', borderRadius: '4px'}} />
-                  </div>
-                  <textarea name='description' placeholder='Mô tả công việc và thành tích...' style={{width: '100%', padding: '8px', border: '1px solid #64748b', borderRadius: '4px', minHeight: '60px', marginBottom: '10px'}} />
-                  <button type='submit' style={{background: '#64748b', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', marginRight: '10px', cursor: 'pointer'}}>
-                    <SaveOutlined /> Lưu kinh nghiệm
-                  </button>
-                  <button type='button' onClick={() => setEditMode(null)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer'}}>
-                    <CloseOutlined /> Hủy
-                  </button>
-                </form>
-              </div>
-            )}
-
-            {(candidate.workExperiences || []).map((exp, index) => (
-              <div key={exp.id || index} style={{background: '#f8fafc', padding: '15px', borderRadius: '6px', marginBottom: '10px', border: '1px solid #e2e8f0'}}>
-                {editMode === `experience-${index}` ? (
-                  <form onSubmit={(e) => {
-                    e.preventDefault();
-                    const formData = new FormData(e.target);
-                    updateExperience(index, {
-                      ...exp,
-                      company: formData.get('company'),
-                      position: formData.get('position'),
-                      startDate: formData.get('startDate'),
-                      endDate: formData.get('endDate'),
-                      description: formData.get('description')
-                    });
-                  }}>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px'}}>
-                      <input name='company' defaultValue={exp.company} placeholder='Công ty' style={{padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
-                      <input name='position' defaultValue={exp.position} placeholder='Vị trí' style={{padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
-                      <input name='startDate' type='date' defaultValue={exp.startDate} style={{padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
-                      <input name='endDate' type='date' defaultValue={exp.endDate} style={{padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
-                    </div>
-                    <textarea name='description' defaultValue={exp.description} placeholder='Mô tả công việc' style={{width: '100%', padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px', minHeight: '60px', marginBottom: '10px'}} />
-                    <button type='submit' style={{background: '#64748b', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', marginRight: '5px', cursor: 'pointer'}}>
-                      <SaveOutlined /> Lưu
-                    </button>
-                    <button type='button' onClick={() => setEditMode(null)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer'}}>
-                      <CloseOutlined /> Hủy
-                    </button>
-                  </form>
-                ) : (
-                  <div>
-                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start'}}>
-                      <div>
-                        <div><strong>{exp.company}</strong></div>
-                        <div>{exp.position}</div>
-                        <div style={{fontSize: '12px', color: '#64748b'}}>{exp.startDate} - {exp.endDate || 'Hiện tại'}</div>
-                        {exp.description && <div style={{marginTop: '5px', fontSize: '14px'}}>{exp.description}</div>}
-                      </div>
-                      <div>
-                        <button onClick={() => setEditMode(`experience-${index}`)} style={{background: '#64748b', color: 'white', border: 'none', padding: '3px 8px', borderRadius: '4px', marginRight: '5px', fontSize: '12px', cursor: 'pointer'}}>
-                          <EditOutlined /> Sửa
-                        </button>
-                        <button onClick={() => deleteExperience(index)} style={{background: '#e11d48', color: 'white', border: 'none', padding: '3px 8px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer'}}>
-                          <DeleteOutlined /> Xóa
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Certifications */}
-          <div style={{background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '20px', border: '1px solid #e2e8f0'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
-              <h3 style={{color: '#334155', margin: 0}}><TrophyOutlined /> Chứng chỉ ({(candidate.certifications || []).length})</h3>
-              <button onClick={() => setEditMode(editMode === 'new-certification' ? null : 'new-certification')} style={{background: '#64748b', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer'}}>
-                {editMode === 'new-certification' ? <><CloseOutlined /> Hủy</> : <><PlusOutlined /> Thêm mới</>}
-              </button>
-            </div>
-            
-            {/* New Certification Form */}
-            {editMode === 'new-certification' && (
-              <div style={{background: '#f8fafc', padding: '15px', borderRadius: '6px', marginBottom: '15px', border: '2px dashed #e2e8f0'}}>
-                <h4 style={{color: '#334155', marginBottom: '10px'}}><PlusOutlined /> Thêm chứng chỉ mới</h4>
-                <form onSubmit={(e) => {
-                  e.preventDefault();
-                  const formData = new FormData(e.target);
-                  const newCert = {
-                    name: formData.get('name'),
-                    organization: formData.get('organization'),
-                    issueDate: formData.get('issueDate'),
-                    expiryDate: formData.get('expiryDate'),
-                    id: Date.now().toString()
-                  };
-                  const updated = { ...candidate, certifications: [...(candidate.certifications || []), newCert] };
-                  updateCandidate(updated).then(success => {
-                    if (success) {
-                      setEditMode(null);
-                      message.success('Thêm chứng chỉ thành công!');
-                    }
-                  });
-                }}>
-                  <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px'}}>
-                    <input name='name' placeholder='Tên chứng chỉ *' required style={{padding: '8px', border: '1px solid #64748b', borderRadius: '4px'}} />
-                    <input name='organization' placeholder='Tổ chức cấp *' required style={{padding: '8px', border: '1px solid #64748b', borderRadius: '4px'}} />
-                    <input name='issueDate' type='date' required style={{padding: '8px', border: '1px solid #64748b', borderRadius: '4px'}} />
-                    <input name='expiryDate' type='date' style={{padding: '8px', border: '1px solid #64748b', borderRadius: '4px'}} placeholder='Ngày hết hạn (tùy chọn)' />
-                  </div>
-                  <button type='submit' style={{background: '#64748b', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', marginRight: '10px', cursor: 'pointer'}}>
-                    <SaveOutlined /> Lưu chứng chỉ
-                  </button>
-                  <button type='button' onClick={() => setEditMode(null)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer'}}>
-                    <CloseOutlined /> Hủy
-                  </button>
-                </form>
-              </div>
-            )}
-
-            {(candidate.certifications || []).map((cert, index) => (
-              <div key={cert.id || index} style={{background: '#f8fafc', padding: '15px', borderRadius: '6px', marginBottom: '10px', border: '1px solid #e2e8f0'}}>
-                {editMode === `certification-${index}` ? (
-                  <form onSubmit={(e) => {
-                    e.preventDefault();
-                    const formData = new FormData(e.target);
-                    updateCertification(index, {
-                      ...cert,
-                      name: formData.get('name'),
-                      organization: formData.get('organization'),
-                      issueDate: formData.get('issueDate'),
-                      expiryDate: formData.get('expiryDate')
-                    });
-                  }}>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px'}}>
-                      <input name='name' defaultValue={cert.name} placeholder='Tên chứng chỉ' style={{padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
-                      <input name='organization' defaultValue={cert.organization} placeholder='Tổ chức cấp' style={{padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
-                      <input name='issueDate' type='date' defaultValue={cert.issueDate} style={{padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
-                      <input name='expiryDate' type='date' defaultValue={cert.expiryDate} placeholder='Ngày hết hạn (tùy chọn)' style={{padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
-                    </div>
-                    <button type='submit' style={{background: '#64748b', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', marginRight: '5px', cursor: 'pointer'}}>
-                      <SaveOutlined /> Lưu
-                    </button>
-                    <button type='button' onClick={() => setEditMode(null)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer'}}>
-                      <CloseOutlined /> Hủy
-                    </button>
-                  </form>
-                ) : (
-                  <div>
-                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start'}}>
-                      <div>
-                        <div><strong>{cert.name}</strong></div>
-                        <div>{cert.organization}</div>
-                        <div style={{fontSize: '12px', color: '#64748b'}}>
-                          Cấp: {cert.issueDate} {cert.expiryDate && `- Hết hạn: ${cert.expiryDate}`}
-                        </div>
-                      </div>
-                      <div>
-                        <button onClick={() => setEditMode(`certification-${index}`)} style={{background: '#64748b', color: 'white', border: 'none', padding: '3px 8px', borderRadius: '4px', marginRight: '5px', fontSize: '12px', cursor: 'pointer'}}>
-                          <EditOutlined /> Sửa
-                        </button>
-                        <button onClick={() => deleteCertification(index)} style={{background: '#e11d48', color: 'white', border: 'none', padding: '3px 8px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer'}}>
-                          <DeleteOutlined /> Xóa
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          
+      {/* ---------- thông tin cá nhân ---------- */}
+      <div className="panel">
+        <div className="panel__head">
+          <h2 className="panel__title"><UserOutlined /> Thông tin cá nhân</h2>
+          {!editPersonal && (
+            <Button icon={<EditOutlined />} onClick={() => {
+              personalForm.setFieldsValue(candidate);
+              setEditPersonal(true);
+            }}>
+              Sửa
+            </Button>
+          )}
         </div>
-      )}
-    </div>
+
+        {editPersonal ? (
+          <Form form={personalForm} layout="vertical" onFinish={savePersonal}>
+            <Row gutter={16}>
+              <Col xs={24} sm={12}><Form.Item name="firstName" label="Tên"><Input /></Form.Item></Col>
+              <Col xs={24} sm={12}><Form.Item name="lastName" label="Họ"><Input /></Form.Item></Col>
+              <Col xs={24} sm={12}><Form.Item name="email" label="Email"><Input /></Form.Item></Col>
+              <Col xs={24} sm={12}><Form.Item name="phone" label="Điện thoại"><Input /></Form.Item></Col>
+              <Col span={24}><Form.Item name="address" label="Địa chỉ"><Input /></Form.Item></Col>
+              <Col span={24}><Form.Item name="headline" label="Tiêu đề nghề nghiệp"><Input /></Form.Item></Col>
+              <Col span={24}>
+                <Form.Item name="summary" label="Giới thiệu bản thân">
+                  <Input.TextArea rows={4} />
+                </Form.Item>
+              </Col>
+            </Row>
+            <div className="row-3">
+              <Button type="primary" htmlType="submit" loading={saving}>Lưu thông tin</Button>
+              <Button onClick={() => setEditPersonal(false)}>Huỷ</Button>
+            </div>
+          </Form>
+        ) : (
+          <>
+            <div className="info-grid">
+              <div>
+                <div className="info-item__label">Họ và tên</div>
+                <div className="info-item__value">{fullName || '—'}</div>
+              </div>
+              <div>
+                <div className="info-item__label">Email</div>
+                <div className="info-item__value"><MailOutlined className="faint" /> {candidate.email || '—'}</div>
+              </div>
+              <div>
+                <div className="info-item__label">Điện thoại</div>
+                <div className="info-item__value"><PhoneOutlined className="faint" /> {candidate.phone || '—'}</div>
+              </div>
+              <div>
+                <div className="info-item__label">Địa chỉ</div>
+                <div className="info-item__value"><EnvironmentOutlined className="faint" /> {candidate.address || '—'}</div>
+              </div>
+            </div>
+
+            {candidate.summary && (
+              <div style={{ marginTop: 'var(--sp-5)' }}>
+                <div className="info-item__label">Giới thiệu</div>
+                <p style={{ margin: '4px 0 0', lineHeight: 1.7 }}>{candidate.summary}</p>
+              </div>
+            )}
+
+            {Array.isArray(candidate.skills) && candidate.skills.length > 0 && (
+              <div style={{ marginTop: 'var(--sp-5)' }}>
+                <div className="info-item__label">Kỹ năng</div>
+                <div style={{ marginTop: 6, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {candidate.skills.map((s) => <Tag key={s} color="processing">{s}</Tag>)}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* ---------- 3 nhóm mục lặp lại ---------- */}
+      {Object.entries(SECTIONS).map(([key, cfg]) => {
+        const list = candidate[key] || [];
+        return (
+          <div className="panel" key={key}>
+            <div className="panel__head">
+              <h2 className="panel__title">{cfg.icon} {cfg.label} ({list.length})</h2>
+              <Button icon={<PlusOutlined />} onClick={() => openEntry(key)}>Thêm mới</Button>
+            </div>
+
+            {list.length === 0 ? (
+              <p className="muted" style={{ margin: 0 }}>Chưa có thông tin. Bấm “Thêm mới” để bổ sung.</p>
+            ) : (
+              list.map((item, i) => (
+                <div className="entry" key={item.id || i}>
+                  <div className="entry__head">
+                    <div className="grow">
+                      <h3 className="entry__title">{cfg.titleOf(item) || '—'}</h3>
+                      <div className="entry__meta">{cfg.metaOf(item)}</div>
+                      <div className="entry__meta">
+                        {key === 'certifications'
+                          ? [fmtDate(item.issueDate), item.expiryDate ? `hết hạn ${fmtDate(item.expiryDate)}` : null]
+                              .filter(Boolean).join(' · ')
+                          : period(item.startDate, item.endDate)}
+                      </div>
+                    </div>
+                    <div className="entry__actions">
+                      <Button size="small" icon={<EditOutlined />} onClick={() => openEntry(key, i)} />
+                      <Button size="small" danger icon={<DeleteOutlined />} onClick={() => removeEntry(key, i)} />
+                    </div>
+                  </div>
+                  {item.description && (
+                    <p className="muted" style={{ margin: '6px 0 0', fontSize: 'var(--fs-sm)' }}>
+                      {item.description}
+                    </p>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        );
+      })}
+
+      {/* ---------- hộp thoại thêm / sửa ---------- */}
+      <Modal
+        open={!!editing}
+        title={editing
+          ? `${editing.index === null ? 'Thêm' : 'Sửa'} ${SECTIONS[editing.key].label.toLowerCase()}`
+          : ''}
+        onCancel={() => { setEditing(null); form.resetFields(); }}
+        onOk={() => form.submit()}
+        okText="Lưu"
+        cancelText="Huỷ"
+        confirmLoading={saving}
+        destroyOnClose
+        width={620}
+      >
+        <Form form={form} layout="vertical" onFinish={saveEntry} style={{ marginTop: 'var(--sp-4)' }}>
+          <Row gutter={16}>
+            {editing && SECTIONS[editing.key].fields.map(renderField)}
+          </Row>
+        </Form>
+      </Modal>
+    </>
   );
 };
 

@@ -1,0 +1,361 @@
+/* ============================================================
+   LỚP BỐ CỤC DÙNG CHUNG
+   ------------------------------------------------------------
+   Nạp sau tokens.css. Chuẩn hoá khoảng cách, chia cột và cách
+   xếp thẻ cho mọi trang, thay cho việc mỗi trang tự viết inline
+   style với padding/màu hardcode riêng.
+   ============================================================ */
+
+/* ---------- KHỐI SECTION (trang chủ, trang công khai) ---------- */
+
+section[class$="-section"],
+div[class$="-section"] {
+  padding-block: var(--sp-12);
+}
+
+/* Section có nền xám để phân tách thị giác */
+.section-alt {
+  background: var(--bg-subtle);
+  border-block: 1px solid var(--border);
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-6);
+}
+
+.section-title {
+  margin: 0;
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+}
+
+.section-subtitle {
+  margin: 6px 0 0;
+  font-size: var(--fs-md);
+  color: var(--text-muted);
+}
+
+/* ---------- ĐẦU TRANG QUẢN LÝ (dashboard, danh sách) ---------- */
+
+.page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-6);
+}
+
+.page-title {
+  margin: 0;
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+}
+
+.page-desc {
+  margin: 4px 0 0;
+  font-size: var(--fs-base);
+  color: var(--text-muted);
+}
+
+.page-actions {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+/* ---------- LƯỚI THẺ THỐNG KÊ ---------- */
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-6);
+}
+
+.stat-tile {
+  padding: var(--sp-5);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-tile__label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-sm);
+  font-weight: 550;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.stat-tile__value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-tile__hint {
+  margin-top: 6px;
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+
+/* ---------- BỐ CỤC 2 CỘT: nội dung + cột phụ dính ---------- */
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: var(--sp-6);
+  align-items: start;
+}
+
+.detail-aside {
+  position: sticky;
+  top: calc(var(--header-h) + var(--sp-4));
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+@media (max-width: 991px) {
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+  .detail-aside {
+    position: static;
+  }
+}
+
+/* ---------- BỐ CỤC LỌC: sidebar + danh sách ---------- */
+
+.filter-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: var(--sp-6);
+  align-items: start;
+}
+
+.filter-aside {
+  position: sticky;
+  top: calc(var(--header-h) + var(--sp-4));
+  padding: var(--sp-4);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 991px) {
+  .filter-layout {
+    grid-template-columns: 1fr;
+  }
+  .filter-aside {
+    position: static;
+  }
+}
+
+/* ---------- LƯỚI THẺ (việc làm, công ty, mẫu CV) ---------- */
+
+.card-grid {
+  display: grid;
+  gap: var(--sp-4);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+/* Các thẻ trong cùng một hàng phải cao bằng nhau */
+.card-grid > * {
+  height: 100%;
+}
+
+.card-grid .ant-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-grid .ant-card-body {
+  flex: 1 1 auto;
+}
+
+/* ---------- KHỐI NỘI DUNG DẠNG THẺ ---------- */
+
+.panel {
+  padding: var(--sp-5);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.panel + .panel {
+  margin-top: var(--sp-4);
+}
+
+.panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  padding-bottom: var(--sp-3);
+  margin-bottom: var(--sp-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.panel__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: var(--fs-md);
+  font-weight: 650;
+  color: var(--text-strong);
+}
+
+/* ---------- DANH SÁCH THÔNG TIN dạng nhãn / giá trị ---------- */
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--sp-4) var(--sp-6);
+}
+
+.info-item__label {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-faint);
+  margin-bottom: 2px;
+}
+
+.info-item__value {
+  font-size: var(--fs-base);
+  color: var(--text-strong);
+  word-break: break-word;
+}
+
+/* ---------- MỤC CÓ THỂ LẶP (kinh nghiệm, học vấn...) ---------- */
+
+.entry {
+  padding: var(--sp-4);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-subtle);
+}
+
+.entry + .entry {
+  margin-top: var(--sp-3);
+}
+
+.entry__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-bottom: 6px;
+}
+
+.entry__title {
+  margin: 0;
+  font-size: var(--fs-base);
+  font-weight: 650;
+  color: var(--text-strong);
+}
+
+.entry__meta {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.entry__actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   TRANG DANH SÁCH VIỆC LÀM (JobsPage / SearchPage)
+   Hai trang này dùng antd Row/Col chia 6/18 sẵn có. Không dựng lại
+   JSX, chỉ nhắm vào các class đang có để sửa 2 vấn đề:
+   1. Cột lọc không dính khi cuộn -> phải cuộn lên đầu mới lọc được
+   2. Thẻ việc làm trong cùng một hàng cao thấp khác nhau
+   ============================================================ */
+
+.filter-sidebar {
+  align-self: flex-start;
+}
+
+.filter-sidebar > .ant-card {
+  position: sticky;
+  top: calc(var(--header-h) + var(--sp-4));
+}
+
+/* Thẻ việc làm cao bằng nhau trong mỗi hàng.
+   JobCard là <div className="job-card">, antd Col không tự cân chiều cao. */
+.ant-col > .job-card,
+.ant-col > .company-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ant-col > .job-card > .job-card-footer,
+.ant-col > .company-card > .card-footer {
+  margin-top: auto;
+}
+
+/* Khung trang danh sách việc làm (JobsPage và SearchPage cùng dùng) */
+.job-search-page {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: var(--sp-6) var(--sp-4) var(--sp-12);
+}
+
+/* ---------- BẢNG: cuộn ngang trong khung, không tràn trang ---------- */
+
+.table-wrap,
+.ant-table-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* ---------- TIỆN ÍCH ---------- */
+
+.stack-4 { display: flex; flex-direction: column; gap: var(--sp-4); }
+.stack-3 { display: flex; flex-direction: column; gap: var(--sp-3); }
+.row-3   { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }
+.grow    { flex: 1 1 auto; min-width: 0; }
+.muted   { color: var(--text-muted); }
+.faint   { color: var(--text-faint); }
+
+.empty-box {
+  padding: var(--sp-12) var(--sp-4);
+  text-align: center;
+  color: var(--text-muted);
+}
+
+@media (max-width: 575px) {
+  section[class$="-section"],
+  div[class$="-section"] {
+    padding-block: var(--sp-8);
+  }
+  .section-title { font-size: var(--fs-xl); }
+  .stat-tile { padding: var(--sp-4); }
+  .stat-tile__value { font-size: 24px; }
+}

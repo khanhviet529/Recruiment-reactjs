@@ -251,10 +251,10 @@ const JobDetail = () => {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
-      <div className="container">
+    <div className="app-container" style={{ paddingBlock: 'var(--sp-6) var(--sp-12)' }}>
+      <div>
         {/* Job Header */}
-        <Card style={{ marginBottom: 20 }}>
+        <Card style={{ marginBottom: "var(--sp-5)" }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div style={{ flex: 1 }}>
               <Title level={2}>{job.title || 'Tiêu đề công việc'}</Title>
@@ -309,11 +309,11 @@ const JobDetail = () => {
         </Card>
 
         {/* Job Content */}
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px' }}>
-          {/* Main content */}
-          <div>
+        <div className="detail-layout">
+          {/* Cot noi dung chinh */}
+          <div className="stack-4">
             {/* Description */}
-            <Card title={<><FileTextOutlined /> Mô tả công việc</>} style={{ marginBottom: 16 }}>
+            <Card title={<><FileTextOutlined /> Mô tả công việc</>}>
               <Paragraph>
                 <div dangerouslySetInnerHTML={{ __html: job.description || 'Không có mô tả' }} />
               </Paragraph>
@@ -329,8 +329,8 @@ const JobDetail = () => {
             {job.responsibilities && renderList(job.responsibilities, <><CheckCircleOutlined /> Trách nhiệm công việc</>)}
           </div>
 
-          {/* Sidebar */}
-          <div>
+          {/* Cot phu: dinh lai khi cuon */}
+          <aside className="detail-aside">
             <Card title="Thông tin ứng tuyển">
               <div style={{ marginBottom: 12 }}>
                 <Text strong>Số lượng tuyển: </Text>
@@ -376,7 +376,7 @@ const JobDetail = () => {
                 </div>
               </Card>
             )}
-          </div>
+          </aside>
         </div>
       </div>
 
@@ -389,8 +389,6 @@ const JobDetail = () => {
         open={applyDrawerVisible}
         bodyStyle={{ paddingBottom: 80 }}
       >
-        {console.log('Drawer render - applyDrawerVisible:', applyDrawerVisible)}
-        {console.log('Passing jobId to ApplicationForm:', id, 'Type:', typeof id)}
         <ApplicationForm 
           jobId={id}
           jobTitle={job?.title}

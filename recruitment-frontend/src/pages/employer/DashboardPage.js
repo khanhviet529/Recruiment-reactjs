@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Card, Row, Col, Statistic, Table, Button } from 'antd';
+import { Table, Button } from 'antd';
 import {
   FileOutlined,
   UserOutlined,
@@ -190,96 +190,59 @@ const DashboardPage = () => {
     },
   ];
 
+  const TILES = [
+    { label: 'Tin tuyển dụng', value: stats.totalJobs, icon: <FileOutlined />,
+      hint: `${stats.activeJobs} tin đang hoạt động` },
+    { label: 'Đơn ứng tuyển', value: stats.totalApplications, icon: <UserOutlined />,
+      hint: `${stats.newApplications} đơn mới chưa xem` },
+    { label: 'Đang đánh giá', value: stats.interviewsScheduled, icon: <ClockCircleOutlined />,
+      hint: 'Ứng viên ở vòng phỏng vấn / đánh giá' },
+    { label: 'Đã tuyển', value: stats.hiredCandidates, icon: <CheckCircleOutlined />,
+      hint: 'Ứng viên đã nhận việc' },
+  ];
+
   return (
-    <div className="employer-dashboard">
-      <div className="dashboard-header mb-4">
-        <h2>Bảng điều khiển</h2>
-        <div className="quick-actions">
+    <>
+      <div className="page-head">
+        <div>
+          <h1 className="page-title">Bảng điều khiển</h1>
+          <p className="page-desc">Tổng quan tin tuyển dụng và đơn ứng tuyển của công ty</p>
+        </div>
+        <div className="page-actions">
           <Link to="/employer/jobs/new">
-            <Button type="primary" icon={<FileOutlined />} className="me-2">
-              Đăng tin tuyển dụng
-            </Button>
+            <Button type="primary" icon={<FileOutlined />}>Đăng tin tuyển dụng</Button>
           </Link>
+          <Link to="/employer/jobs"><Button>Quản lý tin</Button></Link>
         </div>
       </div>
 
-      <Row gutter={[16, 16]} className="mb-4">
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <Card>
-            <Statistic
-              title="Tổng số tin tuyển dụng"
-              value={stats.totalJobs}
-              prefix={<FileOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <Card>
-            <Statistic
-              title="Tin đang hoạt động"
-              value={stats.activeJobs}
-              prefix={<FileOutlined />}
-              valueStyle={{ color: '#3f8600' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <Card>
-            <Statistic
-              title="Tổng số đơn ứng tuyển"
-              value={stats.totalApplications}
-              prefix={<UserOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <Card>
-            <Statistic
-              title="Đơn mới"
-              value={stats.newApplications}
-              prefix={<UserOutlined />}
-              valueStyle={{ color: '#cf1322' }}
-            />
-          </Card>
-        </Col>
-      </Row>
+      <div className="stat-grid">
+        {TILES.map((t) => (
+          <div className="stat-tile" key={t.label}>
+            <div className="stat-tile__label">{t.icon} {t.label}</div>
+            <div className="stat-tile__value">{t.value}</div>
+            <div className="stat-tile__hint">{t.hint}</div>
+          </div>
+        ))}
+      </div>
 
-      <Row gutter={[16, 16]} className="mb-4">
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <Card>
-            <Statistic
-              title="Lịch phỏng vấn"
-              value={stats.interviewsScheduled}
-              prefix={<ClockCircleOutlined />}
-              valueStyle={{ color: '#4f46e5' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <Card>
-            <Statistic
-              title="Ứng viên đã tuyển"
-              value={stats.hiredCandidates}
-              prefix={<CheckCircleOutlined />}
-              valueStyle={{ color: '#3f8600' }}
-            />
-          </Card>
-        </Col>
-      </Row>
-
-      <Card
-        title="Đơn ứng tuyển gần đây"
-        extra={<Link to="/employer/applications">Xem tất cả</Link>}
-      >
-        <Table
-          columns={columns}
-          dataSource={recentApplications}
-          rowKey="id"
-          loading={loading}
-          pagination={false}
-        />
-      </Card>
-    </div>
+      <div className="panel">
+        <div className="panel__head">
+          <h2 className="panel__title">Đơn ứng tuyển gần đây</h2>
+          <Link to="/employer/applications">Xem tất cả</Link>
+        </div>
+        <div className="table-wrap">
+          <Table
+            columns={columns}
+            dataSource={recentApplications}
+            rowKey="id"
+            loading={loading}
+            pagination={false}
+            locale={{ emptyText: 'Chưa có đơn ứng tuyển nào' }}
+          />
+        </div>
+      </div>
+    </>
   );
 };
 

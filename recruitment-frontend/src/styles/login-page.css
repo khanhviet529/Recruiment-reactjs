@@ -14,20 +14,36 @@
   min-height: 100vh;
 }
 
-/* Form Side */
+/* Form Side
+   Truoc day form chiem tron 60% chieu rong. Tren man hinh 1920px nghia la
+   o input keo dai gan 1000px - rat kho doc va nhin roi mat. Nay gioi han
+   be rong noi dung va can giua lai. */
 .form-side {
   width: 60%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 2rem 4rem;
-  background-color: #fff;
+  align-items: center;
+  padding: var(--sp-8) var(--sp-10);
+  background-color: var(--bg-surface);
 }
 
-@media (max-width: 768px) {
+/* Bo noi dung ben trong form-side dung chung mot be rong toi da */
+.form-side > * {
+  width: 100%;
+  max-width: 440px;
+}
+
+@media (max-width: 991px) {
   .form-side {
     width: 100%;
-    padding: 2rem;
+    padding: var(--sp-8) var(--sp-5);
+  }
+}
+
+@media (max-width: 575px) {
+  .form-side {
+    padding: var(--sp-6) var(--sp-4);
   }
 }
 

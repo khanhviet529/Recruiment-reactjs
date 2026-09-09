@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // LƯU Ý: tokens.css phải nạp SAU bootstrap để ghi đè được biến --bs-*
 import './styles/tokens.css';
+import './styles/layout.css';
 import './App.css';
 
 import store from './redux/store';

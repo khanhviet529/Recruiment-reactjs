@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { Card, Row, Col, Statistic, Table, Tag, Button } from 'antd';
+import { Table, Tag, Button } from 'antd';
 import {
   FileOutlined,
   UserOutlined,
@@ -208,66 +208,57 @@ const CandidateDashboardPage = () => {
     },
   ];
 
+  const TILES = [
+    { label: 'Đã ứng tuyển', value: stats.totalApplications, icon: <FileOutlined />,
+      hint: 'Tổng số đơn bạn đã gửi' },
+    { label: 'Đang chờ xử lý', value: stats.pendingApplications, icon: <ClockCircleOutlined />,
+      hint: 'Nhà tuyển dụng chưa xem' },
+    { label: 'Vào vòng đánh giá', value: stats.interviewApplications, icon: <TeamOutlined />,
+      hint: 'Đang ở vòng phỏng vấn / đánh giá' },
+    { label: 'Đã được nhận', value: stats.acceptedApplications, icon: <CheckCircleOutlined />,
+      hint: 'Đơn được chấp nhận' },
+  ];
+
   return (
-    <div className="candidate-dashboard-page">
-      <h1 className="mb-4">Bảng điều khiển Ứng viên</h1>
-      
-      <Row gutter={[16, 16]} className="mb-4">
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <Card>
-            <Statistic
-              title="Đã ứng tuyển"
-              value={stats.totalApplications}
-              prefix={<FileOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <Card>
-            <Statistic
-              title="Lời mời phỏng vấn"
-              value={stats.interviewApplications}
-              prefix={<TeamOutlined />}
-              valueStyle={{ color: '#3f8600' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <Card>
-            <Statistic
-              title="Đang chờ xử lý"
-              value={stats.pendingApplications}
-              prefix={<ClockCircleOutlined />}
-              valueStyle={{ color: '#cf1322' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <Card>
-            <Statistic
-              title="Đã được nhận"
-              value={stats.acceptedApplications}
-              prefix={<CheckCircleOutlined />}
-              valueStyle={{ color: '#3f8600' }}
-            />
-          </Card>
-        </Col>
-      </Row>
-      
-      
-      <Card
-        title="Đơn ứng tuyển gần đây"
-        extra={<Link to="/candidate/applications">Xem tất cả</Link>}
-      >
-        <Table
-          columns={columns}
-          dataSource={recentApplications}
-          rowKey="id"
-          loading={loading}
-          pagination={false}
-        />
-      </Card>
-    </div>
+    <>
+      <div className="page-head">
+        <div>
+          <h1 className="page-title">Bảng điều khiển</h1>
+          <p className="page-desc">Theo dõi tình trạng các đơn ứng tuyển của bạn</p>
+        </div>
+        <div className="page-actions">
+          <Link to="/jobs"><Button type="primary">Tìm việc làm</Button></Link>
+          <Link to="/candidate/applications"><Button>Xem tất cả đơn</Button></Link>
+        </div>
+      </div>
+
+      <div className="stat-grid">
+        {TILES.map((t) => (
+          <div className="stat-tile" key={t.label}>
+            <div className="stat-tile__label">{t.icon} {t.label}</div>
+            <div className="stat-tile__value">{t.value}</div>
+            <div className="stat-tile__hint">{t.hint}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="panel">
+        <div className="panel__head">
+          <h2 className="panel__title">Đơn ứng tuyển gần đây</h2>
+          <Link to="/candidate/applications">Xem tất cả</Link>
+        </div>
+        <div className="table-wrap">
+          <Table
+            columns={columns}
+            dataSource={recentApplications}
+            rowKey="id"
+            loading={loading}
+            pagination={false}
+            locale={{ emptyText: 'Bạn chưa gửi đơn ứng tuyển nào' }}
+          />
+        </div>
+      </div>
+    </>
   );
 };
 

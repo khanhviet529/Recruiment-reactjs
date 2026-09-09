@@ -375,8 +375,11 @@ const AdminDashboardPage = () => {
   
   return (
     <div className="admin-dashboard-page">
-      <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-        <Title level={2}>Bảng điều khiển</Title>
+      <div className="page-head">
+        <div>
+          <h1 className="page-title">Bảng điều khiển</h1>
+          <p className="page-desc">Tổng quan hoạt động toàn hệ thống</p>
+        </div>
         
         <Button 
           type="primary" 
@@ -406,8 +409,8 @@ const AdminDashboardPage = () => {
       ) : (
         <>
           {/* Statistics Cards */}
-          <Row gutter={16} style={{ marginBottom: 24 }}>
-            <Col span={6}>
+          <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+            <Col xs={24} sm={12} xl={6}>
               <Card>
                 <Statistic
                   title="Tổng người dùng"
@@ -427,7 +430,7 @@ const AdminDashboardPage = () => {
               </Card>
             </Col>
             
-            <Col span={6}>
+            <Col xs={24} sm={12} xl={6}>
               <Card>
                 <Statistic
                   title="Tin tuyển dụng"
@@ -448,7 +451,7 @@ const AdminDashboardPage = () => {
               </Card>
             </Col>
             
-            <Col span={6}>
+            <Col xs={24} sm={12} xl={6}>
               <Card>
                 <Statistic
                   title="Đơn ứng tuyển"
@@ -469,7 +472,7 @@ const AdminDashboardPage = () => {
               </Card>
             </Col>
             
-            <Col span={6}>
+            <Col xs={24} sm={12} xl={6}>
               <Card>
                 <Statistic
                   title="Tin nhắn hỗ trợ"
@@ -487,7 +490,7 @@ const AdminDashboardPage = () => {
           
           <Row gutter={16}>
             {/* Recent Activities */}
-            <Col span={16}>
+            <Col xs={24} lg={16}>
               <Card title="Hoạt động gần đây" style={{ minHeight: 500, overflow: 'auto' }}>
                 {recentActivities.length > 0 ? (
                   <div className="timeline-tree">
@@ -628,7 +631,7 @@ const AdminDashboardPage = () => {
             </Col>
             
             {/* Quick Actions */}
-            <Col span={8}>
+            <Col xs={24} lg={8}>
               <Card title="Tác vụ nhanh" style={{ marginBottom: 24 }}>
                 <List
                   size="large"
