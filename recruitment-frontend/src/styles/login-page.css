@@ -1,17 +1,62 @@
 /* Login Page CSS - ProHire Style */
 
+/* ============================================================
+   KHUNG NGOAI (AuthLayout)
+   ============================================================ */
+
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-topbar {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.auth-topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  height: 56px;
+}
+
+.auth-topbar__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.auth-layout > main {
+  flex: 1 1 auto;
+  display: flex;
+}
+
+.auth-layout > main > * {
+  flex: 1 1 auto;
+}
+
 /* Base Styles */
 .login-page {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
     "Helvetica Neue", sans-serif;
-  color: #333;
-  min-height: 100vh;
+  color: var(--text-body);
+  /* tru chieu cao thanh dau trang (56px) de khong bi tran ra ngoai */
+  min-height: calc(100vh - 56px);
 }
 
 /* Split Layout */
 .login-container {
   display: flex;
-  min-height: 100vh;
+  width: 100%;
+  min-height: calc(100vh - 56px);
 }
 
 /* Form Side
@@ -151,7 +196,7 @@
 }
 
 .welcome-subtext {
-  color: #666;
+  color: var(--text-muted);
   font-size: 0.9rem;
   margin-bottom: 2rem;
 }
@@ -163,8 +208,8 @@
 .form-label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #555;
+  font-weight: 550;
+  color: var(--text-body);
 }
 
 .input-wrapper {
@@ -182,7 +227,7 @@
 .form-input {
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 2.5rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-strong);
   border-radius: 4px;
   font-size: 1rem;
   transition: border-color 0.2s ease;
@@ -191,7 +236,7 @@
 .form-input:focus {
   outline: none;
   border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(0, 166, 125, 0.1);
+  box-shadow: 0 0 0 3px var(--brand-100);
 }
 
 .password-toggle {
@@ -199,7 +244,7 @@
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #999;
+  color: var(--text-faint);
   cursor: pointer;
   background: none;
   border: none;
@@ -209,7 +254,7 @@
 .forgot-password {
   display: block;
   text-align: right;
-  color: #34d399;
+  color: var(--brand);
   font-size: 0.9rem;
   text-decoration: none;
   margin-top: 0.5rem;
@@ -256,7 +301,7 @@
   top: 50%;
   width: calc(50% - 70px);
   height: 1px;
-  background-color: #ddd;
+  background-color: var(--border);
 }
 
 .social-divider::before {
@@ -314,7 +359,7 @@
 }
 
 .register-link a {
-  color: #34d399;
+  color: var(--brand);
   text-decoration: none;
   font-weight: 500;
 }
@@ -326,13 +371,13 @@
 /* Support Text */
 .support-text {
   text-align: center;
-  color: #666;
+  color: var(--text-muted);
   font-size: 0.9rem;
   margin-bottom: 1.5rem;
 }
 
 .support-text a {
-  color: #34d399;
+  color: var(--brand);
   text-decoration: none;
   font-weight: 500;
 }

@@ -1,39 +1,34 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 
-const AuthLayout = () => {
-  return (
-    <div className="auth-layout">
-      <div className="auth-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <header className="py-3 border-bottom">
-          <div className="container">
-            <div className="d-flex justify-content-between align-items-center">
-              <Link to="/" className="text-decoration-none d-flex align-items-center gap-2">
-                <img src="/image/logo-256.png" alt="" width="32" height="32" />
-                <h3 className="m-0 text-primary">ProHire</h3>
-              </Link>
-              <div>
-                <Link to="/" className="btn btn-outline-primary me-2">
-                  Trang chủ
-                </Link>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-grow-1 align-items-center py-5">
-          <Outlet />
-        </main>
-
-        <footer className="py-3 bg-light">
-          <div className="container text-center">
-            <p className="mb-0">© {new Date().getFullYear()} ProHire. Tất cả quyền được bảo lưu.</p>
-          </div>
-        </footer>
+/**
+ * Khung cho các trang đăng nhập / đăng ký.
+ *
+ * Đã bỏ 2 thứ:
+ *  - <footer> ghi dòng bản quyền: trang đăng nhập không cần chân trang,
+ *    và nó bị trùng với dòng bản quyền vốn đã có trong form.
+ *  - class `py-5` ở <main>: nó thêm 3rem padding trên và dưới, tạo ra
+ *    dải trắng giữa thanh đầu trang và nội dung. Trang đăng nhập tự
+ *    chiếm hết chiều cao nên không cần padding này.
+ */
+const AuthLayout = () => (
+  <div className="auth-layout">
+    <header className="auth-topbar">
+      <div className="app-container auth-topbar__inner">
+        <Link to="/" className="auth-topbar__brand">
+          <img src="/image/logo-256.png" alt="" width="30" height="30" />
+          <span>ProHire</span>
+        </Link>
+        <Link to="/" className="btn btn-outline-primary btn-sm">
+          Trang chủ
+        </Link>
       </div>
-    </div>
-  );
-};
+    </header>
+
+    <main>
+      <Outlet />
+    </main>
+  </div>
+);
 
 export default AuthLayout;

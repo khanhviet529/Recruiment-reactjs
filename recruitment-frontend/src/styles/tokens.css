@@ -325,6 +325,42 @@ a:hover {
 .link-primary { color: var(--brand) !important; }
 
 /* ============================================================
+   THONG BAO LOI CUA FORM
+   Class .error-message truoc day chi duoc dinh nghia BEN TRONG
+   .auth-form (assets/scss/components/_forms.scss), ma form dang nhap
+   lai khong co class do -> chu loi hien mau den nhu chu binh thuong.
+   Nay khai bao o cap toan cuc de moi form deu dung.
+   ============================================================ */
+
+.error-message,
+.field-error,
+.invalid-feedback,
+.form-error {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--danger);
+}
+
+/* Ô nhập bị lỗi: viền đỏ cho thấy rõ chỗ sai */
+.form-control.is-invalid,
+input.is-invalid,
+select.is-invalid,
+textarea.is-invalid,
+.input-error input,
+.input-error {
+  border-color: var(--danger);
+}
+
+.form-control.is-invalid:focus,
+input.is-invalid:focus,
+.input-error input:focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px var(--danger-soft);
+}
+
+/* ============================================================
    TIỆN ÍCH DÙNG CHUNG
    ============================================================ */
 

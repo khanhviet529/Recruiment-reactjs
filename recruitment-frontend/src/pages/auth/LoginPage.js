@@ -495,7 +495,6 @@ const LoginPage = () => {
             Vui lòng gọi tới số <a href="tel:(024) 6680 5588">(024) 6680 5588</a> (giờ hành chính).
           </div>
 
-          <div className="login-footer">© 2016. All Rights Reserved. ProHire Vietnam.</div>
         </div>
 
         {/* Brand Side */}
@@ -733,7 +732,6 @@ const LoginPage = () => {
             (giờ hành chính).
           </div>
 
-          <div className="login-footer">© 2016. All Rights Reserved. ProHire Vietnam.</div>
         </div>
 
         {/* Brand Side */}
@@ -896,7 +894,6 @@ const LoginPage = () => {
             )}
           </Formik>
 
-          <div className="login-footer">© 2016. All Rights Reserved. ProHire Vietnam.</div>
         </div>
 
         {/* Brand Side */}
