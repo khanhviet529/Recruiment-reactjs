@@ -1,0 +1,120 @@
+{
+  "users": [
+    {
+      "id": "5e80",
+      "email": "hr@fpt.com.vn",
+      "googleId": "",
+      "facebookId": "",
+      "firstName": "Phạm Thị",
+      "lastName": "Hương",
+      "name": "Phạm Thị Hương",
+      "role": "employer",
+      "profilePicture": "https://i.pravatar.cc/150?img=28",
+      "isVerified": true,
+      "status": "active",
+      "createdAt": "2025-07-01T14:00:00.000Z",
+      "updatedAt": "2025-07-01T14:00:00.000Z",
+      "lastLogin": "2025-07-01T14:00:00.000Z"
+    }
+  ],
+  "candidates": [],
+  "employers": [
+    {
+      "id": "7d31",
+      "userId": "5e80",
+      "companyName": "FPT Software",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/FPT_logo_2010.svg/800px-FPT_logo_2010.svg.png",
+      "coverImage": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab",
+      "description": "FPT Software là một công ty thành viên thuộc Tập đoàn FPT - công ty công nghệ lớn nhất Việt Nam. Chúng tôi cung cấp các dịch vụ và giải pháp phần mềm cho khách hàng toàn cầu.",
+      "industry": "Công nghệ thông tin",
+      "companySize": "10000+",
+      "foundedYear": 1999,
+      "website": "https://www.fpt-software.com/",
+      "socialLinks": {
+        "linkedin": "https://www.linkedin.com/company/fpt-software",
+        "facebook": "https://www.facebook.com/FPTSoftware.official",
+        "twitter": "https://twitter.com/fptsoftware"
+      },
+      "location": {
+        "address": "FPT Complex, Nam Kỳ Khởi Nghĩa",
+        "city": "Đà Nẵng",
+        "country": "Việt Nam",
+        "zipCode": "550000"
+      },
+      "contactEmail": "hr@fpt.com.vn",
+      "contactPhone": "1900 6600",
+      "benefits": [
+        "Bảo hiểm sức khỏe toàn diện",
+        "Lương tháng 13 + thưởng hiệu suất",
+        "Đào tạo chuyên môn liên tục",
+        "Cơ hội thăng tiến rõ ràng",
+        "Môi trường làm việc quốc tế",
+        "Các hoạt động team building hấp dẫn"
+      ],
+      "culture": "Tại FPT Software, chúng tôi đề cao sự sáng tạo, tinh thần đổi mới và làm việc nhóm. Chúng tôi tin rằng nhân viên là tài sản quý giá nhất và luôn tạo môi trường để họ phát triển tối đa tiềm năng.",
+      "verified": true,
+      "createdAt": "2025-07-01T14:00:00.000Z",
+      "updatedAt": "2025-07-01T14:00:00.000Z"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "j123",
+      "employerId": "7d31",
+      "title": "Senior Full Stack Developer",
+      "description": "<p>FPT Software đang tìm kiếm Senior Full Stack Developer tài năng để tham gia vào các dự án phát triển sản phẩm cho khách hàng quốc tế.</p><h3>Yêu cầu:</h3><ul><li>5+ năm kinh nghiệm phát triển web</li><li>Thành thạo JavaScript/TypeScript</li><li>Kinh nghiệm với React, Node.js</li><li>Kỹ năng tối ưu hiệu suất ứng dụng</li></ul>",
+      "requirements": [
+        "Tốt nghiệp đại học chuyên ngành CNTT hoặc tương đương",
+        "5+ năm kinh nghiệm phát triển web",
+        "Thành thạo JavaScript/TypeScript, React, Node.js",
+        "Kinh nghiệm với cơ sở dữ liệu SQL và NoSQL",
+        "Kỹ năng giải quyết vấn đề và tư duy logic tốt",
+        "Tiếng Anh giao tiếp tốt"
+      ],
+      "benefits": [
+        "Mức lương cạnh tranh từ 30-50 triệu",
+        "Thưởng dự án và hiệu suất",
+        "Bảo hiểm sức khỏe cao cấp",
+        "Làm việc từ xa 2 ngày/tuần",
+        "Đào tạo chuyên môn thường xuyên",
+        "Cơ hội thăng tiến rõ ràng"
+      ],
+      "skills": [
+        "JavaScript",
+        "TypeScript",
+        "React",
+        "Node.js",
+        "MongoDB",
+        "AWS"
+      ],
+      "type": "full-time",
+      "level": "senior",
+      "location": {
+        "address": "FPT Complex, Nam Kỳ Khởi Nghĩa",
+        "city": "Đà Nẵng",
+        "country": "Việt Nam"
+      },
+      "salary": {
+        "min": 30000000,
+        "max": 50000000,
+        "currency": "VND",
+        "isNegotiable": true
+      },
+      "applicationDeadline": "2024-08-01",
+      "startDate": "2024-08-15",
+      "status": "active",
+      "tags": [
+        "JavaScript",
+        "React",
+        "Node.js",
+        "Full Stack",
+        "Senior"
+      ],
+      "views": 245,
+      "applications": 12,
+      "createdAt": "2024-07-01T14:00:00.000Z",
+      "updatedAt": "2024-07-01T14:00:00.000Z"
+    }
+  ],
+  "applications": []
+}

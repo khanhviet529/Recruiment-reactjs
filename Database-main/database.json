@@ -1,0 +1,3448 @@
+{
+  "users": [
+    {
+      "id": "hung1",
+      "email": "hung.ungvien@gmail.com",
+      "password": "123456",
+      "phone": "0912345671",
+      "firstName": "Nguyễn Quốc",
+      "lastName": "Hưng",
+      "name": "Nguyễn Quốc Hưng",
+      "role": "applicant",
+      "profilePicture": "",
+      "isVerified": true,
+      "status": "active",
+      "googleId": "",
+      "facebookId": "",
+      "createdAt": "2026-02-10T02:15:00.000Z",
+      "updatedAt": "2026-09-09T08:30:00.000Z",
+      "lastLogin": "2026-09-09T08:30:00.000Z"
+    },
+    {
+      "id": "hung2",
+      "email": "hung.tuyendung@gmail.com",
+      "password": "123456",
+      "phone": "0912345672",
+      "firstName": "Nguyễn Quốc",
+      "lastName": "Hưng",
+      "name": "Nguyễn Quốc Hưng",
+      "role": "employer",
+      "profilePicture": "",
+      "isVerified": true,
+      "status": "active",
+      "googleId": "",
+      "facebookId": "",
+      "createdAt": "2026-01-15T03:00:00.000Z",
+      "updatedAt": "2026-09-09T08:30:00.000Z",
+      "lastLogin": "2026-09-09T08:30:00.000Z"
+    },
+    {
+      "id": "hung3",
+      "email": "hung.admin@gmail.com",
+      "password": "123456",
+      "phone": "0912345673",
+      "firstName": "Nguyễn Quốc",
+      "lastName": "Hưng",
+      "name": "Nguyễn Quốc Hưng",
+      "role": "admin",
+      "profilePicture": "",
+      "isVerified": true,
+      "status": "active",
+      "googleId": "",
+      "facebookId": "",
+      "createdAt": "2026-01-01T01:00:00.000Z",
+      "updatedAt": "2026-09-09T08:30:00.000Z",
+      "lastLogin": "2026-09-09T08:30:00.000Z"
+    },
+    {
+      "id": "6",
+      "email": "admin@gmail.com",
+      "password": "1",
+      "phone": "0987654321",
+      "role": "admin",
+      "isVerified": true,
+      "status": "active",
+      "lastLogin": "2026-07-02T06:43:04.181Z",
+      "createdAt": "2026-01-01T08:00:00.000Z",
+      "updatedAt": "2026-07-02T06:43:04.181Z",
+      "facebookId": "",
+      "googleId": ""
+    },
+    {
+      "id": "056c",
+      "email": "a@gmail.com",
+      "password": "123456",
+      "phone": "0367776632",
+      "role": "employer",
+      "isVerified": false,
+      "status": "active",
+      "createdAt": "2026-07-14T16:20:24.647Z",
+      "updatedAt": "2026-07-14T16:29:18.524Z",
+      "lastLogin": "2026-07-14T16:29:18.524Z"
+    }
+  ],
+  "employers": [
+    {
+      "id": "er-hung",
+      "userId": "hung2",
+      "companyName": "CÔNG TY TNHH CÔNG NGHỆ HƯNG PHÁT",
+      "description": "Hưng Phát Technology là công ty phát triển phần mềm thành lập năm 2019, chuyên xây dựng ứng dụng web và ứng dụng di động cho khách hàng trong nước và Nhật Bản.\n\nĐội ngũ hiện có hơn 80 kỹ sư, làm việc theo mô hình Agile với các công nghệ ReactJS, Node.js, Java Spring Boot và React Native. Công ty chú trọng đào tạo nội bộ, mỗi nhân viên có 4 giờ học tập mỗi tuần trong giờ làm việc.\n\nChúng tôi đang mở rộng quy mô và tìm kiếm những đồng nghiệp mới cho nhiều vị trí khác nhau.",
+      "industry": "Công nghệ thông tin",
+      "companySize": "25-99",
+      "foundedYear": "2019",
+      "website": "https://hungphat-tech.vn",
+      "socialLinks": {
+        "facebook": "https://facebook.com/hungphattech",
+        "linkedin": "https://linkedin.com/company/hungphattech"
+      },
+      "location": {
+        "address": "Tầng 8, Toà nhà Sunrise, 90 Trần Thái Tông, Cầu Giấy",
+        "city": "Hà Nội"
+      },
+      "contactEmail": "tuyendung@hungphat-tech.vn",
+      "contactPhone": "0912345672",
+      "benefits": [
+        "Lương tháng 13 và thưởng theo hiệu quả dự án",
+        "Bảo hiểm sức khoẻ cho bản thân và người thân",
+        "Xét tăng lương 2 lần mỗi năm",
+        "Làm việc từ xa 2 ngày mỗi tuần",
+        "Ngân sách 10 triệu/năm cho học tập và thi chứng chỉ"
+      ],
+      "verified": true,
+      "logo": "/image/company-placeholder.svg",
+      "coverImage": "/image/default-cover.jpg",
+      "createdAt": "2026-01-15T03:10:00.000Z",
+      "updatedAt": "2026-08-20T04:00:00.000Z"
+    },
+    {
+      "id": "c183",
+      "userId": "056c",
+      "companyName": "công ty A",
+      "website": "https://www.careerlink.vn/nha-tuyen-dung-hang-dau?company_size=F",
+      "companySize": "1000-4999",
+      "industry": "Healthcare",
+      "description": "",
+      "verified": false,
+      "createdAt": "2026-07-14T16:20:24.670Z",
+      "updatedAt": "2026-07-14T16:20:24.670Z"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "cd-hung",
+      "userId": "hung1",
+      "firstName": "Nguyễn Quốc",
+      "lastName": "Hưng",
+      "email": "hung.ungvien@gmail.com",
+      "phone": "0912345671",
+      "headline": "Lập trình viên Frontend (ReactJS)",
+      "summary": "Tôi là lập trình viên frontend với 3 năm kinh nghiệm làm việc với ReactJS và TypeScript. Tôi đã tham gia phát triển các hệ thống quản lý nội bộ và website thương mại điện tử, quen với việc làm việc theo Agile và phối hợp cùng đội backend qua API. Tôi đang tìm cơ hội ở vị trí có thể tham gia sâu hơn vào thiết kế giao diện và tối ưu hiệu năng ứng dụng.",
+      "avatar": "",
+      "gender": "male",
+      "dateOfBirth": "2002-04-18",
+      "nationality": "Việt Nam",
+      "maritalStatus": "single",
+      "address": "Số 25, ngõ 12 phố Duy Tân, Cầu Giấy",
+      "city": "Hà Nội",
+      "country": "Việt Nam",
+      "privacy": {
+        "showProfile": true,
+        "showContact": true,
+        "showEducation": true,
+        "showExperience": true
+      },
+      "workExperiences": [
+        {
+          "id": "we-h1",
+          "company": "Công ty CP Giải pháp số Bình Minh",
+          "position": "Lập trình viên Frontend",
+          "startDate": "2024-03-01",
+          "endDate": "",
+          "description": "Phát triển giao diện hệ thống quản lý kho bằng ReactJS và Ant Design. Tối ưu thời gian tải trang từ 4,2 giây xuống 1,6 giây.",
+          "achievements": [
+            "Giảm 60% thời gian tải trang danh sách sản phẩm",
+            "Xây dựng bộ component dùng chung cho 3 dự án"
+          ]
+        },
+        {
+          "id": "we-h2",
+          "company": "Công ty TNHH Phần mềm Đại Việt",
+          "position": "Lập trình viên Frontend (Junior)",
+          "startDate": "2023-06-01",
+          "endDate": "2024-02-28",
+          "description": "Tham gia phát triển website thương mại điện tử với ReactJS, Redux Toolkit và tích hợp cổng thanh toán VNPay.",
+          "achievements": [
+            "Hoàn thành module giỏ hàng và thanh toán"
+          ]
+        }
+      ],
+      "educations": [
+        {
+          "id": "ed-h1",
+          "school": "Đại học Công nghệ Giao thông Vận tải",
+          "degree": "Cử nhân",
+          "major": "Công nghệ thông tin",
+          "startDate": "2020-09-05",
+          "endDate": "2024-06-20",
+          "gpa": 3.42,
+          "description": "Tốt nghiệp loại Giỏi. Đồ án: Xây dựng website tuyển dụng."
+        }
+      ],
+      "certifications": [
+        {
+          "id": "cf-h1",
+          "name": "TOEIC 750",
+          "organization": "IIG Việt Nam",
+          "issueDate": "2026-01-20",
+          "expiryDate": "2028-01-20"
+        },
+        {
+          "id": "cf-h2",
+          "name": "Meta Front-End Developer",
+          "organization": "Coursera",
+          "issueDate": "2026-03-14",
+          "expiryDate": ""
+        }
+      ],
+      "skills": [
+        "JavaScript",
+        "TypeScript",
+        "React.js",
+        "Redux",
+        "HTML",
+        "CSS",
+        "RESTful API",
+        "Node.js"
+      ],
+      "languages": [
+        {
+          "name": "Tiếng Anh",
+          "proficiency": "intermediate"
+        },
+        {
+          "name": "Tiếng Nhật",
+          "proficiency": "beginner"
+        }
+      ],
+      "createdAt": "2026-02-10T02:20:00.000Z",
+      "updatedAt": "2026-09-01T07:45:00.000Z"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "j001",
+      "employerId": "hung2",
+      "title": "Lập trình viên Frontend (ReactJS)",
+      "shortDescription": "Tham gia phát triển giao diện các hệ thống web nội bộ và sản phẩm cho khách hàng Nhật Bản.",
+      "description": "<ul><li>Xây dựng giao diện web bằng ReactJS và TypeScript.</li><li>Phối hợp với đội thiết kế để hoàn thiện trải nghiệm người dùng.</li><li>Tích hợp API do đội backend cung cấp.</li><li>Tham gia review code và viết tài liệu kỹ thuật.</li></ul>",
+      "requirements": "<ul><li>Có từ 1 năm kinh nghiệm với ReactJS.</li><li>Thành thạo HTML, CSS, JavaScript ES6+.</li><li>Biết sử dụng Git và làm việc theo nhóm.</li><li>Ưu tiên ứng viên có kinh nghiệm với TypeScript hoặc Redux.</li></ul>",
+      "benefits": "<ul><li>Lương 15 - 25 triệu, thoả thuận theo năng lực.</li><li>Lương tháng 13, xét tăng lương 2 lần mỗi năm.</li><li>Làm việc từ xa 2 ngày mỗi tuần.</li><li>Bảo hiểm sức khoẻ mở rộng.</li></ul>",
+      "jobTypeId": "1",
+      "jobType": "Toàn thời gian",
+      "experienceLevelId": "2",
+      "experienceLevel": "1 - 2 năm",
+      "minExperienceYears": 1,
+      "educationLevelId": "3",
+      "educationLevel": "Cao đẳng / Đại học",
+      "salary": {
+        "min": 15000000,
+        "max": 25000000,
+        "currency": "VND",
+        "period": "monthly",
+        "isHidden": false,
+        "salaryRangeId": "3"
+      },
+      "locationId": "2",
+      "location": "Hà Nội",
+      "isRemote": false,
+      "workType": "onsite",
+      "industryIds": [
+        "1"
+      ],
+      "skills": [
+        "React.js",
+        "TypeScript",
+        "JavaScript",
+        "CSS"
+      ],
+      "categories": [
+        "Frontend Development"
+      ],
+      "positions": 3,
+      "applicationDeadline": "2026-10-15T16:59:59.000Z",
+      "deadline": "2026-10-15T16:59:59.000Z",
+      "postedAt": "2026-08-25T02:00:00.000Z",
+      "status": "active",
+      "isFeatured": true,
+      "isUrgent": false,
+      "pauseReason": "",
+      "pausedAt": null,
+      "views": 248,
+      "applications": 1,
+      "questions": [
+        {
+          "id": "1",
+          "question": "Bạn đã làm việc với ReactJS trong bao lâu và ở những dự án nào?",
+          "isRequired": true
+        },
+        {
+          "id": "2",
+          "question": "Bạn xử lý việc tối ưu hiệu năng ứng dụng React như thế nào?",
+          "isRequired": false
+        }
+      ],
+      "languages": [
+        {
+          "name": "Tiếng Anh",
+          "proficiency": "intermediate"
+        }
+      ],
+      "tags": [
+        "ReactJS",
+        "TypeScript",
+        "Frontend",
+        "Hà Nội"
+      ],
+      "visibility": "public",
+      "displayInFeed": true,
+      "allowSearch": true,
+      "premium": false,
+      "companyName": "CÔNG TY TNHH CÔNG NGHỆ HƯNG PHÁT",
+      "companyLogo": "/image/company-placeholder.svg",
+      "createdAt": "2026-08-25T02:00:00.000Z",
+      "updatedAt": "2026-08-25T02:00:00.000Z"
+    },
+    {
+      "id": "j002",
+      "employerId": "hung2",
+      "title": "Lập trình viên Backend (Node.js)",
+      "shortDescription": "Phát triển và bảo trì các API phục vụ hệ thống web và ứng dụng di động.",
+      "description": "<ul><li>Thiết kế và xây dựng API bằng Node.js, Express.</li><li>Thiết kế cấu trúc dữ liệu trên MongoDB.</li><li>Viết kiểm thử đơn vị cho các module quan trọng.</li><li>Tham gia thiết kế kiến trúc hệ thống.</li></ul>",
+      "requirements": "<ul><li>Từ 2 năm kinh nghiệm với Node.js.</li><li>Hiểu về cơ sở dữ liệu MongoDB hoặc SQL.</li><li>Biết về Docker là một lợi thế.</li><li>Có khả năng đọc tài liệu kỹ thuật tiếng Anh.</li></ul>",
+      "benefits": "<ul><li>Lương 20 - 35 triệu.</li><li>Thưởng theo dự án.</li><li>Trang bị laptop cấu hình cao.</li><li>Ngân sách học tập 10 triệu mỗi năm.</li></ul>",
+      "jobTypeId": "1",
+      "jobType": "Toàn thời gian",
+      "experienceLevelId": "3",
+      "experienceLevel": "2 - 5 năm",
+      "minExperienceYears": 2,
+      "educationLevelId": "3",
+      "educationLevel": "Cao đẳng / Đại học",
+      "salary": {
+        "min": 20000000,
+        "max": 35000000,
+        "currency": "VND",
+        "period": "monthly",
+        "isHidden": false,
+        "salaryRangeId": "5"
+      },
+      "locationId": "1",
+      "location": "Hồ Chí Minh",
+      "isRemote": false,
+      "workType": "onsite",
+      "industryIds": [
+        "1"
+      ],
+      "skills": [
+        "Node.js",
+        "Express.js",
+        "MongoDB",
+        "Docker"
+      ],
+      "categories": [
+        "Backend Development"
+      ],
+      "positions": 2,
+      "applicationDeadline": "2026-10-20T16:59:59.000Z",
+      "deadline": "2026-10-20T16:59:59.000Z",
+      "postedAt": "2026-08-28T03:30:00.000Z",
+      "status": "active",
+      "isFeatured": true,
+      "isUrgent": false,
+      "pauseReason": "",
+      "pausedAt": null,
+      "views": 193,
+      "applications": 1,
+      "questions": [
+        {
+          "id": "1",
+          "question": "Mô tả một API bạn đã thiết kế và lý do bạn chọn cách đó.",
+          "isRequired": true
+        },
+        {
+          "id": "2",
+          "question": "Bạn đã làm việc với cơ sở dữ liệu nào?",
+          "isRequired": false
+        }
+      ],
+      "languages": [
+        {
+          "name": "Tiếng Anh",
+          "proficiency": "intermediate"
+        }
+      ],
+      "tags": [
+        "Node.js",
+        "Backend",
+        "MongoDB",
+        "Hồ Chí Minh"
+      ],
+      "visibility": "public",
+      "displayInFeed": true,
+      "allowSearch": true,
+      "premium": false,
+      "companyName": "CÔNG TY TNHH CÔNG NGHỆ HƯNG PHÁT",
+      "companyLogo": "/image/company-placeholder.svg",
+      "createdAt": "2026-08-28T03:30:00.000Z",
+      "updatedAt": "2026-08-28T03:30:00.000Z"
+    },
+    {
+      "id": "j003",
+      "employerId": "hung2",
+      "title": "Kỹ sư DevOps",
+      "shortDescription": "Xây dựng và vận hành hạ tầng triển khai tự động cho các sản phẩm của công ty.",
+      "description": "<ul><li>Thiết lập và duy trì quy trình CI/CD.</li><li>Quản lý hạ tầng trên AWS.</li><li>Theo dõi và xử lý sự cố hệ thống.</li><li>Tối ưu chi phí hạ tầng.</li></ul>",
+      "requirements": "<ul><li>Từ 3 năm kinh nghiệm vận hành hệ thống.</li><li>Thành thạo Docker, Kubernetes.</li><li>Có kinh nghiệm với AWS hoặc Google Cloud.</li><li>Biết viết script bằng Bash hoặc Python.</li></ul>",
+      "benefits": "<ul><li>Lương 25 - 40 triệu.</li><li>Hỗ trợ chi phí thi chứng chỉ AWS.</li><li>Làm việc từ xa linh hoạt.</li></ul>",
+      "jobTypeId": "4",
+      "jobType": "Làm việc từ xa",
+      "experienceLevelId": "3",
+      "experienceLevel": "2 - 5 năm",
+      "minExperienceYears": 3,
+      "educationLevelId": "3",
+      "educationLevel": "Cao đẳng / Đại học",
+      "salary": {
+        "min": 25000000,
+        "max": 40000000,
+        "currency": "VND",
+        "period": "monthly",
+        "isHidden": false,
+        "salaryRangeId": "5"
+      },
+      "locationId": "3",
+      "location": "Đà Nẵng",
+      "isRemote": true,
+      "workType": "remote",
+      "industryIds": [
+        "1"
+      ],
+      "skills": [
+        "Docker",
+        "Kubernetes",
+        "AWS",
+        "Python"
+      ],
+      "categories": [
+        "DevOps"
+      ],
+      "positions": 1,
+      "applicationDeadline": "2026-10-30T16:59:59.000Z",
+      "deadline": "2026-10-30T16:59:59.000Z",
+      "postedAt": "2026-08-30T01:15:00.000Z",
+      "status": "active",
+      "isFeatured": false,
+      "isUrgent": true,
+      "pauseReason": "",
+      "pausedAt": null,
+      "views": 156,
+      "applications": 1,
+      "questions": [],
+      "languages": [
+        {
+          "name": "Tiếng Anh",
+          "proficiency": "intermediate"
+        }
+      ],
+      "tags": [
+        "DevOps",
+        "AWS",
+        "Kubernetes",
+        "Đà Nẵng"
+      ],
+      "visibility": "public",
+      "displayInFeed": true,
+      "allowSearch": true,
+      "premium": false,
+      "companyName": "CÔNG TY TNHH CÔNG NGHỆ HƯNG PHÁT",
+      "companyLogo": "/image/company-placeholder.svg",
+      "createdAt": "2026-08-30T01:15:00.000Z",
+      "updatedAt": "2026-08-30T01:15:00.000Z"
+    },
+    {
+      "id": "j004",
+      "employerId": "hung2",
+      "title": "Lập trình viên Mobile (React Native)",
+      "shortDescription": "Phát triển ứng dụng di động đa nền tảng cho khách hàng trong lĩnh vực bán lẻ.",
+      "description": "<ul><li>Phát triển ứng dụng iOS và Android bằng React Native.</li><li>Tích hợp thông báo đẩy và thanh toán trong ứng dụng.</li><li>Phối hợp kiểm thử và phát hành lên App Store, Google Play.</li></ul>",
+      "requirements": "<ul><li>Từ 1 năm kinh nghiệm với React Native.</li><li>Hiểu về vòng đời ứng dụng di động.</li><li>Đã từng phát hành ứng dụng lên store là lợi thế.</li></ul>",
+      "benefits": "<ul><li>Lương 18 - 30 triệu.</li><li>Thưởng khi phát hành sản phẩm đúng hạn.</li><li>Được cấp thiết bị kiểm thử.</li></ul>",
+      "jobTypeId": "1",
+      "jobType": "Toàn thời gian",
+      "experienceLevelId": "2",
+      "experienceLevel": "1 - 2 năm",
+      "minExperienceYears": 2,
+      "educationLevelId": "3",
+      "educationLevel": "Cao đẳng / Đại học",
+      "salary": {
+        "min": 18000000,
+        "max": 30000000,
+        "currency": "VND",
+        "period": "monthly",
+        "isHidden": false,
+        "salaryRangeId": "4"
+      },
+      "locationId": "2",
+      "location": "Hà Nội",
+      "isRemote": false,
+      "workType": "onsite",
+      "industryIds": [
+        "1"
+      ],
+      "skills": [
+        "React.js",
+        "JavaScript",
+        "RESTful API"
+      ],
+      "categories": [
+        "Mobile Development"
+      ],
+      "positions": 2,
+      "applicationDeadline": "2026-10-25T16:59:59.000Z",
+      "deadline": "2026-10-25T16:59:59.000Z",
+      "postedAt": "2026-09-01T02:00:00.000Z",
+      "status": "active",
+      "isFeatured": false,
+      "isUrgent": false,
+      "pauseReason": "",
+      "pausedAt": null,
+      "views": 134,
+      "applications": 1,
+      "questions": [],
+      "languages": [
+        {
+          "name": "Tiếng Anh",
+          "proficiency": "intermediate"
+        }
+      ],
+      "tags": [
+        "React Native",
+        "Mobile",
+        "Hà Nội"
+      ],
+      "visibility": "public",
+      "displayInFeed": true,
+      "allowSearch": true,
+      "premium": false,
+      "companyName": "CÔNG TY TNHH CÔNG NGHỆ HƯNG PHÁT",
+      "companyLogo": "/image/company-placeholder.svg",
+      "createdAt": "2026-09-01T02:00:00.000Z",
+      "updatedAt": "2026-09-01T02:00:00.000Z"
+    },
+    {
+      "id": "j005",
+      "employerId": "hung2",
+      "title": "Chuyên viên kiểm thử phần mềm (QA)",
+      "shortDescription": "Kiểm thử chức năng và viết tài liệu kiểm thử cho các dự án web, mobile.",
+      "description": "<ul><li>Đọc tài liệu yêu cầu và viết trường hợp kiểm thử.</li><li>Thực hiện kiểm thử chức năng và kiểm thử hồi quy.</li><li>Ghi nhận lỗi và theo dõi tới khi xử lý xong.</li></ul>",
+      "requirements": "<ul><li>Từ 1 năm kinh nghiệm kiểm thử phần mềm.</li><li>Biết viết test case rõ ràng, có hệ thống.</li><li>Biết kiểm thử API bằng Postman.</li></ul>",
+      "benefits": "<ul><li>Lương 12 - 20 triệu.</li><li>Đào tạo về kiểm thử tự động.</li><li>Bảo hiểm đầy đủ theo quy định.</li></ul>",
+      "jobTypeId": "1",
+      "jobType": "Toàn thời gian",
+      "experienceLevelId": "2",
+      "experienceLevel": "1 - 2 năm",
+      "minExperienceYears": 1,
+      "educationLevelId": "3",
+      "educationLevel": "Cao đẳng / Đại học",
+      "salary": {
+        "min": 12000000,
+        "max": 20000000,
+        "currency": "VND",
+        "period": "monthly",
+        "isHidden": false,
+        "salaryRangeId": "3"
+      },
+      "locationId": "2",
+      "location": "Hà Nội",
+      "isRemote": false,
+      "workType": "onsite",
+      "industryIds": [
+        "1"
+      ],
+      "skills": [
+        "RESTful API",
+        "SQL"
+      ],
+      "categories": [
+        "Công nghệ thông tin"
+      ],
+      "positions": 2,
+      "applicationDeadline": "2026-10-18T16:59:59.000Z",
+      "deadline": "2026-10-18T16:59:59.000Z",
+      "postedAt": "2026-09-02T04:00:00.000Z",
+      "status": "active",
+      "isFeatured": false,
+      "isUrgent": false,
+      "pauseReason": "",
+      "pausedAt": null,
+      "views": 98,
+      "applications": 1,
+      "questions": [],
+      "languages": [
+        {
+          "name": "Tiếng Anh",
+          "proficiency": "intermediate"
+        }
+      ],
+      "tags": [
+        "QA",
+        "Tester",
+        "Hà Nội"
+      ],
+      "visibility": "public",
+      "displayInFeed": true,
+      "allowSearch": true,
+      "premium": false,
+      "companyName": "CÔNG TY TNHH CÔNG NGHỆ HƯNG PHÁT",
+      "companyLogo": "/image/company-placeholder.svg",
+      "createdAt": "2026-09-02T04:00:00.000Z",
+      "updatedAt": "2026-09-02T04:00:00.000Z"
+    },
+    {
+      "id": "j006",
+      "employerId": "hung2",
+      "title": "Thực tập sinh Lập trình web",
+      "shortDescription": "Chương trình thực tập 4 tháng dành cho sinh viên năm cuối ngành Công nghệ thông tin.",
+      "description": "<ul><li>Tham gia dự án thực tế cùng đội phát triển.</li><li>Được hướng dẫn trực tiếp bởi lập trình viên có kinh nghiệm.</li><li>Học quy trình làm việc Agile trong doanh nghiệp.</li></ul>",
+      "requirements": "<ul><li>Sinh viên năm 3, năm 4 ngành Công nghệ thông tin.</li><li>Có kiến thức cơ bản về HTML, CSS, JavaScript.</li><li>Cam kết thực tập tối thiểu 4 tháng, 3 buổi mỗi tuần.</li></ul>",
+      "benefits": "<ul><li>Phụ cấp 4 - 6 triệu mỗi tháng.</li><li>Có cơ hội trở thành nhân viên chính thức.</li><li>Được cấp giấy xác nhận thực tập.</li></ul>",
+      "jobTypeId": "2",
+      "jobType": "Bán thời gian",
+      "experienceLevelId": "1",
+      "experienceLevel": "Dưới 1 năm",
+      "minExperienceYears": 0,
+      "educationLevelId": "3",
+      "educationLevel": "Cao đẳng / Đại học",
+      "salary": {
+        "min": 4000000,
+        "max": 6000000,
+        "currency": "VND",
+        "period": "monthly",
+        "isHidden": false,
+        "salaryRangeId": "1"
+      },
+      "locationId": "2",
+      "location": "Hà Nội",
+      "isRemote": false,
+      "workType": "onsite",
+      "industryIds": [
+        "1"
+      ],
+      "skills": [
+        "HTML",
+        "CSS",
+        "JavaScript"
+      ],
+      "categories": [
+        "Web Development"
+      ],
+      "positions": 5,
+      "applicationDeadline": "2026-09-30T16:59:59.000Z",
+      "deadline": "2026-09-30T16:59:59.000Z",
+      "postedAt": "2026-09-04T01:30:00.000Z",
+      "status": "active",
+      "isFeatured": false,
+      "isUrgent": false,
+      "pauseReason": "",
+      "pausedAt": null,
+      "views": 312,
+      "applications": 1,
+      "questions": [],
+      "languages": [
+        {
+          "name": "Tiếng Anh",
+          "proficiency": "intermediate"
+        }
+      ],
+      "tags": [
+        "Thực tập",
+        "Fresher",
+        "Hà Nội"
+      ],
+      "visibility": "public",
+      "displayInFeed": true,
+      "allowSearch": true,
+      "premium": false,
+      "companyName": "CÔNG TY TNHH CÔNG NGHỆ HƯNG PHÁT",
+      "companyLogo": "/image/company-placeholder.svg",
+      "createdAt": "2026-09-04T01:30:00.000Z",
+      "updatedAt": "2026-09-04T01:30:00.000Z"
+    },
+    {
+      "id": "j007",
+      "employerId": "hung2",
+      "title": "Chuyên viên phân tích dữ liệu",
+      "shortDescription": "Phân tích dữ liệu người dùng và xây dựng báo cáo phục vụ ra quyết định.",
+      "description": "<ul><li>Thu thập và làm sạch dữ liệu từ nhiều nguồn.</li><li>Xây dựng báo cáo và biểu đồ trực quan.</li><li>Phối hợp với các bộ phận để đề xuất cải tiến sản phẩm.</li></ul>",
+      "requirements": "<ul><li>Từ 2 năm kinh nghiệm phân tích dữ liệu.</li><li>Thành thạo SQL và Excel nâng cao.</li><li>Biết Python (pandas) là một lợi thế.</li></ul>",
+      "benefits": "<ul><li>Lương 20 - 30 triệu.</li><li>Thưởng theo kết quả kinh doanh.</li><li>Cơ hội làm việc với dữ liệu quy mô lớn.</li></ul>",
+      "jobTypeId": "1",
+      "jobType": "Toàn thời gian",
+      "experienceLevelId": "3",
+      "experienceLevel": "2 - 5 năm",
+      "minExperienceYears": 2,
+      "educationLevelId": "3",
+      "educationLevel": "Cao đẳng / Đại học",
+      "salary": {
+        "min": 20000000,
+        "max": 30000000,
+        "currency": "VND",
+        "period": "monthly",
+        "isHidden": false,
+        "salaryRangeId": "4"
+      },
+      "locationId": "1",
+      "location": "Hồ Chí Minh",
+      "isRemote": false,
+      "workType": "onsite",
+      "industryIds": [
+        "1"
+      ],
+      "skills": [
+        "SQL",
+        "Python"
+      ],
+      "categories": [
+        "Data Science"
+      ],
+      "positions": 1,
+      "applicationDeadline": "2026-10-10T16:59:59.000Z",
+      "deadline": "2026-10-10T16:59:59.000Z",
+      "postedAt": "2026-08-20T06:00:00.000Z",
+      "status": "active",
+      "isFeatured": false,
+      "isUrgent": false,
+      "pauseReason": "",
+      "pausedAt": null,
+      "views": 87,
+      "applications": 0,
+      "questions": [],
+      "languages": [
+        {
+          "name": "Tiếng Anh",
+          "proficiency": "intermediate"
+        }
+      ],
+      "tags": [
+        "Data",
+        "SQL",
+        "Python",
+        "Hồ Chí Minh"
+      ],
+      "visibility": "public",
+      "displayInFeed": true,
+      "allowSearch": true,
+      "premium": false,
+      "companyName": "CÔNG TY TNHH CÔNG NGHỆ HƯNG PHÁT",
+      "companyLogo": "/image/company-placeholder.svg",
+      "createdAt": "2026-08-20T06:00:00.000Z",
+      "updatedAt": "2026-08-20T06:00:00.000Z"
+    },
+    {
+      "id": "j008",
+      "employerId": "hung2",
+      "title": "Thiết kế giao diện người dùng (UI/UX)",
+      "shortDescription": "Thiết kế giao diện cho ứng dụng web và di động, xây dựng hệ thống thiết kế dùng chung.",
+      "description": "<ul><li>Thiết kế wireframe và giao diện chi tiết trên Figma.</li><li>Xây dựng và duy trì hệ thống thiết kế của công ty.</li><li>Phối hợp với lập trình viên để đảm bảo giao diện đúng thiết kế.</li></ul>",
+      "requirements": "<ul><li>Từ 2 năm kinh nghiệm thiết kế giao diện số.</li><li>Thành thạo Figma.</li><li>Có portfolio thể hiện các dự án đã làm.</li></ul>",
+      "benefits": "<ul><li>Lương 15 - 25 triệu.</li><li>Hỗ trợ thiết bị làm việc.</li><li>Môi trường tôn trọng ý kiến chuyên môn.</li></ul>",
+      "jobTypeId": "1",
+      "jobType": "Toàn thời gian",
+      "experienceLevelId": "3",
+      "experienceLevel": "2 - 5 năm",
+      "minExperienceYears": 2,
+      "educationLevelId": "3",
+      "educationLevel": "Cao đẳng / Đại học",
+      "salary": {
+        "min": 15000000,
+        "max": 25000000,
+        "currency": "VND",
+        "period": "monthly",
+        "isHidden": false,
+        "salaryRangeId": "3"
+      },
+      "locationId": "3",
+      "location": "Đà Nẵng",
+      "isRemote": false,
+      "workType": "onsite",
+      "industryIds": [
+        "16"
+      ],
+      "skills": [
+        "Figma",
+        "UI Design",
+        "UX Research",
+        "Prototyping"
+      ],
+      "categories": [
+        "Thiết kế / Sáng tạo"
+      ],
+      "positions": 1,
+      "applicationDeadline": "2026-10-05T16:59:59.000Z",
+      "deadline": "2026-10-05T16:59:59.000Z",
+      "postedAt": "2026-08-18T03:00:00.000Z",
+      "status": "active",
+      "isFeatured": false,
+      "isUrgent": false,
+      "pauseReason": "",
+      "pausedAt": null,
+      "views": 142,
+      "applications": 0,
+      "questions": [],
+      "languages": [
+        {
+          "name": "Tiếng Anh",
+          "proficiency": "intermediate"
+        }
+      ],
+      "tags": [
+        "UI",
+        "UX",
+        "Figma",
+        "Đà Nẵng"
+      ],
+      "visibility": "public",
+      "displayInFeed": true,
+      "allowSearch": true,
+      "premium": false,
+      "companyName": "CÔNG TY TNHH CÔNG NGHỆ HƯNG PHÁT",
+      "companyLogo": "/image/company-placeholder.svg",
+      "createdAt": "2026-08-18T03:00:00.000Z",
+      "updatedAt": "2026-08-18T03:00:00.000Z"
+    },
+    {
+      "id": "j009",
+      "employerId": "hung2",
+      "title": "Trưởng nhóm phát triển phần mềm",
+      "shortDescription": "Dẫn dắt nhóm 6 - 8 lập trình viên, chịu trách nhiệm chất lượng và tiến độ dự án.",
+      "description": "<ul><li>Phân công và theo dõi công việc của nhóm.</li><li>Tham gia thiết kế kiến trúc và review code.</li><li>Đào tạo, kèm cặp thành viên mới.</li><li>Làm việc trực tiếp với khách hàng về yêu cầu kỹ thuật.</li></ul>",
+      "requirements": "<ul><li>Từ 5 năm kinh nghiệm phát triển phần mềm, trong đó 2 năm quản lý nhóm.</li><li>Nắm vững một trong các nền tảng: Node.js, Java, .NET.</li><li>Giao tiếp tiếng Anh tốt.</li><li>Kinh nghiệm làm việc với khách hàng Nhật là lợi thế.</li></ul>",
+      "benefits": "<ul><li>Lương 40 - 60 triệu.</li><li>Thưởng theo lợi nhuận dự án.</li><li>Xét cổ phần cho vị trí quản lý.</li><li>Bảo hiểm sức khoẻ cho cả gia đình.</li></ul>",
+      "jobTypeId": "1",
+      "jobType": "Toàn thời gian",
+      "experienceLevelId": "4",
+      "experienceLevel": "5 - 10 năm",
+      "minExperienceYears": 5,
+      "educationLevelId": "3",
+      "educationLevel": "Cao đẳng / Đại học",
+      "salary": {
+        "min": 40000000,
+        "max": 60000000,
+        "currency": "VND",
+        "period": "monthly",
+        "isHidden": false,
+        "salaryRangeId": "6"
+      },
+      "locationId": "2",
+      "location": "Hà Nội",
+      "isRemote": false,
+      "workType": "onsite",
+      "industryIds": [
+        "1"
+      ],
+      "skills": [
+        "Node.js",
+        "Java",
+        "SQL",
+        "Docker"
+      ],
+      "categories": [
+        "Công nghệ thông tin"
+      ],
+      "positions": 1,
+      "applicationDeadline": "2026-09-28T16:59:59.000Z",
+      "deadline": "2026-09-28T16:59:59.000Z",
+      "postedAt": "2026-08-12T02:30:00.000Z",
+      "status": "active",
+      "isFeatured": true,
+      "isUrgent": false,
+      "pauseReason": "",
+      "pausedAt": null,
+      "views": 201,
+      "applications": 0,
+      "questions": [],
+      "languages": [
+        {
+          "name": "Tiếng Anh",
+          "proficiency": "intermediate"
+        }
+      ],
+      "tags": [
+        "Team Lead",
+        "Quản lý",
+        "Hà Nội"
+      ],
+      "visibility": "public",
+      "displayInFeed": true,
+      "allowSearch": true,
+      "premium": false,
+      "companyName": "CÔNG TY TNHH CÔNG NGHỆ HƯNG PHÁT",
+      "companyLogo": "/image/company-placeholder.svg",
+      "createdAt": "2026-08-12T02:30:00.000Z",
+      "updatedAt": "2026-08-12T02:30:00.000Z"
+    },
+    {
+      "id": "j010",
+      "employerId": "hung2",
+      "title": "Nhân viên hỗ trợ kỹ thuật (IT Helpdesk)",
+      "shortDescription": "Hỗ trợ nhân viên nội bộ về thiết bị, mạng và các ứng dụng công ty đang dùng.",
+      "description": "<ul><li>Tiếp nhận và xử lý yêu cầu hỗ trợ từ nhân viên.</li><li>Cài đặt, bảo trì máy tính và thiết bị mạng.</li><li>Quản lý tài sản thiết bị công nghệ thông tin.</li></ul>",
+      "requirements": "<ul><li>Tốt nghiệp trung cấp trở lên ngành liên quan.</li><li>Biết cài đặt Windows, xử lý sự cố phần cứng cơ bản.</li><li>Thái độ hỗ trợ nhiệt tình, kiên nhẫn.</li></ul>",
+      "benefits": "<ul><li>Lương 10 - 15 triệu.</li><li>Được đào tạo về hệ thống mạng.</li><li>Nghỉ phép 14 ngày mỗi năm.</li></ul>",
+      "jobTypeId": "1",
+      "jobType": "Toàn thời gian",
+      "experienceLevelId": "1",
+      "experienceLevel": "Dưới 1 năm",
+      "minExperienceYears": 0,
+      "educationLevelId": "2",
+      "educationLevel": "Trung cấp",
+      "salary": {
+        "min": 10000000,
+        "max": 15000000,
+        "currency": "VND",
+        "period": "monthly",
+        "isHidden": false,
+        "salaryRangeId": "2"
+      },
+      "locationId": "2",
+      "location": "Hà Nội",
+      "isRemote": false,
+      "workType": "onsite",
+      "industryIds": [
+        "1"
+      ],
+      "skills": [],
+      "categories": [
+        "Công nghệ thông tin"
+      ],
+      "positions": 2,
+      "applicationDeadline": "2026-10-08T16:59:59.000Z",
+      "deadline": "2026-10-08T16:59:59.000Z",
+      "postedAt": "2026-09-06T07:00:00.000Z",
+      "status": "active",
+      "isFeatured": false,
+      "isUrgent": false,
+      "pauseReason": "",
+      "pausedAt": null,
+      "views": 64,
+      "applications": 0,
+      "questions": [],
+      "languages": [
+        {
+          "name": "Tiếng Anh",
+          "proficiency": "intermediate"
+        }
+      ],
+      "tags": [
+        "Helpdesk",
+        "IT Support",
+        "Hà Nội"
+      ],
+      "visibility": "public",
+      "displayInFeed": true,
+      "allowSearch": true,
+      "premium": false,
+      "companyName": "CÔNG TY TNHH CÔNG NGHỆ HƯNG PHÁT",
+      "companyLogo": "/image/company-placeholder.svg",
+      "createdAt": "2026-09-06T07:00:00.000Z",
+      "updatedAt": "2026-09-06T07:00:00.000Z"
+    },
+    {
+      "id": "11db",
+      "employerId": "056c",
+      "title": "Lập trình viên Full Stack",
+      "description": "<ul><li>Phát triển ứng dụng web full stack sử dụng React và Node.js.</li><li>Thiết kế và triển khai API với MongoDB và Express.</li><li>Làm việc với đội ngũ kỹ thuật để xây dựng các tính năng mới và cải thiện hiệu suất ứng dụng.</li><li>Đảm bảo tính bảo mật và hiệu suất cho hệ thống.</li></ul><p><br></p>",
+      "shortDescription": "Tìm kiếm ứng viên cho vị trí lập trình viên full stack với khả năng làm việc cả ở frontend và backend.",
+      "requirements": [
+        "<ul><li>Tốt nghiệp đại học chuyên ngành Công nghệ thông tin hoặc các ngành liên quan.</li><li>Có kinh nghiệm làm việc với <strong>React</strong>, <strong>Node.js</strong> hoặc các công nghệ tương tự.</li><li>Hiểu biết về các cơ sở dữ liệu như <strong>MongoDB</strong>, <strong>MySQL</strong>.</li><li>Khả năng làm việc độc lập và phối hợp tốt với các nhóm khác.</li><li>Có kinh nghiệm làm việc trong môi trường <strong>agile</strong> là một lợi thế.</li></ul><p><br></p>"
+      ],
+      "benefits": [
+        "<ul><li>Mức lương cạnh tranh và thưởng theo hiệu quả công việc.</li><li>Cơ hội học hỏi và phát triển kỹ năng với các dự án quốc tế.</li><li>Chính sách bảo hiểm và các phúc lợi đầy đủ.</li><li>Môi trường làm việc thân thiện, sáng tạo và nhiều cơ hội thăng tiến.</li><li>Có thể làm việc remote linh hoạt.</li></ul><p><br></p>"
+      ],
+      "jobTypeId": "4",
+      "jobType": "Làm việc từ xa",
+      "experienceLevelId": "3",
+      "experienceLevel": "Nhân viên",
+      "minExperienceYears": 3,
+      "educationLevelId": "4",
+      "educationLevel": "Thạc sĩ",
+      "salary": {
+        "min": 2000,
+        "max": 3500,
+        "currency": "USD",
+        "period": "monthly",
+        "isHidden": false,
+        "salaryRangeId": "5"
+      },
+      "locationId": "1",
+      "location": "Remote",
+      "isRemote": true,
+      "workType": "remote",
+      "industryIds": [
+        "5",
+        "8"
+      ],
+      "skills": [],
+      "categories": [
+        "Data Science",
+        "DevOps"
+      ],
+      "positions": 2,
+      "applicationDeadline": "2026-10-12T16:59:59.000Z",
+      "postedAt": "2026-08-22T03:00:00.000Z",
+      "status": "active",
+      "isFeatured": true,
+      "isUrgent": false,
+      "pauseReason": "",
+      "pausedAt": null,
+      "views": 0,
+      "applications": 0,
+      "questions": [
+        {
+          "id": "1",
+          "question": "Mô tả kinh nghiệm của bạn với các dự án full stack?",
+          "isRequired": false
+        },
+        {
+          "id": "2",
+          "question": "Bạn đã từng làm việc remote chưa và bạn thích nghi với nó như thế nào?",
+          "isRequired": false
+        }
+      ],
+      "languages": [
+        {
+          "name": "Tiếng Anh",
+          "proficiency": "intermediate"
+        }
+      ],
+      "tags": [
+        "Remote",
+        "Full Stack",
+        "JavaScript",
+        "React",
+        "Node.js",
+        "Node.js",
+        "MongoDB",
+        "AWS"
+      ],
+      "visibility": "public",
+      "displayInFeed": true,
+      "allowSearch": true,
+      "premium": false,
+      "companyName": "Digital Enterprise",
+      "companyLogo": "/image/company-placeholder.svg",
+      "createdAt": "2026-07-14T23:27:34+07:00",
+      "updatedAt": "2026-07-14T23:27:34+07:00",
+      "deadline": "2026-10-12T16:59:59.000Z"
+    }
+  ],
+  "applications": [
+    {
+      "id": "a001",
+      "jobId": "j001",
+      "candidateId": "hung1",
+      "appliedAt": "2026-08-26T03:20:00.000Z",
+      "status": "interviewing",
+      "coverLetter": "Kính gửi bộ phận tuyển dụng,\n\nTôi rất mong muốn được ứng tuyển vào vị trí này. Với kinh nghiệm 3 năm làm việc với ReactJS, tôi tin mình có thể đóng góp cho đội ngũ của công ty.\n\nTrân trọng cảm ơn.",
+      "resume": {
+        "url": "/image/company-placeholder.svg",
+        "name": "CV - Nguyễn Quốc Hưng"
+      },
+      "resumeUrl": "/image/company-placeholder.svg",
+      "answers": [
+        {
+          "questionId": "1",
+          "question": "Bạn đã làm việc với ReactJS trong bao lâu và ở những dự án nào?",
+          "answer": "Tôi làm việc với ReactJS khoảng 3 năm, qua 4 dự án gồm hệ thống quản lý kho, website thương mại điện tử và 2 hệ thống quản trị nội bộ.",
+          "isRequired": true
+        },
+        {
+          "questionId": "2",
+          "question": "Bạn xử lý việc tối ưu hiệu năng ứng dụng React như thế nào?",
+          "answer": "Tôi thường dùng React.memo và useMemo cho các component nặng, chia nhỏ bundle bằng lazy loading, và dùng ảnh định dạng WebP. Ở dự án gần nhất tôi giảm thời gian tải trang từ 4,2 giây xuống 1,6 giây.",
+          "isRequired": false
+        }
+      ],
+      "fullName": "Nguyễn Quốc Hưng",
+      "email": "hung.ungvien@gmail.com",
+      "phone": "0912345671",
+      "stageHistory": [
+        {
+          "stage": 1,
+          "enteredAt": "2026-08-26T03:20:00.000Z",
+          "exitedAt": "2026-08-27T02:00:00.000Z",
+          "notes": "Hồ sơ đã được gửi, đang chờ xét duyệt."
+        },
+        {
+          "stage": 2,
+          "enteredAt": "2026-08-27T02:00:00.000Z",
+          "exitedAt": "2026-08-31T06:30:00.000Z",
+          "notes": "Nhà tuyển dụng đã xem hồ sơ."
+        },
+        {
+          "stage": 3,
+          "enteredAt": "2026-08-31T06:30:00.000Z",
+          "exitedAt": null,
+          "notes": "Đã gửi bài đánh giá năng lực cho ứng viên."
+        }
+      ],
+      "currentStage": 3,
+      "updatedAt": "2026-08-31T06:30:00.000Z"
+    },
+    {
+      "id": "a002",
+      "jobId": "j002",
+      "candidateId": "hung1",
+      "appliedAt": "2026-08-29T08:10:00.000Z",
+      "status": "reviewing",
+      "coverLetter": "Kính gửi bộ phận tuyển dụng,\n\nTôi rất mong muốn được ứng tuyển vào vị trí này. Với kinh nghiệm 3 năm làm việc với ReactJS, tôi tin mình có thể đóng góp cho đội ngũ của công ty.\n\nTrân trọng cảm ơn.",
+      "resume": {
+        "url": "/image/company-placeholder.svg",
+        "name": "CV - Nguyễn Quốc Hưng"
+      },
+      "resumeUrl": "/image/company-placeholder.svg",
+      "answers": [],
+      "fullName": "Nguyễn Quốc Hưng",
+      "email": "hung.ungvien@gmail.com",
+      "phone": "0912345671",
+      "stageHistory": [
+        {
+          "stage": 1,
+          "enteredAt": "2026-08-29T08:10:00.000Z",
+          "exitedAt": "2026-09-01T01:20:00.000Z",
+          "notes": "Hồ sơ đã được gửi, đang chờ xét duyệt."
+        },
+        {
+          "stage": 2,
+          "enteredAt": "2026-09-01T01:20:00.000Z",
+          "exitedAt": null,
+          "notes": "Nhà tuyển dụng đang xem xét hồ sơ."
+        }
+      ],
+      "currentStage": 2,
+      "updatedAt": "2026-09-01T01:20:00.000Z"
+    },
+    {
+      "id": "a003",
+      "jobId": "j004",
+      "candidateId": "hung1",
+      "appliedAt": "2026-09-05T02:45:00.000Z",
+      "status": "pending",
+      "coverLetter": "Kính gửi bộ phận tuyển dụng,\n\nTôi rất mong muốn được ứng tuyển vào vị trí này. Với kinh nghiệm 3 năm làm việc với ReactJS, tôi tin mình có thể đóng góp cho đội ngũ của công ty.\n\nTrân trọng cảm ơn.",
+      "resume": {
+        "url": "/image/company-placeholder.svg",
+        "name": "CV - Nguyễn Quốc Hưng"
+      },
+      "resumeUrl": "/image/company-placeholder.svg",
+      "answers": [],
+      "fullName": "Nguyễn Quốc Hưng",
+      "email": "hung.ungvien@gmail.com",
+      "phone": "0912345671",
+      "stageHistory": [
+        {
+          "stage": 1,
+          "enteredAt": "2026-09-05T02:45:00.000Z",
+          "exitedAt": null,
+          "notes": "Hồ sơ đã được gửi, đang chờ xét duyệt."
+        }
+      ],
+      "currentStage": 1,
+      "updatedAt": "2026-09-05T02:45:00.000Z"
+    },
+    {
+      "id": "a004",
+      "jobId": "j005",
+      "candidateId": "hung1",
+      "appliedAt": "2026-07-15T04:00:00.000Z",
+      "status": "rejected",
+      "coverLetter": "Kính gửi bộ phận tuyển dụng,\n\nTôi rất mong muốn được ứng tuyển vào vị trí này. Với kinh nghiệm 3 năm làm việc với ReactJS, tôi tin mình có thể đóng góp cho đội ngũ của công ty.\n\nTrân trọng cảm ơn.",
+      "resume": {
+        "url": "/image/company-placeholder.svg",
+        "name": "CV - Nguyễn Quốc Hưng"
+      },
+      "resumeUrl": "/image/company-placeholder.svg",
+      "answers": [],
+      "fullName": "Nguyễn Quốc Hưng",
+      "email": "hung.ungvien@gmail.com",
+      "phone": "0912345671",
+      "stageHistory": [
+        {
+          "stage": 1,
+          "enteredAt": "2026-07-15T04:00:00.000Z",
+          "exitedAt": "2026-07-18T03:00:00.000Z",
+          "notes": "Hồ sơ đã được gửi."
+        },
+        {
+          "stage": 2,
+          "enteredAt": "2026-07-18T03:00:00.000Z",
+          "exitedAt": null,
+          "notes": "Cảm ơn bạn đã ứng tuyển. Vị trí này cần kinh nghiệm kiểm thử tự động."
+        }
+      ],
+      "currentStage": 2,
+      "updatedAt": "2026-07-20T03:00:00.000Z"
+    },
+    {
+      "id": "a005",
+      "jobId": "j006",
+      "candidateId": "hung1",
+      "appliedAt": "2026-03-02T02:00:00.000Z",
+      "status": "hired",
+      "coverLetter": "Kính gửi bộ phận tuyển dụng,\n\nTôi rất mong muốn được ứng tuyển vào vị trí này. Với kinh nghiệm 3 năm làm việc với ReactJS, tôi tin mình có thể đóng góp cho đội ngũ của công ty.\n\nTrân trọng cảm ơn.",
+      "resume": {
+        "url": "/image/company-placeholder.svg",
+        "name": "CV - Nguyễn Quốc Hưng"
+      },
+      "resumeUrl": "/image/company-placeholder.svg",
+      "answers": [],
+      "fullName": "Nguyễn Quốc Hưng",
+      "email": "hung.ungvien@gmail.com",
+      "phone": "0912345671",
+      "stageHistory": [
+        {
+          "stage": 1,
+          "enteredAt": "2026-03-02T02:00:00.000Z",
+          "exitedAt": "2026-03-04T02:00:00.000Z",
+          "notes": "Hồ sơ đã được gửi."
+        },
+        {
+          "stage": 2,
+          "enteredAt": "2026-03-04T02:00:00.000Z",
+          "exitedAt": "2026-03-09T06:00:00.000Z",
+          "notes": "Đã xem hồ sơ."
+        },
+        {
+          "stage": 3,
+          "enteredAt": "2026-03-09T06:00:00.000Z",
+          "exitedAt": "2026-03-16T04:00:00.000Z",
+          "notes": "Hoàn thành bài đánh giá, đạt 82/100."
+        },
+        {
+          "stage": 4,
+          "enteredAt": "2026-03-16T04:00:00.000Z",
+          "exitedAt": null,
+          "notes": "Đã nhận vào thực tập từ 01/04/2026."
+        }
+      ],
+      "currentStage": 4,
+      "updatedAt": "2026-03-16T04:00:00.000Z"
+    },
+    {
+      "id": "a006",
+      "jobId": "j003",
+      "candidateId": "hung1",
+      "appliedAt": "2026-09-01T05:00:00.000Z",
+      "status": "withdrawn",
+      "coverLetter": "Kính gửi bộ phận tuyển dụng,\n\nTôi rất mong muốn được ứng tuyển vào vị trí này. Với kinh nghiệm 3 năm làm việc với ReactJS, tôi tin mình có thể đóng góp cho đội ngũ của công ty.\n\nTrân trọng cảm ơn.",
+      "resume": {
+        "url": "/image/company-placeholder.svg",
+        "name": "CV - Nguyễn Quốc Hưng"
+      },
+      "resumeUrl": "/image/company-placeholder.svg",
+      "answers": [],
+      "fullName": "Nguyễn Quốc Hưng",
+      "email": "hung.ungvien@gmail.com",
+      "phone": "0912345671",
+      "stageHistory": [
+        {
+          "stage": 1,
+          "enteredAt": "2026-09-01T05:00:00.000Z",
+          "exitedAt": null,
+          "notes": "Hồ sơ đã được gửi."
+        }
+      ],
+      "currentStage": 1,
+      "updatedAt": "2026-09-03T08:00:00.000Z",
+      "withdrawnAt": "2026-09-03T08:00:00.000Z"
+    }
+  ],
+  "recruitmentStages": [
+    {
+      "id": "rs1",
+      "employerId": "hung2",
+      "order": 1,
+      "name": "Sàng lọc hồ sơ",
+      "description": "Xem xét hồ sơ ứng viên và loại các hồ sơ không đạt yêu cầu tối thiểu.",
+      "createdAt": "2026-01-20T02:00:00.000Z",
+      "updatedAt": "2026-01-20T02:00:00.000Z"
+    },
+    {
+      "id": "rs2",
+      "employerId": "hung2",
+      "order": 2,
+      "name": "Đánh giá năng lực",
+      "description": "Ứng viên làm bài kiểm tra kỹ năng trực tuyến, hệ thống chấm điểm tự động.",
+      "createdAt": "2026-01-20T02:00:00.000Z",
+      "updatedAt": "2026-01-20T02:00:00.000Z"
+    },
+    {
+      "id": "rs3",
+      "employerId": "hung2",
+      "order": 3,
+      "name": "Phỏng vấn chuyên môn",
+      "description": "Trao đổi trực tiếp với trưởng nhóm kỹ thuật.",
+      "createdAt": "2026-01-20T02:00:00.000Z",
+      "updatedAt": "2026-01-20T02:00:00.000Z"
+    },
+    {
+      "id": "rs4",
+      "employerId": "hung2",
+      "order": 4,
+      "name": "Quyết định tuyển dụng",
+      "description": "Gửi thư mời nhận việc hoặc thư từ chối.",
+      "createdAt": "2026-01-20T02:00:00.000Z",
+      "updatedAt": "2026-01-20T02:00:00.000Z"
+    }
+  ],
+  "messages": [],
+  "notifications": [
+    {
+      "id": "n01",
+      "recipient": "hung1",
+      "type": "application_status_changed",
+      "title": "Trạng thái ứng tuyển đã thay đổi",
+      "message": "Đơn ứng tuyển vị trí Lập trình viên Frontend (ReactJS) đã chuyển sang vòng đánh giá năng lực.",
+      "link": "/candidate/applications/a001",
+      "read": false,
+      "createdAt": "2026-08-31T06:30:00.000Z",
+      "updatedAt": "2026-08-31T06:30:00.000Z",
+      "data": {}
+    },
+    {
+      "id": "n02",
+      "recipient": "hung1",
+      "type": "application_status_changed",
+      "title": "Hồ sơ đang được xem xét",
+      "message": "Nhà tuyển dụng đang xem xét hồ sơ của bạn cho vị trí Lập trình viên Backend (Node.js).",
+      "link": "/candidate/applications/a002",
+      "read": false,
+      "createdAt": "2026-09-01T01:20:00.000Z",
+      "updatedAt": "2026-09-01T01:20:00.000Z",
+      "data": {}
+    },
+    {
+      "id": "n03",
+      "recipient": "hung1",
+      "type": "job_posted",
+      "title": "Công việc mới phù hợp",
+      "message": "Có tin tuyển dụng mới: Nhân viên hỗ trợ kỹ thuật (IT Helpdesk) tại Hà Nội.",
+      "link": "/jobs/j010",
+      "read": true,
+      "createdAt": "2026-09-06T07:05:00.000Z",
+      "updatedAt": "2026-09-06T07:05:00.000Z",
+      "data": {}
+    },
+    {
+      "id": "n04",
+      "recipient": "hung2",
+      "type": "application_received",
+      "title": "Đơn ứng tuyển mới",
+      "message": "Nguyễn Quốc Hưng đã ứng tuyển vị trí Lập trình viên Mobile (React Native).",
+      "link": "/employer/applications/a003",
+      "read": false,
+      "createdAt": "2026-09-05T02:45:00.000Z",
+      "updatedAt": "2026-09-05T02:45:00.000Z",
+      "data": {}
+    },
+    {
+      "id": "n05",
+      "recipient": "hung2",
+      "type": "application_received",
+      "title": "Đơn ứng tuyển mới",
+      "message": "Nguyễn Quốc Hưng đã ứng tuyển vị trí Lập trình viên Backend (Node.js).",
+      "link": "/employer/applications/a002",
+      "read": true,
+      "createdAt": "2026-08-29T08:10:00.000Z",
+      "updatedAt": "2026-08-29T08:10:00.000Z",
+      "data": {}
+    }
+  ],
+  "savedJobs": [
+    {
+      "id": "sj01",
+      "candidateId": "hung1",
+      "jobId": "j007",
+      "createdAt": "2026-09-06T02:00:00.000Z",
+      "updatedAt": "2026-09-06T02:00:00.000Z"
+    },
+    {
+      "id": "sj02",
+      "candidateId": "hung1",
+      "jobId": "j008",
+      "createdAt": "2026-09-07T09:15:00.000Z",
+      "updatedAt": "2026-09-07T09:15:00.000Z"
+    },
+    {
+      "id": "sj03",
+      "candidateId": "hung1",
+      "jobId": "j009",
+      "createdAt": "2026-09-08T01:40:00.000Z",
+      "updatedAt": "2026-09-08T01:40:00.000Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": "1",
+      "name": "Công nghệ thông tin",
+      "label": "Công nghệ thông tin",
+      "slug": "cong-nghe-thong-tin",
+      "parentId": null,
+      "description": "Ngành nghề liên quan đến phát triển, triển khai và bảo trì hệ thống phần mềm, phần cứng và cơ sở hạ tầng công nghệ.",
+      "count": 3450,
+      "isPopular": true,
+      "displayOrder": 1,
+      "iconUrl": "https://example.com/icons/it.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "name": "Web Development",
+      "label": "Phát triển web",
+      "slug": "web-development",
+      "parentId": "1",
+      "description": "Các vị trí liên quan đến phát triển ứng dụng web, từ frontend đến backend và fullstack.",
+      "count": 1245,
+      "isPopular": true,
+      "displayOrder": 1,
+      "iconUrl": "https://example.com/icons/web-dev.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "name": "Frontend Development",
+      "label": "Phát triển frontend",
+      "slug": "frontend-development",
+      "parentId": "2",
+      "description": "Phát triển giao diện người dùng của ứng dụng web, làm việc với HTML, CSS, JavaScript và các framework.",
+      "count": 785,
+      "isPopular": true,
+      "displayOrder": 1,
+      "iconUrl": "https://example.com/icons/frontend.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "4",
+      "name": "Backend Development",
+      "label": "Phát triển backend",
+      "slug": "backend-development",
+      "parentId": "2",
+      "description": "Phát triển logic và cơ sở dữ liệu phía máy chủ của ứng dụng web.",
+      "count": 650,
+      "isPopular": true,
+      "displayOrder": 2,
+      "iconUrl": "https://example.com/icons/backend.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "5",
+      "name": "Mobile Development",
+      "label": "Phát triển ứng dụng di động",
+      "slug": "mobile-development",
+      "parentId": "1",
+      "description": "Phát triển ứng dụng cho các thiết bị di động như smartphone và tablet.",
+      "count": 890,
+      "isPopular": true,
+      "displayOrder": 2,
+      "iconUrl": "https://example.com/icons/mobile-dev.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "6",
+      "name": "iOS Development",
+      "label": "Phát triển iOS",
+      "slug": "ios-development",
+      "parentId": "5",
+      "description": "Phát triển ứng dụng cho hệ điều hành iOS của Apple.",
+      "count": 430,
+      "isPopular": false,
+      "displayOrder": 1,
+      "iconUrl": "https://example.com/icons/ios.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "7",
+      "name": "Android Development",
+      "label": "Phát triển Android",
+      "slug": "android-development",
+      "parentId": "5",
+      "description": "Phát triển ứng dụng cho hệ điều hành Android của Google.",
+      "count": 460,
+      "isPopular": false,
+      "displayOrder": 2,
+      "iconUrl": "https://example.com/icons/android.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "8",
+      "name": "DevOps",
+      "label": "DevOps",
+      "slug": "devops",
+      "parentId": "1",
+      "description": "Kết hợp phát triển phần mềm và vận hành IT để rút ngắn chu kỳ phát triển và cung cấp liên tục.",
+      "count": 320,
+      "isPopular": false,
+      "displayOrder": 3,
+      "iconUrl": "https://example.com/icons/devops.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "9",
+      "name": "Data Science",
+      "label": "Khoa học dữ liệu",
+      "slug": "data-science",
+      "parentId": "1",
+      "description": "Sử dụng các phương pháp khoa học, quy trình, thuật toán và hệ thống để trích xuất kiến thức và thông tin từ dữ liệu.",
+      "count": 280,
+      "isPopular": false,
+      "displayOrder": 4,
+      "iconUrl": "https://example.com/icons/data-science.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "10",
+      "name": "Marketing",
+      "label": "Marketing",
+      "slug": "marketing",
+      "parentId": null,
+      "description": "Các hoạt động và quy trình để xây dựng, truyền thông và mang lại giá trị cho khách hàng.",
+      "count": 980,
+      "isPopular": true,
+      "displayOrder": 2,
+      "iconUrl": "https://example.com/icons/marketing.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "11",
+      "name": "Digital Marketing",
+      "label": "Marketing kỹ thuật số",
+      "slug": "digital-marketing",
+      "parentId": "10",
+      "description": "Quảng bá sản phẩm hoặc thương hiệu qua các kênh kỹ thuật số như web, email và mạng xã hội.",
+      "count": 520,
+      "isPopular": true,
+      "displayOrder": 1,
+      "iconUrl": "https://example.com/icons/digital-marketing.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "12",
+      "name": "Content Marketing",
+      "label": "Marketing nội dung",
+      "slug": "content-marketing",
+      "parentId": "10",
+      "description": "Tạo và phân phối nội dung có giá trị, phù hợp và nhất quán để thu hút và giữ chân khách hàng.",
+      "count": 350,
+      "isPopular": false,
+      "displayOrder": 2,
+      "iconUrl": "https://example.com/icons/content-marketing.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "13",
+      "name": "SEO",
+      "label": "SEO",
+      "slug": "seo",
+      "parentId": "11",
+      "description": "Tối ưu hóa công cụ tìm kiếm để tăng lượng truy cập từ các kết quả tìm kiếm tự nhiên.",
+      "count": 280,
+      "isPopular": false,
+      "displayOrder": 1,
+      "iconUrl": "https://example.com/icons/seo.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "14",
+      "name": "Tài chính / Ngân hàng",
+      "label": "Tài chính / Ngân hàng",
+      "slug": "tai-chinh-ngan-hang",
+      "parentId": null,
+      "description": "Các vị trí liên quan đến quản lý tiền, đầu tư, và các dịch vụ tài chính.",
+      "count": 765,
+      "isPopular": true,
+      "displayOrder": 3,
+      "iconUrl": "https://example.com/icons/finance.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "15",
+      "name": "Kế toán",
+      "label": "Kế toán",
+      "slug": "ke-toan",
+      "parentId": "14",
+      "description": "Ghi chép, phân loại, tóm tắt, phân tích và báo cáo các giao dịch tài chính.",
+      "count": 320,
+      "isPopular": false,
+      "displayOrder": 1,
+      "iconUrl": "https://example.com/icons/accounting.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "16",
+      "name": "Ngân hàng đầu tư",
+      "label": "Ngân hàng đầu tư",
+      "slug": "ngan-hang-dau-tu",
+      "parentId": "14",
+      "description": "Tạo vốn cho các công ty, chính phủ và các thực thể khác.",
+      "count": 180,
+      "isPopular": false,
+      "displayOrder": 2,
+      "iconUrl": "https://example.com/icons/investment-banking.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "17",
+      "name": "Giáo dục / Đào tạo",
+      "label": "Giáo dục / Đào tạo",
+      "slug": "giao-duc-dao-tao",
+      "parentId": null,
+      "description": "Các vị trí liên quan đến giảng dạy, hướng dẫn và phát triển giáo dục.",
+      "count": 540,
+      "isPopular": false,
+      "displayOrder": 4,
+      "iconUrl": "https://example.com/icons/education.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "18",
+      "name": "Giáo viên",
+      "label": "Giáo viên",
+      "slug": "giao-vien",
+      "parentId": "17",
+      "description": "Giảng dạy tại các cấp học từ mầm non đến đại học.",
+      "count": 280,
+      "isPopular": false,
+      "displayOrder": 1,
+      "iconUrl": "https://example.com/icons/teacher.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "19",
+      "name": "Quản trị nhân sự",
+      "label": "Quản trị nhân sự",
+      "slug": "quan-tri-nhan-su",
+      "parentId": null,
+      "description": "Các vị trí liên quan đến quản lý và phát triển nhân sự trong tổ chức.",
+      "count": 420,
+      "isPopular": false,
+      "displayOrder": 5,
+      "iconUrl": "https://example.com/icons/hr.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "20",
+      "name": "Tuyển dụng",
+      "label": "Tuyển dụng",
+      "slug": "tuyen-dung",
+      "parentId": "19",
+      "description": "Tìm kiếm và đánh giá ứng viên để điền vào các vị trí trống trong công ty.",
+      "count": 180,
+      "isPopular": false,
+      "displayOrder": 1,
+      "iconUrl": "https://example.com/icons/recruitment.png",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    }
+  ],
+  "skills": [
+    {
+      "id": "1",
+      "name": "JavaScript",
+      "category": "Programming Languages",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "name": "TypeScript",
+      "category": "Programming Languages",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "name": "React.js",
+      "category": "Frontend",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "4",
+      "name": "Angular",
+      "category": "Frontend",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "5",
+      "name": "Vue.js",
+      "category": "Frontend",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "6",
+      "name": "Node.js",
+      "category": "Backend",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "7",
+      "name": "Express.js",
+      "category": "Backend",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "8",
+      "name": "MongoDB",
+      "category": "Database",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "9",
+      "name": "SQL",
+      "category": "Database",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "10",
+      "name": "Python",
+      "category": "Programming Languages",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "11",
+      "name": "Java",
+      "category": "Programming Languages",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "12",
+      "name": "HTML",
+      "category": "Frontend",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "13",
+      "name": "CSS",
+      "category": "Frontend",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "14",
+      "name": "Redux",
+      "category": "Frontend",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "15",
+      "name": "GraphQL",
+      "category": "API",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "16",
+      "name": "RESTful API",
+      "category": "API",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "17",
+      "name": "Docker",
+      "category": "DevOps",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "18",
+      "name": "Kubernetes",
+      "category": "DevOps",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "19",
+      "name": "AWS",
+      "category": "Cloud",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "20",
+      "name": "Figma",
+      "category": "Design",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "21",
+      "name": "Adobe XD",
+      "category": "Design",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "22",
+      "name": "UI Design",
+      "category": "Design",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "23",
+      "name": "UX Research",
+      "category": "Design",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "24",
+      "name": "Prototyping",
+      "category": "Design",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "25",
+      "name": "Wireframing",
+      "category": "Design",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "26",
+      "name": "React Native",
+      "category": "Mobile",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "27",
+      "name": "iOS",
+      "category": "Mobile",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "28",
+      "name": "Android",
+      "category": "Mobile",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "29",
+      "name": "Machine Learning",
+      "category": "AI/ML",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "30",
+      "name": "TensorFlow",
+      "category": "AI/ML",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "31",
+      "name": "PyTorch",
+      "category": "AI/ML",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "32",
+      "name": "Deep Learning",
+      "category": "AI/ML",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "33",
+      "name": "NLP",
+      "category": "AI/ML",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "34",
+      "name": "Computer Vision",
+      "category": "AI/ML",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "35",
+      "name": "OOP",
+      "category": "Programming Concepts",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "36",
+      "name": "Data Structures",
+      "category": "Programming Concepts",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "37",
+      "name": "Algorithms",
+      "category": "Programming Concepts",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "38",
+      "name": "Product Management",
+      "category": "Management",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "39",
+      "name": "Agile",
+      "category": "Methodologies",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "40",
+      "name": "Data Analysis",
+      "category": "Data",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "41",
+      "name": "User Research",
+      "category": "Design",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "42",
+      "name": "CI/CD",
+      "category": "DevOps",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "43",
+      "name": "Terraform",
+      "category": "DevOps",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "44",
+      "name": "Jenkins",
+      "category": "DevOps",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "45",
+      "name": "Linux",
+      "category": "Operating Systems",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "46",
+      "name": "Mobile Development",
+      "category": "Development",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "47",
+      "name": "Microservices",
+      "category": "Architecture",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "48",
+      "name": "Redis",
+      "category": "Database",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "49",
+      "name": "Fintech",
+      "category": "Industry",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "50",
+      "name": "Software Development",
+      "category": "Development",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "searchHistory": [
+    {
+      "id": "1",
+      "candidateId": "hung1",
+      "query": "React.js Developer",
+      "filters": {
+        "location": "Hồ Chí Minh",
+        "jobType": "full-time",
+        "skills": [
+          "React.js",
+          "JavaScript"
+        ]
+      },
+      "resultsCount": 4,
+      "clickedJobIds": [
+        1,
+        3
+      ],
+      "searchedAt": "2026-04-10T09:45:00.000Z"
+    },
+    {
+      "id": "2",
+      "candidateId": "hung1",
+      "query": "Frontend Remote",
+      "filters": {
+        "isRemote": true,
+        "skills": [
+          "React.js",
+          "JavaScript"
+        ]
+      },
+      "resultsCount": 2,
+      "clickedJobIds": [
+        4
+      ],
+      "searchedAt": "2026-04-15T14:30:00.000Z"
+    },
+    {
+      "id": "3",
+      "candidateId": "hung1",
+      "query": "UI/UX Designer",
+      "filters": {
+        "location": "Hà Nội",
+        "jobType": "full-time"
+      },
+      "resultsCount": 1,
+      "clickedJobIds": [
+        3
+      ],
+      "searchedAt": "2026-04-18T10:15:00.000Z"
+    },
+    {
+      "id": "4",
+      "candidateId": "hung1",
+      "query": "DevOps Engineer",
+      "filters": {
+        "location": "Đà Nẵng",
+        "isRemote": true,
+        "skills": [
+          "Docker",
+          "Kubernetes"
+        ]
+      },
+      "resultsCount": 1,
+      "clickedJobIds": [
+        4
+      ],
+      "searchedAt": "2026-04-20T16:25:00.000Z"
+    },
+    {
+      "id": "5",
+      "candidateId": "hung1",
+      "query": "Backend Developer",
+      "filters": {
+        "skills": [
+          "Node.js",
+          "MongoDB"
+        ]
+      },
+      "resultsCount": 2,
+      "clickedJobIds": [
+        2
+      ],
+      "searchedAt": "2026-04-22T11:10:00.000Z"
+    },
+    {
+      "id": "6",
+      "candidateId": "hung1",
+      "query": "Java Fresher",
+      "filters": {
+        "location": "Hà Nội",
+        "experienceLevel": "entry"
+      },
+      "resultsCount": 1,
+      "clickedJobIds": [
+        7
+      ],
+      "searchedAt": "2026-04-25T09:30:00.000Z"
+    },
+    {
+      "id": "7",
+      "candidateId": "hung1",
+      "query": "Graphic Designer",
+      "filters": {
+        "categories": [
+          "Thiết kế"
+        ]
+      },
+      "resultsCount": 0,
+      "clickedJobIds": [],
+      "searchedAt": "2026-04-26T13:45:00.000Z"
+    }
+  ],
+  "savedCVs": [],
+  "locations": [
+    {
+      "id": "1",
+      "name": "Hồ Chí Minh",
+      "slug": "ho-chi-minh",
+      "type": "city",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": true,
+      "jobCount": 845,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "name": "Hà Nội",
+      "slug": "ha-noi",
+      "type": "city",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": true,
+      "jobCount": 723,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "name": "Đà Nẵng",
+      "slug": "da-nang",
+      "type": "city",
+      "region": "Central",
+      "country": "Việt Nam",
+      "isPopular": true,
+      "jobCount": 241,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "4",
+      "name": "An Giang",
+      "slug": "an-giang",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 38,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "5",
+      "name": "Bà Rịa - Vũng Tàu",
+      "slug": "ba-ria-vung-tau",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 79,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "6",
+      "name": "Bắc Cạn",
+      "slug": "bac-can",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 12,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "7",
+      "name": "Bắc Giang",
+      "slug": "bac-giang",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 25,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "8",
+      "name": "Bạc Liêu",
+      "slug": "bac-lieu",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 18,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "9",
+      "name": "Bắc Ninh",
+      "slug": "bac-ninh",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 92,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "10",
+      "name": "Bến Tre",
+      "slug": "ben-tre",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 21,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "11",
+      "name": "Bình Định",
+      "slug": "binh-dinh",
+      "type": "province",
+      "region": "Central",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 32,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "12",
+      "name": "Bình Dương",
+      "slug": "binh-duong",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": true,
+      "jobCount": 154,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "13",
+      "name": "Bình Phước",
+      "slug": "binh-phuoc",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 26,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "14",
+      "name": "Bình Thuận",
+      "slug": "binh-thuan",
+      "type": "province",
+      "region": "Central",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 42,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "15",
+      "name": "Cà Mau",
+      "slug": "ca-mau",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 17,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "16",
+      "name": "Cần Thơ",
+      "slug": "can-tho",
+      "type": "city",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": true,
+      "jobCount": 87,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "17",
+      "name": "Cao Bằng",
+      "slug": "cao-bang",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 10,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "18",
+      "name": "Đắk Lắk",
+      "slug": "dak-lak",
+      "type": "province",
+      "region": "Central Highlands",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 33,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "19",
+      "name": "Đắk Nông",
+      "slug": "dak-nong",
+      "type": "province",
+      "region": "Central Highlands",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 9,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "20",
+      "name": "Điện Biên",
+      "slug": "dien-bien",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 7,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "21",
+      "name": "Đồng Nai",
+      "slug": "dong-nai",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": true,
+      "jobCount": 128,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "22",
+      "name": "Đồng Tháp",
+      "slug": "dong-thap",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 19,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "23",
+      "name": "Gia Lai",
+      "slug": "gia-lai",
+      "type": "province",
+      "region": "Central Highlands",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 18,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "24",
+      "name": "Hà Giang",
+      "slug": "ha-giang",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 8,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "25",
+      "name": "Hà Nam",
+      "slug": "ha-nam",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 19,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "26",
+      "name": "Hà Tĩnh",
+      "slug": "ha-tinh",
+      "type": "province",
+      "region": "North Central",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 14,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "27",
+      "name": "Hải Dương",
+      "slug": "hai-duong",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 32,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "28",
+      "name": "Hải Phòng",
+      "slug": "hai-phong",
+      "type": "city",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": true,
+      "jobCount": 95,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "29",
+      "name": "Hậu Giang",
+      "slug": "hau-giang",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 12,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "30",
+      "name": "Hòa Bình",
+      "slug": "hoa-binh",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 11,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "31",
+      "name": "Hưng Yên",
+      "slug": "hung-yen",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 28,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "32",
+      "name": "Khánh Hòa",
+      "slug": "khanh-hoa",
+      "type": "province",
+      "region": "Central",
+      "country": "Việt Nam",
+      "isPopular": true,
+      "jobCount": 67,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "33",
+      "name": "Kiên Giang",
+      "slug": "kien-giang",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 29,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "34",
+      "name": "Kon Tum",
+      "slug": "kon-tum",
+      "type": "province",
+      "region": "Central Highlands",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 9,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "35",
+      "name": "Lai Châu",
+      "slug": "lai-chau",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 5,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "36",
+      "name": "Lâm Đồng",
+      "slug": "lam-dong",
+      "type": "province",
+      "region": "Central Highlands",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 43,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "37",
+      "name": "Lạng Sơn",
+      "slug": "lang-son",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 11,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "38",
+      "name": "Lào Cai",
+      "slug": "lao-cai",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 14,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "39",
+      "name": "Long An",
+      "slug": "long-an",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 37,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "40",
+      "name": "Nam Định",
+      "slug": "nam-dinh",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 18,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "41",
+      "name": "Nghệ An",
+      "slug": "nghe-an",
+      "type": "province",
+      "region": "North Central",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 29,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "42",
+      "name": "Ninh Bình",
+      "slug": "ninh-binh",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 15,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "43",
+      "name": "Ninh Thuận",
+      "slug": "ninh-thuan",
+      "type": "province",
+      "region": "Central",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 9,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "44",
+      "name": "Phú Thọ",
+      "slug": "phu-tho",
+      "type": "province",
+      "region": "Northeast",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 18,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "45",
+      "name": "Phú Yên",
+      "slug": "phu-yen",
+      "type": "province",
+      "region": "Central",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 11,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "46",
+      "name": "Quảng Bình",
+      "slug": "quang-binh",
+      "type": "province",
+      "region": "North Central",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 12,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "47",
+      "name": "Quảng Nam",
+      "slug": "quang-nam",
+      "type": "province",
+      "region": "Central",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 23,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "48",
+      "name": "Quảng Ngãi",
+      "slug": "quang-ngai",
+      "type": "province",
+      "region": "Central",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 14,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "49",
+      "name": "Quảng Ninh",
+      "slug": "quang-ninh",
+      "type": "province",
+      "region": "Northeast",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 35,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "50",
+      "name": "Quảng Trị",
+      "slug": "quang-tri",
+      "type": "province",
+      "region": "North Central",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 9,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "51",
+      "name": "Sóc Trăng",
+      "slug": "soc-trang",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 13,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "52",
+      "name": "Sơn La",
+      "slug": "son-la",
+      "type": "province",
+      "region": "Northwest",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 7,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "53",
+      "name": "Tây Ninh",
+      "slug": "tay-ninh",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 22,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "54",
+      "name": "Thái Bình",
+      "slug": "thai-binh",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 15,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "56",
+      "name": "Thanh Hóa",
+      "slug": "thanh-hoa",
+      "type": "province",
+      "region": "North Central",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 31,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "57",
+      "name": "Thừa Thiên Huế",
+      "slug": "thua-thien-hue",
+      "type": "province",
+      "region": "North Central",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 26,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "58",
+      "name": "Tiền Giang",
+      "slug": "tien-giang",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 19,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "59",
+      "name": "Trà Vinh",
+      "slug": "tra-vinh",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 11,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "60",
+      "name": "Tuyên Quang",
+      "slug": "tuyen-quang",
+      "type": "province",
+      "region": "Northeast",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 8,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "61",
+      "name": "Vĩnh Long",
+      "slug": "vinh-long",
+      "type": "province",
+      "region": "South",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 15,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "62",
+      "name": "Vĩnh Phúc",
+      "slug": "vinh-phuc",
+      "type": "province",
+      "region": "North",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 29,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    },
+    {
+      "id": "63",
+      "name": "Yên Bái",
+      "slug": "yen-bai",
+      "type": "province",
+      "region": "Northeast",
+      "country": "Việt Nam",
+      "isPopular": false,
+      "jobCount": 9,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-04-26T00:00:00.000Z"
+    }
+  ],
+  "jobFilters": {
+    "industries": [
+      {
+        "id": "1",
+        "name": "Công nghệ thông tin",
+        "label": "Công nghệ thông tin",
+        "slug": "cong-nghe-thong-tin",
+        "count": 1245,
+        "isPopular": true,
+        "displayOrder": 1,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "2",
+        "name": "Marketing / Truyền thông",
+        "label": "Marketing / Truyền thông",
+        "slug": "marketing-truyen-thong",
+        "count": 578,
+        "isPopular": true,
+        "displayOrder": 2,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "3",
+        "name": "Tài chính / Ngân hàng",
+        "label": "Tài chính / Ngân hàng",
+        "slug": "tai-chinh-ngan-hang",
+        "count": 634,
+        "isPopular": true,
+        "displayOrder": 3,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "4",
+        "name": "Kế toán / Kiểm toán",
+        "label": "Kế toán / Kiểm toán",
+        "slug": "ke-toan-kiem-toan",
+        "count": 426,
+        "isPopular": true,
+        "displayOrder": 4,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "5",
+        "name": "Bán hàng / Kinh doanh",
+        "label": "Bán hàng / Kinh doanh",
+        "slug": "ban-hang-kinh-doanh",
+        "count": 767,
+        "isPopular": true,
+        "displayOrder": 5,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "6",
+        "name": "Sản xuất / Vận hành",
+        "label": "Sản xuất / Vận hành",
+        "slug": "san-xuat-van-hanh",
+        "count": 388,
+        "isPopular": false,
+        "displayOrder": 6,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "7",
+        "name": "Nhân sự",
+        "label": "Nhân sự",
+        "slug": "nhan-su",
+        "count": 320,
+        "isPopular": true,
+        "displayOrder": 7,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "8",
+        "name": "Hành chính / Văn phòng",
+        "label": "Hành chính / Văn phòng",
+        "slug": "hanh-chinh-van-phong",
+        "count": 343,
+        "isPopular": false,
+        "displayOrder": 8,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "9",
+        "name": "Giáo dục / Đào tạo",
+        "label": "Giáo dục / Đào tạo",
+        "slug": "giao-duc-dao-tao",
+        "count": 289,
+        "isPopular": false,
+        "displayOrder": 9,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "10",
+        "name": "Du lịch / Nhà hàng / Khách sạn",
+        "label": "Du lịch / Nhà hàng / Khách sạn",
+        "slug": "du-lich-nha-hang-khach-san",
+        "count": 356,
+        "isPopular": false,
+        "displayOrder": 10,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "11",
+        "name": "Xây dựng / Kiến trúc",
+        "label": "Xây dựng / Kiến trúc",
+        "slug": "xay-dung-kien-truc",
+        "count": 278,
+        "isPopular": false,
+        "displayOrder": 11,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "12",
+        "name": "Y tế / Dược",
+        "label": "Y tế / Dược",
+        "slug": "y-te-duoc",
+        "count": 245,
+        "isPopular": false,
+        "displayOrder": 12,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "13",
+        "name": "Bảo hiểm",
+        "label": "Bảo hiểm",
+        "slug": "bao-hiem",
+        "count": 156,
+        "isPopular": false,
+        "displayOrder": 13,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "14",
+        "name": "Bất động sản",
+        "label": "Bất động sản",
+        "slug": "bat-dong-san",
+        "count": 267,
+        "isPopular": false,
+        "displayOrder": 14,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "15",
+        "name": "Luật / Pháp lý",
+        "label": "Luật / Pháp lý",
+        "slug": "luat-phap-ly",
+        "count": 132,
+        "isPopular": false,
+        "displayOrder": 15,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "16",
+        "name": "Thiết kế / Sáng tạo",
+        "label": "Thiết kế / Sáng tạo",
+        "slug": "thiet-ke-sang-tao",
+        "count": 198,
+        "isPopular": false,
+        "displayOrder": 16,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "17",
+        "name": "Logistics / Vận tải",
+        "label": "Logistics / Vận tải",
+        "slug": "logistics-van-tai",
+        "count": 167,
+        "isPopular": false,
+        "displayOrder": 17,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "18",
+        "name": "Nông nghiệp",
+        "label": "Nông nghiệp",
+        "slug": "nong-nghiep",
+        "count": 87,
+        "isPopular": false,
+        "displayOrder": 18,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      }
+    ],
+    "experienceLevels": [
+      {
+        "id": "1",
+        "name": "Dưới 1 năm",
+        "label": "Dưới 1 năm",
+        "slug": "duoi-1-nam",
+        "minYears": 0,
+        "maxYears": 1,
+        "count": 423,
+        "displayOrder": 1,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "2",
+        "name": "1 - 2 năm",
+        "label": "1 - 2 năm",
+        "slug": "1-2-nam",
+        "minYears": 1,
+        "maxYears": 2,
+        "count": 678,
+        "displayOrder": 2,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "3",
+        "name": "2 - 5 năm",
+        "label": "2 - 5 năm",
+        "slug": "2-5-nam",
+        "minYears": 2,
+        "maxYears": 5,
+        "count": 845,
+        "displayOrder": 3,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "4",
+        "name": "5 - 10 năm",
+        "label": "5 - 10 năm",
+        "slug": "5-10-nam",
+        "minYears": 5,
+        "maxYears": 10,
+        "count": 534,
+        "displayOrder": 4,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "5",
+        "name": "Trên 10 năm",
+        "label": "Trên 10 năm",
+        "slug": "tren-10-nam",
+        "minYears": 10,
+        "maxYears": null,
+        "count": 245,
+        "displayOrder": 5,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      }
+    ],
+    "jobLevels": [
+      {
+        "id": "1",
+        "name": "Thực tập",
+        "label": "Thực tập",
+        "slug": "thuc-tap",
+        "count": 435,
+        "displayOrder": 1,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "2",
+        "name": "Mới đi làm",
+        "label": "Mới đi làm",
+        "slug": "moi-di-lam",
+        "count": 567,
+        "displayOrder": 2,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "3",
+        "name": "Nhân viên",
+        "label": "Nhân viên",
+        "slug": "nhan-vien",
+        "count": 1245,
+        "displayOrder": 3,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "4",
+        "name": "Trưởng phòng / Quản lý",
+        "label": "Trưởng phòng / Quản lý",
+        "slug": "truong-phong-quan-ly",
+        "count": 678,
+        "displayOrder": 4,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "5",
+        "name": "Giám đốc",
+        "label": "Giám đốc",
+        "slug": "giam-doc",
+        "count": 143,
+        "displayOrder": 5,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      }
+    ],
+    "salaries": [
+      {
+        "id": "1",
+        "name": "Dưới 10 triệu",
+        "label": "Dưới 10 triệu",
+        "slug": "duoi-10-trieu",
+        "minValue": 0,
+        "maxValue": 10000000,
+        "count": 867,
+        "displayOrder": 1,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "2",
+        "name": "10 - 15 triệu",
+        "label": "10 - 15 triệu",
+        "slug": "10-15-trieu",
+        "minValue": 10000000,
+        "maxValue": 15000000,
+        "count": 934,
+        "displayOrder": 2,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "3",
+        "name": "15 - 20 triệu",
+        "label": "15 - 20 triệu",
+        "slug": "15-20-trieu",
+        "minValue": 15000000,
+        "maxValue": 20000000,
+        "count": 756,
+        "displayOrder": 3,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "4",
+        "name": "20 - 30 triệu",
+        "label": "20 - 30 triệu",
+        "slug": "20-30-trieu",
+        "minValue": 20000000,
+        "maxValue": 30000000,
+        "count": 634,
+        "displayOrder": 4,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "5",
+        "name": "30 - 50 triệu",
+        "label": "30 - 50 triệu",
+        "slug": "30-50-trieu",
+        "minValue": 30000000,
+        "maxValue": 50000000,
+        "count": 387,
+        "displayOrder": 5,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "6",
+        "name": "Trên 50 triệu",
+        "label": "Trên 50 triệu",
+        "slug": "tren-50-trieu",
+        "minValue": 50000000,
+        "maxValue": null,
+        "count": 245,
+        "displayOrder": 6,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "7",
+        "name": "Thỏa thuận",
+        "label": "Thỏa thuận",
+        "slug": "thoa-thuan",
+        "minValue": null,
+        "maxValue": null,
+        "count": 1234,
+        "displayOrder": 7,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      }
+    ],
+    "educationLevels": [
+      {
+        "id": "1",
+        "name": "Trung học phổ thông",
+        "label": "Trung học phổ thông",
+        "slug": "trung-hoc-pho-thong",
+        "count": 367,
+        "displayOrder": 1,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "2",
+        "name": "Trung cấp",
+        "label": "Trung cấp",
+        "slug": "trung-cap",
+        "count": 289,
+        "displayOrder": 2,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "3",
+        "name": "Cao đẳng / Đại học",
+        "label": "Cao đẳng / Đại học",
+        "slug": "cao-dang-dai-hoc",
+        "count": 2134,
+        "displayOrder": 3,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "4",
+        "name": "Thạc sĩ",
+        "label": "Thạc sĩ",
+        "slug": "thac-si",
+        "count": 253,
+        "displayOrder": 4,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "5",
+        "name": "Tiến sĩ",
+        "label": "Tiến sĩ",
+        "slug": "tien-si",
+        "count": 89,
+        "displayOrder": 5,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      }
+    ],
+    "jobTypes": [
+      {
+        "id": "1",
+        "name": "Toàn thời gian",
+        "label": "Toàn thời gian",
+        "slug": "toan-thoi-gian",
+        "count": 2345,
+        "displayOrder": 1,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "2",
+        "name": "Bán thời gian",
+        "label": "Bán thời gian",
+        "slug": "ban-thoi-gian",
+        "count": 867,
+        "displayOrder": 2,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "3",
+        "name": "Thời vụ",
+        "label": "Thời vụ",
+        "slug": "thoi-vu",
+        "count": 356,
+        "displayOrder": 3,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "4",
+        "name": "Làm việc từ xa",
+        "label": "Làm việc từ xa",
+        "slug": "lam-viec-tu-xa",
+        "count": 634,
+        "displayOrder": 4,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "5",
+        "name": "Hợp đồng / Dự án",
+        "label": "Hợp đồng / Dự án",
+        "slug": "hop-dong-du-an",
+        "count": 356,
+        "displayOrder": 5,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      }
+    ],
+    "postingDates": [
+      {
+        "id": "1",
+        "name": "Hôm nay",
+        "label": "Hôm nay",
+        "slug": "hom-nay",
+        "count": 342,
+        "days": 1,
+        "displayOrder": 1,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "2",
+        "name": "3 ngày",
+        "label": "3 ngày",
+        "slug": "3-ngay",
+        "count": 687,
+        "days": 3,
+        "displayOrder": 2,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "3",
+        "name": "1 tuần",
+        "label": "1 tuần",
+        "slug": "1-tuan",
+        "count": 1245,
+        "days": 7,
+        "displayOrder": 3,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "4",
+        "name": "2 tuần",
+        "label": "2 tuần",
+        "slug": "2-tuan",
+        "count": 2134,
+        "days": 14,
+        "displayOrder": 4,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      },
+      {
+        "id": "5",
+        "name": "1 tháng",
+        "label": "1 tháng",
+        "slug": "1-thang",
+        "count": 3578,
+        "days": 30,
+        "displayOrder": 5,
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-04-26T00:00:00.000Z"
+      }
+    ]
+  }
+}

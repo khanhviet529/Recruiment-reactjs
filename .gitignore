@@ -1,23 +1,42 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
+# ===== Thu vien =====
+node_modules/
+.pnp
 .pnp.js
 
-# testing
-/coverage
+# ===== Ban build =====
+build/
+dist/
+coverage/
 
-# production
-/build
+# ===== Log =====
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
 
-# misc
+# ===== He thong =====
 .DS_Store
+Thumbs.db
+
+# ===== Bien moi truong rieng cua may =====
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# ===== agora-backend: da bo chuc nang video call =====
+# Thu muc nay khong con duoc dung (he thong chi con 2 service).
+# Khong dua len GitHub vi .env cua no chua AGORA_APP_CERTIFICATE la khoa bi mat.
+agora-backend/
+
+# ===== File anh nguoi dung tai len khi chay =====
+Database-main/uploads/
+
+# ===== Ban sao luu chi de tren may =====
+*.BACKUP_*.json
+*BACKUP*.tar.gz
+database.BACKUP*.json
+db.BACKUP*.json
+
+# ===== File tam cua Word =====
+~$*
