@@ -10,6 +10,9 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 
 import '../../assets/scss/main.scss';
+import {
+  MailOutlined,
+} from '@ant-design/icons';
 
 const API_URL = 'http://localhost:5000';
 
@@ -220,7 +223,7 @@ const RegisterPage = () => {
             <div className="col-md-8 col-lg-6">
               <div className="card shadow-sm">
                 <div className="card-body p-4 text-center">
-                  <i className="bi bi-envelope-check" style={{ fontSize: '3rem', color: '#059669', marginBottom: '1rem' }}></i>
+                  <MailOutlined style={{ fontSize: '3rem', color: '#059669', marginBottom: '1rem' }} />
                   <h2 className="mb-3">Xác thực email của bạn</h2>
                   <p className="mb-3">
                     Chúng tôi đã gửi một email xác thực đến <strong>{verificationEmail}</strong>.

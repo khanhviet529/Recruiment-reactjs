@@ -3,6 +3,11 @@ import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import moment from 'moment';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 
 const projectSchema = Yup.object({
   name: Yup.string().required('Tên dự án là bắt buộc'),
@@ -98,7 +103,7 @@ const handleProjectSubmit = async (values) => {
             setEditingItem(null);
           }}
         >
-          <i className="bi bi-plus me-1"></i> Thêm mới
+          <PlusOutlined className="me-1" /> Thêm mới
         </button>
       </div>
       <div className="card-body">
@@ -165,7 +170,7 @@ const handleProjectSubmit = async (values) => {
                               className="btn btn-outline-danger"
                               onClick={() => arrayHelpers.remove(index)}
                             >
-                              <i className="bi bi-trash"></i>
+                              <DeleteOutlined />
                             </button>
                           </div>
                         ))}
@@ -197,7 +202,7 @@ const handleProjectSubmit = async (values) => {
                               className="btn btn-outline-danger"
                               onClick={() => arrayHelpers.remove(index)}
                             >
-                              <i className="bi bi-trash"></i>
+                              <DeleteOutlined />
                             </button>
                           </div>
                         ))}
@@ -229,7 +234,7 @@ const handleProjectSubmit = async (values) => {
                               className="btn btn-outline-danger"
                               onClick={() => arrayHelpers.remove(index)}
                             >
-                              <i className="bi bi-trash"></i>
+                              <DeleteOutlined />
                             </button>
                           </div>
                         ))}
@@ -289,13 +294,13 @@ const handleProjectSubmit = async (values) => {
                         setEditingItem(proj);
                       }}
                     >
-                      <i className="bi bi-pencil"></i>
+                      <EditOutlined />
                     </button>
                     <button 
                       className="btn btn-sm btn-outline-danger"
                       onClick={() => handleProjectDelete(proj.id)}
                     >
-                      <i className="bi bi-trash"></i>
+                      <DeleteOutlined />
                     </button>
                   </div>
                 </div>

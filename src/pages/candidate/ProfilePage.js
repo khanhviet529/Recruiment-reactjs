@@ -1,6 +1,21 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { message } from 'antd';
+import {
+  IdcardOutlined,
+  UserOutlined,
+  BookOutlined,
+  BankOutlined,
+  TrophyOutlined,
+  PlusOutlined,
+  EditOutlined,
+  SaveOutlined,
+  DeleteOutlined,
+  LoadingOutlined,
+  DownloadOutlined,
+  EyeInvisibleOutlined,
+  CloseOutlined,
+} from '@ant-design/icons';
 import axios from 'axios';
 
 const CandidateProfilePage = () => {
@@ -116,7 +131,7 @@ const CandidateProfilePage = () => {
   };
 
   if (loading) {
-    return <div style={{textAlign: 'center', padding: '50px', background: '#f8fafc', minHeight: '100vh'}}>⏳ Đang xử lý...</div>;
+    return <div style={{textAlign: 'center', padding: '50px', background: '#f8fafc', minHeight: '100vh'}}><LoadingOutlined /> Đang xử lý...</div>;
   }
 
   return (
@@ -124,14 +139,14 @@ const CandidateProfilePage = () => {
       {/* Header */}
       <div style={{background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '20px', border: '1px solid #e2e8f0'}}>
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          <h2 style={{color: '#334155', margin: 0}}>🏠 Hồ sơ ứng viên</h2>
+          <h2 style={{color: '#334155', margin: 0}}><IdcardOutlined /> Hồ sơ ứng viên</h2>
           {!showProfile ? (
             <button onClick={handleShowProfile} style={{background: '#64748b', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer'}}>
-              📄 Tải hồ sơ
+              <DownloadOutlined /> Tải hồ sơ
             </button>
           ) : (
             <button onClick={() => setShowProfile(false)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer'}}>
-              👁️ Ẩn hồ sơ
+              <EyeInvisibleOutlined /> Ẩn hồ sơ
             </button>
           )}
         </div>
@@ -142,9 +157,9 @@ const CandidateProfilePage = () => {
           {/* Personal Info */}
           <div style={{background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '20px', border: '1px solid #e2e8f0'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
-              <h3 style={{color: '#334155', margin: 0}}>👤 Thông tin cá nhân</h3>
+              <h3 style={{color: '#334155', margin: 0}}><UserOutlined /> Thông tin cá nhân</h3>
               <button onClick={() => setEditMode(editMode === 'personal' ? null : 'personal')} style={{background: '#64748b', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer'}}>
-                {editMode === 'personal' ? '💾 Lưu' : '✏️ Sửa'}
+                {editMode === 'personal' ? <><SaveOutlined /> Lưu</> : <><EditOutlined /> Sửa</>}
               </button>
             </div>
             
@@ -172,10 +187,10 @@ const CandidateProfilePage = () => {
                 <input name='headline' defaultValue={candidate.headline} placeholder='Tiêu đề' style={{width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px', marginBottom: '15px'}} />
                 <textarea name='summary' defaultValue={candidate.summary} placeholder='Giới thiệu' style={{width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px', minHeight: '80px', marginBottom: '15px'}} />
                 <button type='submit' style={{background: '#64748b', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', marginRight: '10px', cursor: 'pointer'}}>
-                  💾 Lưu thông tin
+                  <SaveOutlined /> Lưu thông tin
                 </button>
                 <button type='button' onClick={() => setEditMode(null)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer'}}>
-                  ❌ Hủy
+                  <CloseOutlined /> Hủy
                 </button>
               </form>
             ) : (
@@ -193,16 +208,16 @@ const CandidateProfilePage = () => {
           {/* Education */}
           <div style={{background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '20px', border: '1px solid #e2e8f0'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
-              <h3 style={{color: '#334155', margin: 0}}>🎓 Học vấn ({(candidate.educations || []).length})</h3>
+              <h3 style={{color: '#334155', margin: 0}}><BookOutlined /> Học vấn ({(candidate.educations || []).length})</h3>
               <button onClick={() => setEditMode(editMode === 'new-education' ? null : 'new-education')} style={{background: '#64748b', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer'}}>
-                {editMode === 'new-education' ? '❌ Hủy' : '+ Thêm mới'}
+                {editMode === 'new-education' ? <><CloseOutlined /> Hủy</> : <><PlusOutlined /> Thêm mới</>}
               </button>
             </div>
             
             {/* New Education Form */}
             {editMode === 'new-education' && (
               <div style={{background: '#f8fafc', padding: '15px', borderRadius: '6px', marginBottom: '15px', border: '2px dashed #e2e8f0'}}>
-                <h4 style={{color: '#334155', marginBottom: '10px'}}>➕ Thêm học vấn mới</h4>
+                <h4 style={{color: '#334155', marginBottom: '10px'}}><PlusOutlined /> Thêm học vấn mới</h4>
                 <form onSubmit={(e) => {
                   e.preventDefault();
                   const formData = new FormData(e.target);
@@ -232,10 +247,10 @@ const CandidateProfilePage = () => {
                     </div>
                   </div>
                   <button type='submit' style={{background: '#64748b', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', marginRight: '10px', cursor: 'pointer'}}>
-                    💾 Lưu học vấn
+                    <SaveOutlined /> Lưu học vấn
                   </button>
                   <button type='button' onClick={() => setEditMode(null)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer'}}>
-                    ❌ Hủy
+                    <CloseOutlined /> Hủy
                   </button>
                 </form>
               </div>
@@ -266,10 +281,10 @@ const CandidateProfilePage = () => {
                       </div>
                     </div>
                     <button type='submit' style={{background: '#64748b', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', marginRight: '5px', cursor: 'pointer'}}>
-                      💾 Lưu
+                      <SaveOutlined /> Lưu
                     </button>
                     <button type='button' onClick={() => setEditMode(null)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer'}}>
-                      ❌ Hủy
+                      <CloseOutlined /> Hủy
                     </button>
                   </form>
                 ) : (
@@ -282,10 +297,10 @@ const CandidateProfilePage = () => {
                       </div>
                       <div>
                         <button onClick={() => setEditMode(`education-${index}`)} style={{background: '#64748b', color: 'white', border: 'none', padding: '3px 8px', borderRadius: '4px', marginRight: '5px', fontSize: '12px', cursor: 'pointer'}}>
-                          ✏️ Sửa
+                          <EditOutlined /> Sửa
                         </button>
                         <button onClick={() => deleteEducation(index)} style={{background: '#e11d48', color: 'white', border: 'none', padding: '3px 8px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer'}}>
-                          🗑️ Xóa
+                          <DeleteOutlined /> Xóa
                         </button>
                       </div>
                     </div>
@@ -298,16 +313,16 @@ const CandidateProfilePage = () => {
           {/* Work Experience */}
           <div style={{background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '20px', border: '1px solid #e2e8f0'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
-              <h3 style={{color: '#334155', margin: 0}}>💼 Kinh nghiệm ({(candidate.workExperiences || []).length})</h3>
+              <h3 style={{color: '#334155', margin: 0}}><BankOutlined /> Kinh nghiệm ({(candidate.workExperiences || []).length})</h3>
               <button onClick={() => setEditMode(editMode === 'new-experience' ? null : 'new-experience')} style={{background: '#64748b', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer'}}>
-                {editMode === 'new-experience' ? '❌ Hủy' : '+ Thêm mới'}
+                {editMode === 'new-experience' ? <><CloseOutlined /> Hủy</> : <><PlusOutlined /> Thêm mới</>}
               </button>
             </div>
             
             {/* New Experience Form */}
             {editMode === 'new-experience' && (
               <div style={{background: '#f8fafc', padding: '15px', borderRadius: '6px', marginBottom: '15px', border: '2px dashed #e2e8f0'}}>
-                <h4 style={{color: '#334155', marginBottom: '10px'}}>💼 Thêm kinh nghiệm mới</h4>
+                <h4 style={{color: '#334155', marginBottom: '10px'}}><PlusOutlined /> Thêm kinh nghiệm mới</h4>
                 <form onSubmit={(e) => {
                   e.preventDefault();
                   const formData = new FormData(e.target);
@@ -335,10 +350,10 @@ const CandidateProfilePage = () => {
                   </div>
                   <textarea name='description' placeholder='Mô tả công việc và thành tích...' style={{width: '100%', padding: '8px', border: '1px solid #64748b', borderRadius: '4px', minHeight: '60px', marginBottom: '10px'}} />
                   <button type='submit' style={{background: '#64748b', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', marginRight: '10px', cursor: 'pointer'}}>
-                    💾 Lưu kinh nghiệm
+                    <SaveOutlined /> Lưu kinh nghiệm
                   </button>
                   <button type='button' onClick={() => setEditMode(null)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer'}}>
-                    ❌ Hủy
+                    <CloseOutlined /> Hủy
                   </button>
                 </form>
               </div>
@@ -367,10 +382,10 @@ const CandidateProfilePage = () => {
                     </div>
                     <textarea name='description' defaultValue={exp.description} placeholder='Mô tả công việc' style={{width: '100%', padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px', minHeight: '60px', marginBottom: '10px'}} />
                     <button type='submit' style={{background: '#64748b', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', marginRight: '5px', cursor: 'pointer'}}>
-                      💾 Lưu
+                      <SaveOutlined /> Lưu
                     </button>
                     <button type='button' onClick={() => setEditMode(null)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer'}}>
-                      ❌ Hủy
+                      <CloseOutlined /> Hủy
                     </button>
                   </form>
                 ) : (
@@ -384,10 +399,10 @@ const CandidateProfilePage = () => {
                       </div>
                       <div>
                         <button onClick={() => setEditMode(`experience-${index}`)} style={{background: '#64748b', color: 'white', border: 'none', padding: '3px 8px', borderRadius: '4px', marginRight: '5px', fontSize: '12px', cursor: 'pointer'}}>
-                          ✏️ Sửa
+                          <EditOutlined /> Sửa
                         </button>
                         <button onClick={() => deleteExperience(index)} style={{background: '#e11d48', color: 'white', border: 'none', padding: '3px 8px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer'}}>
-                          🗑️ Xóa
+                          <DeleteOutlined /> Xóa
                         </button>
                       </div>
                     </div>
@@ -400,16 +415,16 @@ const CandidateProfilePage = () => {
           {/* Certifications */}
           <div style={{background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '20px', border: '1px solid #e2e8f0'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
-              <h3 style={{color: '#334155', margin: 0}}>🏆 Chứng chỉ ({(candidate.certifications || []).length})</h3>
+              <h3 style={{color: '#334155', margin: 0}}><TrophyOutlined /> Chứng chỉ ({(candidate.certifications || []).length})</h3>
               <button onClick={() => setEditMode(editMode === 'new-certification' ? null : 'new-certification')} style={{background: '#64748b', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer'}}>
-                {editMode === 'new-certification' ? '❌ Hủy' : '+ Thêm mới'}
+                {editMode === 'new-certification' ? <><CloseOutlined /> Hủy</> : <><PlusOutlined /> Thêm mới</>}
               </button>
             </div>
             
             {/* New Certification Form */}
             {editMode === 'new-certification' && (
               <div style={{background: '#f8fafc', padding: '15px', borderRadius: '6px', marginBottom: '15px', border: '2px dashed #e2e8f0'}}>
-                <h4 style={{color: '#334155', marginBottom: '10px'}}>🏆 Thêm chứng chỉ mới</h4>
+                <h4 style={{color: '#334155', marginBottom: '10px'}}><PlusOutlined /> Thêm chứng chỉ mới</h4>
                 <form onSubmit={(e) => {
                   e.preventDefault();
                   const formData = new FormData(e.target);
@@ -435,10 +450,10 @@ const CandidateProfilePage = () => {
                     <input name='expiryDate' type='date' style={{padding: '8px', border: '1px solid #64748b', borderRadius: '4px'}} placeholder='Ngày hết hạn (tùy chọn)' />
                   </div>
                   <button type='submit' style={{background: '#64748b', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '4px', marginRight: '10px', cursor: 'pointer'}}>
-                    💾 Lưu chứng chỉ
+                    <SaveOutlined /> Lưu chứng chỉ
                   </button>
                   <button type='button' onClick={() => setEditMode(null)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '8px 15px', borderRadius: '4px', cursor: 'pointer'}}>
-                    ❌ Hủy
+                    <CloseOutlined /> Hủy
                   </button>
                 </form>
               </div>
@@ -465,10 +480,10 @@ const CandidateProfilePage = () => {
                       <input name='expiryDate' type='date' defaultValue={cert.expiryDate} placeholder='Ngày hết hạn (tùy chọn)' style={{padding: '6px', border: '1px solid #e2e8f0', borderRadius: '4px'}} />
                     </div>
                     <button type='submit' style={{background: '#64748b', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', marginRight: '5px', cursor: 'pointer'}}>
-                      💾 Lưu
+                      <SaveOutlined /> Lưu
                     </button>
                     <button type='button' onClick={() => setEditMode(null)} style={{background: '#f1f5f9', color: '#334155', border: '1px solid #e2e8f0', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer'}}>
-                      ❌ Hủy
+                      <CloseOutlined /> Hủy
                     </button>
                   </form>
                 ) : (
@@ -483,10 +498,10 @@ const CandidateProfilePage = () => {
                       </div>
                       <div>
                         <button onClick={() => setEditMode(`certification-${index}`)} style={{background: '#64748b', color: 'white', border: 'none', padding: '3px 8px', borderRadius: '4px', marginRight: '5px', fontSize: '12px', cursor: 'pointer'}}>
-                          ✏️ Sửa
+                          <EditOutlined /> Sửa
                         </button>
                         <button onClick={() => deleteCertification(index)} style={{background: '#e11d48', color: 'white', border: 'none', padding: '3px 8px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer'}}>
-                          🗑️ Xóa
+                          <DeleteOutlined /> Xóa
                         </button>
                       </div>
                     </div>

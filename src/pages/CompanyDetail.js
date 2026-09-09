@@ -2,6 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/CompanyDetail.scss';
+import {
+  CalendarOutlined,
+  CheckCircleFilled,
+  ClockCircleOutlined,
+  DollarOutlined,
+  EnvironmentOutlined,
+  EyeOutlined,
+  FacebookOutlined,
+  GlobalOutlined,
+  LinkedinOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  ProfileOutlined,
+  TeamOutlined,
+  TwitterOutlined,
+} from '@ant-design/icons';
 
 const CompanyDetail = () => {
   const { id } = useParams();
@@ -128,15 +144,15 @@ const CompanyDetail = () => {
                   <h1 className="h3 mb-2">{company.companyName || 'Công ty chưa đặt tên'}</h1>
                   <div className="d-flex flex-wrap gap-3 text-muted">
                     <div>
-                      <i className="bi bi-geo-alt me-1"></i>
+                      <EnvironmentOutlined className="me-1" />
                       {company.location?.city ? `${company.location.city}, ${company.location.country}` : 'Chưa cập nhật địa điểm'}
                     </div>
                     <div>
-                      <i className="bi bi-people me-1"></i>
+                      <TeamOutlined className="me-1" />
                       {company.companySize || 'Chưa cập nhật'} nhân viên
                     </div>
                     <div>
-                      <i className="bi bi-briefcase me-1"></i>
+                      <ProfileOutlined className="me-1" />
                       {company.industry || 'Chưa cập nhật ngành nghề'}
                     </div>
                   </div>
@@ -145,13 +161,13 @@ const CompanyDetail = () => {
               <div className="col-md-4 text-md-end mt-3 mt-md-0">
                 {company.verified && (
                   <div className="text-primary mb-2">
-                    <i className="bi bi-patch-check-fill me-1"></i>
+                    <CheckCircleFilled className="me-1" />
                     Đã xác thực
                   </div>
                 )}
                 {company.website && (
                   <a href={company.website} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
-                    <i className="bi bi-globe me-1"></i>
+                    <GlobalOutlined className="me-1" />
                     Trang web công ty
                   </a>
                 )}
@@ -218,7 +234,7 @@ const CompanyDetail = () => {
                         {company.benefits.map((benefit, index) => (
                           <div key={index} className="col-md-6">
                             <div className="d-flex align-items-center p-3 rounded border benefit-item">
-                              <i className="bi bi-check-circle-fill text-primary me-2"></i>
+                              <CheckCircleFilled className="text-primary me-2" />
                               {benefit}
                             </div>
                           </div>
@@ -244,15 +260,15 @@ const CompanyDetail = () => {
                               </h5>
                               <div className="d-flex flex-wrap gap-3 text-muted mb-3">
                                 <div>
-                                  <i className="bi bi-briefcase me-1"></i>
+                                  <ProfileOutlined className="me-1" />
                                   {job.jobType === 'full-time' ? 'Toàn thời gian' : 'Bán thời gian'}
                                 </div>
                                 <div>
-                                  <i className="bi bi-geo-alt me-1"></i>
+                                  <EnvironmentOutlined className="me-1" />
                                   {job.location}
                                 </div>
                                 <div>
-                                  <i className="bi bi-cash me-1"></i>
+                                  <DollarOutlined className="me-1" />
                                   {formatSalary(job.salary)}
                                 </div>
                               </div>
@@ -279,18 +295,18 @@ const CompanyDetail = () => {
                                 <span className="badge bg-danger mb-2">Gấp</span>
                               )}
                               <div className="text-muted small">
-                                <i className="bi bi-eye me-1"></i>
+                                <EyeOutlined className="me-1" />
                                 {job.views} lượt xem
                               </div>
                               <div className="text-muted small">
-                                <i className="bi bi-people me-1"></i>
+                                <TeamOutlined className="me-1" />
                                 {job.applications} ứng viên
                               </div>
                             </div>
                           </div>
                           <div className="d-flex justify-content-between align-items-center mt-3">
                             <div className="text-muted small">
-                              <i className="bi bi-clock me-1"></i>
+                              <ClockCircleOutlined className="me-1" />
                               Hạn nộp: {formatDate(job.applicationDeadline)}
                             </div>
                             <Link 
@@ -324,7 +340,7 @@ const CompanyDetail = () => {
                   <div className="mb-3">
                     <div className="text-muted mb-2">Năm thành lập</div>
                     <div className="d-flex align-items-center">
-                      <i className="bi bi-calendar3 text-primary me-2"></i>
+                      <CalendarOutlined className="text-primary me-2" />
                       {company.foundedYear}
                     </div>
                   </div>
@@ -334,7 +350,7 @@ const CompanyDetail = () => {
                   <div className="mb-3">
                     <div className="text-muted mb-2">Địa chỉ</div>
                     <div className="d-flex align-items-center">
-                      <i className="bi bi-geo-alt text-primary me-2"></i>
+                      <EnvironmentOutlined className="text-primary me-2" />
                       {company.location.address}, {company.location.city}, {company.location.country}
                     </div>
                   </div>
@@ -344,7 +360,7 @@ const CompanyDetail = () => {
                   <div className="mb-3">
                     <div className="text-muted mb-2">Email liên hệ</div>
                     <div className="d-flex align-items-center">
-                      <i className="bi bi-envelope text-primary me-2"></i>
+                      <MailOutlined className="text-primary me-2" />
                       <a href={`mailto:${company.contactEmail}`} className="text-decoration-none">
                         {company.contactEmail}
                       </a>
@@ -356,7 +372,7 @@ const CompanyDetail = () => {
                   <div className="mb-3">
                     <div className="text-muted mb-2">Số điện thoại</div>
                     <div className="d-flex align-items-center">
-                      <i className="bi bi-telephone text-primary me-2"></i>
+                      <PhoneOutlined className="text-primary me-2" />
                       <a href={`tel:${company.contactPhone}`} className="text-decoration-none">
                         {company.contactPhone}
                       </a>
@@ -372,19 +388,19 @@ const CompanyDetail = () => {
                       {company.socialLinks?.linkedin && (
                         <a href={company.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" 
                            className="btn btn-outline-primary btn-sm">
-                          <i className="bi bi-linkedin"></i>
+                          <LinkedinOutlined />
                         </a>
                       )}
                       {company.socialLinks?.facebook && (
                         <a href={company.socialLinks.facebook} target="_blank" rel="noopener noreferrer"
                            className="btn btn-outline-primary btn-sm">
-                          <i className="bi bi-facebook"></i>
+                          <FacebookOutlined />
                         </a>
                       )}
                       {company.socialLinks?.twitter && (
                         <a href={company.socialLinks.twitter} target="_blank" rel="noopener noreferrer"
                            className="btn btn-outline-primary btn-sm">
-                          <i className="bi bi-twitter"></i>
+                          <TwitterOutlined />
                         </a>
                       )}
                     </div>

@@ -1,5 +1,8 @@
 import React from 'react';
 import './ModernButton.scss';
+import {
+  ReloadOutlined,
+} from '@ant-design/icons';
 
 const ModernButton = ({
   children,
@@ -41,7 +44,7 @@ const ModernButton = ({
     >
       {loading && (
         <span className="modern-btn__spinner">
-          <i className="bi bi-arrow-clockwise"></i>
+          <ReloadOutlined />
         </span>
       )}
       

@@ -3,6 +3,10 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import '../../assets/scss/main.scss';
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+} from '@ant-design/icons';
 
 const API_URL = 'http://localhost:5000';
 
@@ -94,7 +98,7 @@ const VerifyEmailPage = () => {
                 ) : success ? (
                   <div className="success-container">
                     <div className="text-success mb-4">
-                      <i className="bi bi-check-circle" style={{ fontSize: '4rem' }}></i>
+                      <CheckCircleOutlined style={{ fontSize: '4rem' }} />
                     </div>
                     <h2 className="mb-3">Email đã được xác thực!</h2>
                     <p className="mb-4">
@@ -111,7 +115,7 @@ const VerifyEmailPage = () => {
                 ) : (
                   <div className="error-container">
                     <div className="text-danger mb-4">
-                      <i className="bi bi-x-circle" style={{ fontSize: '4rem' }}></i>
+                      <CloseCircleOutlined style={{ fontSize: '4rem' }} />
                     </div>
                     <h2 className="mb-3">Xác thực không thành công</h2>
                     <p className="mb-4">

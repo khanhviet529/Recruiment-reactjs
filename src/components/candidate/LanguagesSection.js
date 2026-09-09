@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 
 const languageSchema = Yup.object({
   language: Yup.string().required('Ngôn ngữ là bắt buộc'),
@@ -93,7 +98,7 @@ const handleLanguageSubmit = async (values) => {
             setEditingItem(null);
           }}
         >
-          <i className="bi bi-plus me-1"></i> Thêm mới
+          <PlusOutlined className="me-1" /> Thêm mới
         </button>
       </div>
       <div className="card-body">
@@ -185,13 +190,13 @@ const handleLanguageSubmit = async (values) => {
                         setEditingItem(lang);
                       }}
                     >
-                      <i className="bi bi-pencil"></i>
+                      <EditOutlined />
                     </button>
                     <button 
                       className="btn btn-sm btn-outline-danger"
                       onClick={() => handleLanguageDelete(lang.id)}
                     >
-                      <i className="bi bi-trash"></i>
+                      <DeleteOutlined />
                     </button>
                   </div>
                 </div>

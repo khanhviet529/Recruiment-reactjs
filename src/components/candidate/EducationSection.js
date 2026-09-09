@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import {
+  BookOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 
 const educationSchema = Yup.object({
   school: Yup.string().required('Tên trường là bắt buộc'),
@@ -141,7 +147,7 @@ const EducationSection = ({ candidate, setCandidate }) => {
             setEditingItem(null);
           }}
         >
-          <i className="bi bi-plus me-1"></i> Thêm học vấn
+          <PlusOutlined className="me-1" /> Thêm học vấn
         </button>
       </div>
       <div className="card-body">
@@ -251,14 +257,14 @@ const EducationSection = ({ candidate, setCandidate }) => {
                       onClick={() => handleEdit(edu)}
                       title="Chỉnh sửa"
                     >
-                      <i className="bi bi-pencil"></i>
+                      <EditOutlined />
                     </button>
                     <button 
                       className="btn btn-sm btn-outline-danger"
                       onClick={() => handleEducationDelete(edu.id)}
                       title="Xóa"
                     >
-                      <i className="bi bi-trash"></i>
+                      <DeleteOutlined />
                     </button>
                   </div>
                 </div>
@@ -266,7 +272,7 @@ const EducationSection = ({ candidate, setCandidate }) => {
             ))
           ) : (
             <div className="text-center text-muted py-4">
-              <i className="bi bi-mortarboard fs-1 d-block mb-2"></i>
+              <BookOutlined className="fs-1 d-block mb-2" />
               <p>Chưa có thông tin học vấn nào</p>
               <button 
                 className="btn btn-outline-primary"

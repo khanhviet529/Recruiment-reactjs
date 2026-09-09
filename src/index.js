@@ -4,7 +4,10 @@ import './assets/scss/main.scss';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import 'bootstrap-icons/font/bootstrap-icons.css';
+// Đã bỏ 'bootstrap-icons/font/bootstrap-icons.css': toàn bộ icon nay dùng
+// @ant-design/icons (SVG, tự động tree-shake) nên không cần tải thêm font
+// icon ~180 KB ở mỗi lần vào web. Các tham chiếu bi-* còn lại chỉ nằm
+// trong file mồ côi (SearchBar, ModernHomePage) và code đã comment.
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

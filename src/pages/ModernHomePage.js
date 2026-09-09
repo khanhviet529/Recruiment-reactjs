@@ -5,6 +5,19 @@ import ModernCard from '../components/common/ModernCard';
 import ModernButton from '../components/common/ModernButton';
 import axios from 'axios';
 import './ModernHomePage.scss';
+import {
+  ArrowRightOutlined,
+  BankOutlined,
+  ClockCircleOutlined,
+  CodeOutlined,
+  DollarOutlined,
+  EnvironmentOutlined,
+  ProfileOutlined,
+  RiseOutlined,
+  SearchOutlined,
+  TeamOutlined,
+  UserAddOutlined,
+} from '@ant-design/icons';
 
 const ModernHomePage = () => {
   const navigate = useNavigate();
@@ -100,7 +113,7 @@ const ModernHomePage = () => {
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           onKeyPress={handleKeyPress}
-                          prefix={<i className="bi bi-search"></i>}
+                          prefix={<SearchOutlined />}
                           className="search-input"
                         />
                         <Input
@@ -109,7 +122,7 @@ const ModernHomePage = () => {
                           value={selectedLocation}
                           onChange={(e) => setSelectedLocation(e.target.value)}
                           onKeyPress={handleKeyPress}
-                          prefix={<i className="bi bi-geo-alt"></i>}
+                          prefix={<EnvironmentOutlined />}
                           className="location-input"
                         />
                         <ModernButton
@@ -145,15 +158,15 @@ const ModernHomePage = () => {
               <div className="col-lg-6">
                 <div className="hero-image">
                   <div className="floating-card card-1">
-                    <i className="bi bi-briefcase"></i>
+                    <ProfileOutlined />
                     <span>UI/UX Designer</span>
                   </div>
                   <div className="floating-card card-2">
-                    <i className="bi bi-code-slash"></i>
+                    <CodeOutlined />
                     <span>Frontend Developer</span>
                   </div>
                   <div className="floating-card card-3">
-                    <i className="bi bi-graph-up"></i>
+                    <RiseOutlined />
                     <span>Data Analyst</span>
                   </div>
                   <div className="hero-illustration">
@@ -173,7 +186,7 @@ const ModernHomePage = () => {
             <h2 className="section-title">Việc làm nổi bật</h2>
             <p className="section-subtitle">Khám phá những cơ hội việc làm hấp dẫn nhất</p>
             <Link to="/jobs" className="section-link">
-              Xem tất cả <i className="bi bi-arrow-right"></i>
+              Xem tất cả <ArrowRightOutlined />
             </Link>
           </div>
 
@@ -201,15 +214,15 @@ const ModernHomePage = () => {
 
                       <div className="job-info">
                         <div className="info-item">
-                          <i className="bi bi-geo-alt"></i>
+                          <EnvironmentOutlined />
                           <span>{job.location || 'Remote'}</span>
                         </div>
                         <div className="info-item">
-                          <i className="bi bi-currency-dollar"></i>
+                          <DollarOutlined />
                           <span>{job.salary || 'Thỏa thuận'}</span>
                         </div>
                         <div className="info-item">
-                          <i className="bi bi-clock"></i>
+                          <ClockCircleOutlined />
                           <span>{job.jobType || 'Full-time'}</span>
                         </div>
                       </div>
@@ -282,7 +295,7 @@ const ModernHomePage = () => {
             <h2 className="section-title">Công ty hàng đầu</h2>
             <p className="section-subtitle">Những nhà tuyển dụng uy tín đang tìm kiếm nhân tài</p>
             <Link to="/companies" className="section-link">
-              Xem tất cả <i className="bi bi-arrow-right"></i>
+              Xem tất cả <ArrowRightOutlined />
             </Link>
           </div>
 
@@ -306,11 +319,11 @@ const ModernHomePage = () => {
                     </ModernCard.Text>
                     <div className="company-stats">
                       <span className="stat">
-                        <i className="bi bi-people"></i>
+                        <TeamOutlined />
                         {company.companySize || '100-500'}
                       </span>
                       <span className="stat">
-                        <i className="bi bi-briefcase"></i>
+                        <ProfileOutlined />
                         {company.jobCount || 0} việc làm
                       </span>
                     </div>
@@ -330,7 +343,7 @@ const ModernHomePage = () => {
               <ModernCard variant="gradient" className="cta-card">
                 <ModernCard.Body>
                   <div className="cta-icon">
-                    <i className="bi bi-person-plus"></i>
+                    <UserAddOutlined />
                   </div>
                   <ModernCard.Title>Dành cho ứng viên</ModernCard.Title>
                   <ModernCard.Text>
@@ -349,7 +362,7 @@ const ModernHomePage = () => {
               <ModernCard variant="gradient" className="cta-card">
                 <ModernCard.Body>
                   <div className="cta-icon">
-                    <i className="bi bi-building"></i>
+                    <BankOutlined />
                   </div>
                   <ModernCard.Title>Dành cho nhà tuyển dụng</ModernCard.Title>
                   <ModernCard.Text>

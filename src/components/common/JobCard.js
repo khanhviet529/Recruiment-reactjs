@@ -1,6 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { HeartOutlined, HeartFilled, EnvironmentOutlined, DollarOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import {
+  ArrowRightOutlined,
+  ClockCircleOutlined,
+  DollarOutlined,
+  EnvironmentOutlined,
+  HeartFilled,
+  HeartOutlined,
+} from '@ant-design/icons';
 import { Tag, Tooltip } from 'antd';
 import { useSavedJobs } from '../../context/SavedJobsContext';
 
@@ -100,11 +107,11 @@ const JobCard = ({ job, savedJobs = [], onSaveJob }) => {
       
       <div className="job-card-footer">
         <div className="posted-date">
-          <i className="bi bi-clock"></i>
+          <ClockCircleOutlined />
           {formattedDate(job.createdAt)}
         </div>
         <Link to={`/jobs/${job.id}`} className="view-job">
-          Xem chi tiết <i className="bi bi-arrow-right"></i>
+          Xem chi tiết <ArrowRightOutlined />
         </Link>
       </div>
     </div>

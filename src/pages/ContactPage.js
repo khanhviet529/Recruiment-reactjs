@@ -1,4 +1,10 @@
 import React from 'react';
+import {
+  FacebookOutlined,
+  InstagramOutlined,
+  LinkedinOutlined,
+  TwitterOutlined,
+} from '@ant-design/icons';
 
 const ContactPage = () => {
   return (
@@ -33,16 +39,16 @@ const ContactPage = () => {
                 <h5 className="card-title">Kết nối với chúng tôi</h5>
                 <div className="social-links mt-3">
                   <a href="#" className="me-3 text-decoration-none">
-                    <i className="bi bi-facebook fs-4"></i>
+                    <FacebookOutlined className="fs-4" />
                   </a>
                   <a href="#" className="me-3 text-decoration-none">
-                    <i className="bi bi-linkedin fs-4"></i>
+                    <LinkedinOutlined className="fs-4" />
                   </a>
                   <a href="#" className="me-3 text-decoration-none">
-                    <i className="bi bi-twitter fs-4"></i>
+                    <TwitterOutlined className="fs-4" />
                   </a>
                   <a href="#" className="text-decoration-none">
-                    <i className="bi bi-instagram fs-4"></i>
+                    <InstagramOutlined className="fs-4" />
                   </a>
                 </div>
               </div>

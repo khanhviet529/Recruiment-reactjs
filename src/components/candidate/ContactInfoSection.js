@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import {
+  EditOutlined,
+} from '@ant-design/icons';
 
 const contactInfoSchema = Yup.object({
   email: Yup.string().email('Email không hợp lệ').required('Email là bắt buộc'),
@@ -50,7 +53,7 @@ const ContactInfoSection = ({ candidate, setCandidate }) => {
             className="btn btn-sm btn-primary"
             onClick={() => setEditMode(!editMode)}
           >
-            <i className="bi bi-pencil me-1"></i> {editMode ? 'Hủy' : 'Chỉnh sửa'}
+            <EditOutlined className="me-1" /> {editMode ? 'Hủy' : 'Chỉnh sửa'}
           </button>
         </div>
         <div className="card-body">

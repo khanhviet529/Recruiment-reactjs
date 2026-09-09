@@ -4,6 +4,10 @@ import * as Yup from 'yup';
 import axios from 'axios';
 import { message } from 'antd';
 import moment from 'moment';
+import {
+  EditOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 
 const PersonalInfoSection = ({ candidate, setCandidate }) => {
   const [editMode, setEditMode] = useState(false);
@@ -95,7 +99,7 @@ const PersonalInfoSection = ({ candidate, setCandidate }) => {
             className="btn btn-sm btn-primary"
             onClick={() => setEditMode(true)}
           >
-            <i className="bi bi-pencil me-1"></i> Chỉnh sửa
+            <EditOutlined className="me-1" /> Chỉnh sửa
           </button>
         )}
       </div>
@@ -329,7 +333,7 @@ const PersonalInfoSection = ({ candidate, setCandidate }) => {
 
             {!candidate?.firstName && !candidate?.lastName && !candidate?.email && (
               <div className="text-center text-muted py-4">
-                <i className="bi bi-person fs-1 d-block mb-2"></i>
+                <UserOutlined className="fs-1 d-block mb-2" />
                 <p>Chưa có thông tin cá nhân</p>
                 <button 
                   className="btn btn-primary"

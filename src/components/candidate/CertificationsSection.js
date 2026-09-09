@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  TrophyOutlined,
+} from '@ant-design/icons';
 
 const certificationSchema = Yup.object({
   name: Yup.string().required('Tên chứng chỉ là bắt buộc'),
@@ -140,7 +146,7 @@ const handleCertificationSubmit = async (values, { setSubmitting, resetForm }) =
             setEditingItem(null);
           }}
         >
-          <i className="bi bi-plus me-1"></i> Thêm chứng chỉ
+          <PlusOutlined className="me-1" /> Thêm chứng chỉ
         </button>
       </div>
       <div className="card-body">
@@ -242,14 +248,14 @@ const handleCertificationSubmit = async (values, { setSubmitting, resetForm }) =
                       onClick={() => handleEdit(cert)}
                       title="Chỉnh sửa"
                     >
-                      <i className="bi bi-pencil"></i>
+                      <EditOutlined />
                     </button>
                     <button 
                       className="btn btn-sm btn-outline-danger"
                       onClick={() => handleCertificationDelete(cert.id)}
                       title="Xóa"
                     >
-                      <i className="bi bi-trash"></i>
+                      <DeleteOutlined />
                     </button>
                   </div>
                 </div>
@@ -257,7 +263,7 @@ const handleCertificationSubmit = async (values, { setSubmitting, resetForm }) =
             ))
           ) : (
             <div className="text-center text-muted py-4">
-              <i className="bi bi-award fs-1 d-block mb-2"></i>
+              <TrophyOutlined className="fs-1 d-block mb-2" />
               <p>Chưa có chứng chỉ nào</p>
               <button 
                 className="btn btn-outline-primary"

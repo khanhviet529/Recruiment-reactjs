@@ -22,14 +22,15 @@ import {
   Space,
   Tag
 } from 'antd';
-import { 
-  SearchOutlined, 
-  EnvironmentOutlined, 
-  DollarOutlined, 
-  FilterOutlined,
-  SortAscendingOutlined,
+import {
   AppstoreOutlined,
-  BarsOutlined
+  BarsOutlined,
+  DollarOutlined,
+  EnvironmentOutlined,
+  FilterOutlined,
+  SearchOutlined,
+  SortAscendingOutlined,
+  WarningFilled,
 } from '@ant-design/icons';
 import '../styles/jobPage.scss';
 
@@ -904,7 +905,7 @@ const SearchPage = () => {
               </div>
             ) : error ? (
               <div className="alert alert-danger">
-                <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                <WarningFilled className="me-2" />
                 {error}
               </div>
             ) : currentJobs.length === 0 ? (

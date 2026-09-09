@@ -20,17 +20,20 @@ import {
   Space,
   notification
 } from 'antd';
-import { 
-  UploadOutlined, 
-  SaveOutlined, 
-  EditOutlined, 
-  LoadingOutlined,
-  PlusOutlined,
+import {
+  CheckCircleOutlined,
+  EditOutlined,
   EnvironmentOutlined,
+  FacebookOutlined,
+  GlobalOutlined,
+  LinkedinOutlined,
+  LoadingOutlined,
   MailOutlined,
   PhoneOutlined,
-  GlobalOutlined,
-  CheckCircleOutlined
+  PlusOutlined,
+  SaveOutlined,
+  TwitterOutlined,
+  UploadOutlined,
 } from '@ant-design/icons';
 import { useForm } from 'antd/lib/form/Form';
 import ImageViewer from '../../components/common/ImageViewer';
@@ -520,17 +523,17 @@ const EmployerProfilePage = () => {
               <div className="social-links">
                 {profile.socialLinks?.linkedin && (
                   <Button type="link" href={profile.socialLinks.linkedin} target="_blank">
-                    <i className="bi bi-linkedin"></i>
+                    <LinkedinOutlined />
                   </Button>
                 )}
                 {profile.socialLinks?.facebook && (
                   <Button type="link" href={profile.socialLinks.facebook} target="_blank">
-                    <i className="bi bi-facebook"></i>
+                    <FacebookOutlined />
                   </Button>
                 )}
                 {profile.socialLinks?.twitter && (
                   <Button type="link" href={profile.socialLinks.twitter} target="_blank">
-                    <i className="bi bi-twitter"></i>
+                    <TwitterOutlined />
                   </Button>
                 )}
               </div>

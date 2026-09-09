@@ -1,5 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import {
+  CalendarOutlined,
+  CheckCircleFilled,
+  EnvironmentOutlined,
+  ProfileOutlined,
+  TeamOutlined,
+} from '@ant-design/icons';
 
 const CompanyCard = ({ company }) => {
   const benefits = company?.benefits || [];
@@ -27,7 +34,7 @@ const CompanyCard = ({ company }) => {
               </Link>
             </h5>
             <div className="text-muted small">
-              <i className="bi bi-geo-alt me-1"></i>
+              <EnvironmentOutlined className="me-1" />
               {location.city ? `${location.city}, ${location.country}` : 'Chưa cập nhật địa điểm'}
             </div>
           </div>
@@ -36,25 +43,25 @@ const CompanyCard = ({ company }) => {
         <div className="company-info mb-3">
           {company.industry && (
             <div className="d-flex align-items-center mb-2">
-              <i className="bi bi-briefcase me-2 text-primary"></i>
+              <ProfileOutlined className="me-2 text-primary" />
               <span>{company.industry}</span>
             </div>
           )}
           {company.companySize && (
             <div className="d-flex align-items-center mb-2">
-              <i className="bi bi-people me-2 text-primary"></i>
+              <TeamOutlined className="me-2 text-primary" />
               <span>{company.companySize} nhân viên</span>
             </div>
           )}
           {company.foundedYear && (
             <div className="d-flex align-items-center mb-2">
-              <i className="bi bi-calendar me-2 text-primary"></i>
+              <CalendarOutlined className="me-2 text-primary" />
               <span>Thành lập năm {company.foundedYear}</span>
             </div>
           )}
           {company.verified && (
             <div className="d-flex align-items-center">
-              <i className="bi bi-patch-check-fill me-2 text-primary"></i>
+              <CheckCircleFilled className="me-2 text-primary" />
               <span className="text-primary">Đã xác thực</span>
             </div>
           )}
