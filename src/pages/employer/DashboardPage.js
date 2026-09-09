@@ -38,7 +38,8 @@ const DashboardPage = () => {
           
           if (employer) {
             // Lấy tin tuyển dụng của nhà tuyển dụng
-            const jobsResponse = await axios.get(`http://localhost:5000/jobs?employerId=${employer.id}`);
+            // jobs.employerId luu theo users.id, khong phai employers.id
+            const jobsResponse = await axios.get(`http://localhost:5000/jobs?employerId=${user.id}`);
             const jobs = jobsResponse.data || [];
             
             // Lấy đơn ứng tuyển cho các công việc của nhà tuyển dụng

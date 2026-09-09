@@ -38,8 +38,8 @@ const CandidateDashboardPage = () => {
       if (candidateResponse.data && candidateResponse.data.length > 0) {
         const candidateId = candidateResponse.data[0].id;
         
-        // Lấy danh sách đơn ứng tuyển của ứng viên
-        const applicationsResponse = await axios.get(`http://localhost:5000/applications?candidateId=${candidateId}`);
+        // Đơn ứng tuyển được lưu theo users.id (không phải candidates.id)
+        const applicationsResponse = await axios.get(`http://localhost:5000/applications?candidateId=${user.id}`);
         const applications = applicationsResponse.data || [];
         
         // Lấy thông tin chi tiết của mỗi công việc đã ứng tuyển để hiển thị
@@ -49,8 +49,9 @@ const CandidateDashboardPage = () => {
             const job = jobResponse.data;
             
             // Lấy thông tin công ty
-            const employerResponse = await axios.get(`http://localhost:5000/employers/${job.employerId}`);
-            const employer = employerResponse.data;
+            // jobs.employerId chinh la users.id nen phai tim bang ?userId=
+            const employerResponse = await axios.get(`http://localhost:5000/employers?userId=${job.employerId}`);
+            const employer = employerResponse.data?.[0] || {};
             
             return {
               id: app.id,

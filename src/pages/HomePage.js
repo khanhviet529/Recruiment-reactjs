@@ -155,8 +155,9 @@ const HomePage = () => {
         const jobsWithEmployerData = await Promise.all(
           jobsResponse.data.map(async (job) => {
             try {
-              const employerResponse = await axios.get(`http://localhost:5000/employers/${job.employerId}`);
-              const employer = employerResponse.data;
+              // jobs.employerId chinh la users.id nen phai tim bang ?userId=
+              const employerResponse = await axios.get(`http://localhost:5000/employers?userId=${job.employerId}`);
+              const employer = employerResponse.data?.[0] || {};
               
               return {
                 ...job,
@@ -203,8 +204,9 @@ const HomePage = () => {
         const featuredJobsWithEmployerData = await Promise.all(
           featuredJobsData.map(async (job) => {
             try {
-              const employerResponse = await axios.get(`http://localhost:5000/employers/${job.employerId}`);
-              const employer = employerResponse.data;
+              // jobs.employerId chinh la users.id nen phai tim bang ?userId=
+              const employerResponse = await axios.get(`http://localhost:5000/employers?userId=${job.employerId}`);
+              const employer = employerResponse.data?.[0] || {};
               
               return {
                 ...job,
