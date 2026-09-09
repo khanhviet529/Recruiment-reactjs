@@ -90,7 +90,7 @@ const CompanyDetail = () => {
         className="cover-image position-relative"
         style={{
           height: '300px',
-          backgroundImage: `url(${company.coverImage || 'https://via.placeholder.com/1920x300'})`,
+          backgroundImage: `url(${company.coverImage || '/image/default-cover.jpg'})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}

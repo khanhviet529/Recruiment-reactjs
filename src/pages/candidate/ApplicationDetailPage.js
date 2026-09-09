@@ -587,7 +587,7 @@ const ApplicationDetailPage = () => {
         <Row gutter={24} align="middle">
           <Col xs={24} md={6} className="text-center">
             <img 
-              src={employer?.logo || "https://via.placeholder.com/150"} 
+              src={employer?.logo || '/image/company-placeholder.svg'} 
               alt={employer?.companyName} 
               style={{ maxWidth: '100%', maxHeight: 120, objectFit: 'contain' }} 
             />

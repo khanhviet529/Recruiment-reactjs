@@ -123,18 +123,18 @@ const HomePage = () => {
   const banners = [
     {
       id: 1,
-      image: "/image/mau-thong-bao-tuyen-dung-3.jpg",
-      altText: "Banner 1"
+      image: "/image/banner-01.jpg",
+      altText: "Tìm việc làm phù hợp cùng ProHire"
     },
     {
       id: 2,
-      image: "/image/mau-thong-bao-tuyen-dung-3 copy.jpg",
-      altText: "Banner 2"
+      image: "/image/banner-02.jpg",
+      altText: "Đánh giá năng lực trực tuyến ngay trên hệ thống"
     },
     {
       id: 3,
-      image: "/image/pngtree-blue-tech-theme-globe-poster-background-image_153891.jpg",
-      altText: "Banner 3"
+      image: "/image/banner-03.jpg",
+      altText: "Giải pháp sàng lọc ứng viên cho nhà tuyển dụng"
     }
     // Add more banners as needed
   ];
@@ -160,7 +160,7 @@ const HomePage = () => {
               
               return {
                 ...job,
-                companyLogo: employer?.logo || employer?.profilePicture || `https://via.placeholder.com/100?text=${(employer?.companyName || 'C').charAt(0)}`,
+                companyLogo: employer?.logo || employer?.profilePicture || '/image/company-placeholder.svg',
                 companyName: employer?.companyName || 'Company Name',
                 employerData: employer
               };
@@ -168,7 +168,7 @@ const HomePage = () => {
               console.error(`Error fetching employer ${job.employerId}:`, error);
               return {
                 ...job,
-                companyLogo: `https://via.placeholder.com/100?text=${job.title ? job.title.charAt(0) : 'C'}`,
+                companyLogo: '/image/company-placeholder.svg',
                 companyName: 'Company Name',
                 employerData: null
               };
@@ -208,7 +208,7 @@ const HomePage = () => {
               
               return {
                 ...job,
-                companyLogo: employer?.logo || employer?.profilePicture || `https://via.placeholder.com/100?text=${(employer?.companyName || 'C').charAt(0)}`,
+                companyLogo: employer?.logo || employer?.profilePicture || '/image/company-placeholder.svg',
                 companyName: employer?.companyName || 'Company Name',
                 employerData: employer
               };
@@ -216,7 +216,7 @@ const HomePage = () => {
               console.error(`Error fetching employer ${job.employerId}:`, error);
               return {
                 ...job,
-                companyLogo: `https://via.placeholder.com/100?text=${job.title ? job.title.charAt(0) : 'C'}`,
+                companyLogo: '/image/company-placeholder.svg',
                 companyName: 'Company Name',
                 employerData: null
               };
@@ -435,7 +435,7 @@ const HomePage = () => {
                   <img 
                     src={banner.image} 
                     alt={banner.altText} 
-                    style={{ width: '100%', height: '500px' }}
+                    style={{ width: '100%', height: '500px', objectFit: 'cover' }}
                     className="slide-image"
                   />
                 </div>
@@ -545,7 +545,7 @@ const HomePage = () => {
                     <div className="employer-card">
                       <div 
                         className="employer-logo-container"
-                        style={{ backgroundImage: `url(${employer.logo || 'https://via.placeholder.com/100x50?text=Logo'})` }}
+                        style={{ backgroundImage: `url(${employer.logo || '/image/company-placeholder.svg'})` }}
                       >
                       </div>
                       <div className="employer-info">

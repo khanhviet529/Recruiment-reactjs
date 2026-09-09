@@ -207,7 +207,7 @@ const ImageUploaderNoView = ({
                 opacity: isUploading ? 0.7 : 1,
                 transition: 'opacity 0.3s, transform 0.2s'
               }}
-              fallback={`https://via.placeholder.com/${size}x${size}?text=No+Image`}
+              fallback={'/image/company-placeholder.svg'}
               preview={{
                 mask: (
                   <div className="custom-preview-mask">

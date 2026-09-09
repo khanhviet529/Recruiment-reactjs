@@ -6,7 +6,7 @@ const scrollToTop = () => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' 
 
 const COLUMNS = [
   {
-    title: 'Về JobConnect',
+    title: 'Về ProHire',
     links: [
       { to: '/', label: 'Trang chủ' },
       { to: '/about', label: 'Về chúng tôi' },
@@ -38,8 +38,8 @@ const Footer = () => (
       {/* Cột giới thiệu */}
       <div className="ft__about">
         <Link to="/" className="ft__brand" onClick={scrollToTop}>
-          <span className="ft__mark" aria-hidden="true">JC</span>
-          <span className="ft__word">JobConnect</span>
+          <img src="/image/logo-256.png" alt="" className="ft__logo" width="34" height="34" />
+          <span className="ft__word">ProHire</span>
         </Link>
         <p className="ft__desc">
           Nền tảng kết nối ứng viên và nhà tuyển dụng, hỗ trợ đánh giá năng lực
@@ -66,7 +66,7 @@ const Footer = () => (
 
     <div className="ft__bottom">
       <div className="app-container ft__bottom-inner">
-        <span>© {new Date().getFullYear()} JobConnect. Đồ án tốt nghiệp.</span>
+        <span>© {new Date().getFullYear()} ProHire. Đồ án tốt nghiệp.</span>
         <span className="ft__made">Xây dựng với React &amp; Ant Design</span>
       </div>
     </div>

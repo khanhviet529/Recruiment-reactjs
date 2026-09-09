@@ -52,7 +52,7 @@ const JobCard = ({ job, savedJobs = [], onSaveJob }) => {
       <div className="job-card-header">
         <Link to={`/jobs/${job.id}`} className="company-logo">
           <img 
-            src={job.companyLogo || "https://via.placeholder.com/100?text=Logo"} 
+            src={job.companyLogo || '/image/company-placeholder.svg'} 
             alt={job.companyName || "Company"}
           />
         </Link>

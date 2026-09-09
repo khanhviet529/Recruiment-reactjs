@@ -16,7 +16,7 @@ const ContactPage = () => {
                 </div>
                 <div className="mb-3">
                   <p className="mb-1"><strong>Email:</strong></p>
-                  <p>info@jobconnect.com</p>
+                  <p>info@prohire.vn</p>
                 </div>
                 <div className="mb-3">
                   <p className="mb-1"><strong>Số điện thoại:</strong></p>

@@ -59,7 +59,7 @@ export const getCandidateAvatar = (candidate) => {
   // Generate placeholder with first letter
   const firstName = candidate.firstName || candidate.participantInfo?.firstName || '';
   const firstLetter = firstName.charAt(0).toUpperCase() || '?';
-  return `https://via.placeholder.com/70x70?text=${firstLetter}`;
+  return '/image/company-placeholder.svg';
 };
 
 /**
@@ -80,7 +80,7 @@ export const getEmployerAvatar = (employer) => {
   // Generate placeholder with company name first letter
   const companyName = employer.companyName || '';
   const firstLetter = companyName.charAt(0).toUpperCase() || 'C';
-  return `https://via.placeholder.com/70x70?text=${firstLetter}`;
+  return '/image/company-placeholder.svg';
 };
 
 /**

@@ -495,20 +495,23 @@ const LoginPage = () => {
             Vui lòng gọi tới số <a href="tel:(024) 6680 5588">(024) 6680 5588</a> (giờ hành chính).
           </div>
 
-          <div className="login-footer">© 2016. All Rights Reserved. Job Connect Vietnam JSC.</div>
+          <div className="login-footer">© 2016. All Rights Reserved. ProHire Vietnam.</div>
         </div>
 
         {/* Brand Side */}
-        <div className="brand-side">
+        <div
+          className="brand-side candidate"
+          style={{ '--panel-img': "url('/image/panel-candidate.jpg')" }}
+        >
           <div className="brand-logo">
-            Job<span>Connect</span>
+            Pro<span>Hire</span>
           </div>
           <h2 className="brand-tagline">
             Tiếp lợi thế
             <br />
             Nổi thành công
           </h2>
-          <p className="brand-description">Job Connect  - Hệ sinh thái nhân sự tiên phong ứng dụng công nghệ tại Việt Nam</p>
+          <p className="brand-description">ProHire - Hệ sinh thái nhân sự tiên phong ứng dụng công nghệ tại Việt Nam</p>
         </div>
       </div>
     )
@@ -730,15 +733,17 @@ const LoginPage = () => {
             (giờ hành chính).
           </div>
 
-          <div className="login-footer">© 2016. All Rights Reserved. Job Connect  Vietnam JSC.</div>
+          <div className="login-footer">© 2016. All Rights Reserved. ProHire Vietnam.</div>
         </div>
 
         {/* Brand Side */}
-        <div className="brand-side employer">
-          <img src="../../../public/image/employer-dashboard.png" alt="Employer Dashboard" />
+        <div
+          className="brand-side employer"
+          style={{ '--panel-img': "url('/image/panel-employer.jpg')" }}
+        >
           <div className="brand-content">
             <div className="brand-logo employer">
-              Job<span>Connect</span>
+              Pro<span>Hire</span>
             </div>
             <p>Tiếp lợi thế, nổi thành công</p>
           </div>
@@ -891,20 +896,20 @@ const LoginPage = () => {
             )}
           </Formik>
 
-          <div className="login-footer">© 2016. All Rights Reserved. Job Connect  Vietnam JSC.</div>
+          <div className="login-footer">© 2016. All Rights Reserved. ProHire Vietnam.</div>
         </div>
 
         {/* Brand Side */}
         <div className="brand-side">
           <div className="brand-logo">
-            Job<span>Connect</span>
+            Pro<span>Hire</span>
           </div>
           <h2 className="brand-tagline">
             Quản trị
             <br />
             Hệ thống
           </h2>
-          <p className="brand-description">Job Connect  - Hệ sinh thái nhân sự tiên phong ứng dụng công nghệ tại Việt Nam</p>
+          <p className="brand-description">ProHire - Hệ sinh thái nhân sự tiên phong ứng dụng công nghệ tại Việt Nam</p>
         </div>
       </div>
     )

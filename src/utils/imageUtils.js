@@ -1,11 +1,15 @@
 import defaultAvatar from '../assets/images/default-avatar.svg';
 import defaultCompanyLogo from '../assets/images/default-company-logo.svg';
 
-// Default images
+// Ảnh mặc định.
+// Trước đây COVER_IMAGE trỏ tới via.placeholder.com — dịch vụ này đã ngừng
+// hoạt động nên mọi ảnh bìa đều bị lỗi. Nay dùng ảnh nằm trong public/image.
 export const DEFAULT_IMAGES = {
   AVATAR: defaultAvatar,
   COMPANY_LOGO: defaultCompanyLogo,
-  COVER_IMAGE: 'https://via.placeholder.com/1200x300/f0f2f5/bfbfbf?text=No+Cover+Image'
+  COVER_IMAGE: '/image/default-cover.jpg',
+  EMPTY_STATE: '/image/empty-state.jpg',
+  NOT_FOUND: '/image/not-found.jpg'
 };
 
 // Get default image based on type

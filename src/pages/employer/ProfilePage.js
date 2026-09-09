@@ -117,8 +117,8 @@ const EmployerProfilePage = () => {
         email: user?.email || 'employer1@company.com',
         phone: '0901234567',
         companyName: 'Tech Solutions Inc.',
-        logo: 'https://via.placeholder.com/150?text=TSI',
-        coverImage: 'https://via.placeholder.com/1200x300?text=TechSolutionsInc',
+        logo: '/image/company-placeholder.svg',
+        coverImage: '/image/default-cover.jpg',
         description: 'Tech Solutions Inc. là công ty công nghệ hàng đầu chuyên cung cấp giải pháp phần mềm sáng tạo cho doanh nghiệp toàn cầu.',
         industry: 'Công nghệ thông tin',
         companySize: '51-200',
@@ -402,7 +402,7 @@ const EmployerProfilePage = () => {
               src={getImageWithFallback(coverUrl, 'cover')}
               alt={profile.companyName}
               style={{ width: '100%', objectFit: 'cover', height: '250px' }}
-              fallback="https://via.placeholder.com/1200x300?text=No+Cover+Image"
+              fallback='/image/default-cover.jpg'
             />
           ) : (
             <div className="no-cover" style={{ width: '100%', height: '250px', background: '#f0f2f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -454,7 +454,7 @@ const EmployerProfilePage = () => {
                       objectFit: 'cover',
                       objectPosition: 'center'
                     }}
-                    fallback="https://via.placeholder.com/200x200?text=No+Logo"
+                    fallback='/image/company-placeholder.svg'
                   />
                 ) : (
                   <div 

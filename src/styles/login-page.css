@@ -1,4 +1,4 @@
-/* Login Page CSS - Job Connect  Style */
+/* Login Page CSS - ProHire Style */
 
 /* Base Styles */
 .login-page {
@@ -34,7 +34,7 @@
 /* Brand Side */
 .brand-side {
   width: 40%;
-  background: linear-gradient(135deg, #004d40 0%, #00695c 100%);
+  background: linear-gradient(135deg, #4338ca 0%, #312e81 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -52,10 +52,36 @@
   right: 0;
   width: 100%;
   height: 100%;
-  background-image: radial-gradient(circle, #00a67d 1px, transparent 1px);
+  background-image: radial-gradient(circle, #34d399 1px, transparent 1px);
   background-size: 20px 20px;
   opacity: 0.2;
   transform: rotate(-15deg) scale(2) translateX(20%) translateY(-10%);
+}
+
+/* Anh minh hoa lam nen panel, phu mo tren nen gradient indigo de chu
+   trang ben tren luon doc duoc.
+
+   LUU Y: duong dan anh KHONG viet truc tiep url("/image/...") o day.
+   File nay do webpack (css-loader) xu ly, no se coi duong dan bat dau
+   bang "/" la module can resolve trong src/ va bao loi "Module not
+   found". Vi vay anh duoc truyen tu JSX vao qua bien --panel-img. */
+.brand-side.candidate::after,
+.brand-side.employer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--panel-img);
+  background-size: cover;
+  background-position: center;
+  opacity: 0.35;
+  mix-blend-mode: luminosity;
+  pointer-events: none;
+}
+
+/* Noi dung phai nam tren lop anh */
+.brand-side > * {
+  position: relative;
+  z-index: 2;
 }
 
 @media (max-width: 768px) {
@@ -74,7 +100,7 @@
 }
 
 .brand-logo span {
-  color: #00a67d;
+  color: #34d399;
 }
 
 /* Tagline */
@@ -102,7 +128,7 @@
 }
 
 .welcome-text {
-  color: #2d69af;
+  color: #4f46e5;
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
@@ -134,7 +160,7 @@
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #2d69af;
+  color: #4f46e5;
 }
 
 .form-input {
@@ -167,7 +193,7 @@
 .forgot-password {
   display: block;
   text-align: right;
-  color: #00a67d;
+  color: #34d399;
   font-size: 0.9rem;
   text-decoration: none;
   margin-top: 0.5rem;
@@ -181,7 +207,7 @@
 .login-btn {
   width: 100%;
   padding: 0.75rem;
-  background-color: #2d69af;
+  background-color: #4f46e5;
   color: white;
   border: none;
   border-radius: 4px;
@@ -193,7 +219,7 @@
 }
 
 .login-btn:hover {
-  background-color: #294e78;
+  background-color: #4338ca;
 }
 
 .login-btn:active {
@@ -272,7 +298,7 @@
 }
 
 .register-link a {
-  color: #00a67d;
+  color: #34d399;
   text-decoration: none;
   font-weight: 500;
 }
@@ -290,7 +316,7 @@
 }
 
 .support-text a {
-  color: #00a67d;
+  color: #34d399;
   text-decoration: none;
   font-weight: 500;
 }

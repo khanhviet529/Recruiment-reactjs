@@ -149,9 +149,9 @@ const Header = () => {
     <header className="hd">
       <div className="hd__inner app-container">
         {/* Thương hiệu */}
-        <Link to="/" className="hd__brand" aria-label="JobConnect - về trang chủ">
-          <span className="hd__mark" aria-hidden="true">JC</span>
-          <span className="hd__word">JobConnect</span>
+        <Link to="/" className="hd__brand" aria-label="ProHire - về trang chủ">
+          <img src="/image/logo-256.png" alt="" className="hd__logo" width="34" height="34" />
+          <span className="hd__word">ProHire</span>
         </Link>
 
         {/* Điều hướng chính */}

@@ -853,7 +853,7 @@ const JobDetail = () => {
           <div className="job-header-content">
             <div className="company-logo">
               <img
-                src={employer?.logo || "https://via.placeholder.com/80"}
+                src={employer?.logo || '/image/company-placeholder.svg'}
                 alt={employer?.companyName || "Company"}
               />
                     </div>
@@ -1058,7 +1058,7 @@ const JobDetail = () => {
                   <div className="company-info-card">
                     <div className="company-logo">
                       <img
-                        src={employer.logo || "https://via.placeholder.com/60"}
+                        src={employer.logo || '/image/company-placeholder.svg'}
                           alt={employer.companyName}
                         />
                       </div>

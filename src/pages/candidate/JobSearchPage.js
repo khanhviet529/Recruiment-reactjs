@@ -171,7 +171,7 @@ const JobSearchPage = () => {
           company: {
             id: index % 10 + 1,
             name: `${['TechCorp', 'Digital Solutions', 'Web Masters', 'IT Innovations', 'Code Factory'][index % 5]}`,
-            logo: 'https://via.placeholder.com/100'
+            logo: '/image/company-placeholder.svg'
           },
           location: `${['Hà Nội', 'Hồ Chí Minh', 'Đà Nẵng', 'Nha Trang', 'Cần Thơ'][index % 5]}`,
           jobType: `${['Full-time', 'Part-time', 'Contract', 'Freelance', 'Internship'][index % 5]}`,

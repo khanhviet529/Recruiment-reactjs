@@ -109,14 +109,14 @@ const JobsPage = () => {
           if (employer) {
             return {
               ...job,
-              companyLogo: employer.logo || employer.profilePicture || `https://via.placeholder.com/100?text=${(employer.companyName || 'C').charAt(0)}`,
+              companyLogo: employer.logo || employer.profilePicture || '/image/company-placeholder.svg',
               companyName: employer.companyName || 'Company Name',
               employerData: employer
             };
           } else {
             return {
               ...job,
-              companyLogo: `https://via.placeholder.com/100?text=${job.title ? job.title.charAt(0) : 'C'}`,
+              companyLogo: '/image/company-placeholder.svg',
               companyName: 'Company Name',
               employerData: null
             };
@@ -807,6 +807,8 @@ const JobsPage = () => {
             </div>
             ) : currentJobs.length === 0 ? (
               <Empty
+                image="/image/empty-state.jpg"
+                imageStyle={{ height: 180, objectFit: 'contain' }}
                 description={
                   <span>
                     Không tìm thấy công việc nào phù hợp với tiêu chí tìm kiếm

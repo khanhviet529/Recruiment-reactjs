@@ -909,6 +909,8 @@ const SearchPage = () => {
               </div>
             ) : currentJobs.length === 0 ? (
               <Empty
+                image="/image/empty-state.jpg"
+                imageStyle={{ height: 180, objectFit: 'contain' }}
                 description={
                   <span>
                     Không tìm thấy công việc nào phù hợp với tiêu chí tìm kiếm

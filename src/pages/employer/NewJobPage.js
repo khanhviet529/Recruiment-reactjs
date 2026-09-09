@@ -196,7 +196,7 @@ const NewJobPage = () => {
         allowSearch: true,
         premium: false,
         companyName: user.companyName || "Digital Enterprise",
-        companyLogo: user.companyLogo || "https://via.placeholder.com/150?text=DE",
+        companyLogo: user.companyLogo || '/image/company-placeholder.svg',
         createdAt: moment().format(),
         updatedAt: moment().format()
       };

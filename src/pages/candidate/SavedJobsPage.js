@@ -74,7 +74,7 @@ const SavedJobsPage = () => {
           }
           
           // Get employer details
-          let employer = { companyName: 'Unknown Company', logo: 'https://via.placeholder.com/100' };
+          let employer = { companyName: 'Unknown Company', logo: '/image/company-placeholder.svg' };
           try {
             // First try to get all employers and find the matching one
             const employersResponse = await axios.get(`http://localhost:5000/employers`);
@@ -94,7 +94,7 @@ const SavedJobsPage = () => {
             company: {
               id: employer.id,
               name: employer.companyName,
-              logo: employer.logo || employer.profilePicture || 'https://via.placeholder.com/100'
+              logo: employer.logo || employer.profilePicture || '/image/company-placeholder.svg'
             },
             location: job.location,
             jobType: job.jobType,
