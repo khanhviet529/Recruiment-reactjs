@@ -166,6 +166,9 @@ const antdTheme = {
     Pagination: {
       itemActiveBg: BRAND,
       borderRadius: 8,
+      // Truoc chi dat mau nen, khong dat mau chu -> so trang dang chon
+      // co nen tim nhung chu van mau toi, doc rat kho.
+      itemActiveColorDisabled: '#fff',
     },
 
     Descriptions: {

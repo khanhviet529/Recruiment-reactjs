@@ -18,7 +18,7 @@ const ContactPage = () => {
                 <h5 className="card-title">Thông tin liên hệ</h5>
                 <div className="mb-3">
                   <p className="mb-1"><strong>Địa chỉ:</strong></p>
-                  <p>Tòa nhà ABC, 123 Đường XYZ, Quận 1, TP. Hồ Chí Minh</p>
+                  <p>Tầng 8, Toà nhà Sunrise, 90 Trần Thái Tông, Cầu Giấy, Hà Nội</p>
                 </div>
                 <div className="mb-3">
                   <p className="mb-1"><strong>Email:</strong></p>
@@ -26,7 +26,7 @@ const ContactPage = () => {
                 </div>
                 <div className="mb-3">
                   <p className="mb-1"><strong>Số điện thoại:</strong></p>
-                  <p>(+84) 28 1234 5678</p>
+                  <p>(+84) 24 6680 5588</p>
                 </div>
                 <div className="mb-3">
                   <p className="mb-1"><strong>Giờ làm việc:</strong></p>

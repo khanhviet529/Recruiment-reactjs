@@ -280,6 +280,21 @@ a:hover {
   border-color: var(--brand);
 }
 
+/* Phan trang cua Ant Design: o dang chon co nen mau thuong hieu nen chu
+   phai la mau trang. Token itemActiveBg chi doi nen, khong doi mau chu. */
+.ant-pagination .ant-pagination-item-active {
+  background-color: var(--brand);
+  border-color: var(--brand);
+}
+.ant-pagination .ant-pagination-item-active a,
+.ant-pagination .ant-pagination-item-active:hover a {
+  color: #fff;
+}
+.ant-pagination .ant-pagination-item-active:hover {
+  background-color: var(--brand-hover);
+  border-color: var(--brand-hover);
+}
+
 .dropdown-item.active,
 .dropdown-item:active {
   background-color: var(--brand);

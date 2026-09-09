@@ -279,11 +279,23 @@ const HomePage = () => {
         // Log the employers response for debugging
         console.log('Employers API Response:', response.data);
         
-        // Process the data to get top employers
+        // LUU Y: bang employers dung truong `companyName`, KHONG co truong
+        // `name`. Truoc day loc bang `employer.name` nen dieu kien luon sai
+        // -> danh sach rong -> muc nay luon hien "Khong co nha tuyen dung".
+        const allJobs = await axios.get('http://localhost:5000/jobs');
+
         const topEmployers = response.data
-          .filter(employer => employer.logo && employer.name) // Ensure employers have logo and name
-          .slice(0, 12); // Take top 12 employers for the carousel
-        
+          .filter(employer => employer.companyName)
+          .map(employer => ({
+            ...employer,
+            // jobs.employerId luu theo users.id
+            openJobs: (allJobs.data || []).filter(
+              j => j.employerId === employer.userId && j.status === 'active'
+            ).length,
+          }))
+          .sort((a, b) => b.openJobs - a.openJobs)
+          .slice(0, 12);
+
         setEmployers(topEmployers);
         setEmployerLoading(false);
       } catch (err) {
@@ -551,7 +563,7 @@ const HomePage = () => {
                       >
                       </div>
                       <div className="employer-info">
-                        <h3 className="employer-name">{employer.name}</h3>
+                        <h3 className="employer-name">{employer.companyName}</h3>
                         <div className="employer-job-count">
                           <Badge count={employer.openJobs || 0} overflowCount={999} style={{ backgroundColor: '#059669' }} />
                           <span className="ml-2">vị trí đang tuyển</span>

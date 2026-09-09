@@ -492,6 +492,8 @@ $option-selected: rgba($primary-color, 0.1); // màu trong suốt 10% của màu
     padding: 15px;
     display: flex;
     align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
     position: relative;
     border-bottom: 1px solid $gray-200;
     
@@ -514,9 +516,11 @@ $option-selected: rgba($primary-color, 0.1); // màu trong suốt 10% của màu
     }
     
     .urgent-badge {
-      position: absolute;
-      top: 15px;
-      left: 75px;
+      /* Truoc day dat absolute o left:75px nen nhan nam lung lo giua the.
+         Nay cho no chay trong luong voi order:-1 -> luon nam ngoai cung
+         ben trai, dung truoc logo, khong phu thuoc vi tri logo. */
+      order: -1;
+      flex-shrink: 0;
       background-color: #e11d48;
       color: white;
       font-size: 12px;
