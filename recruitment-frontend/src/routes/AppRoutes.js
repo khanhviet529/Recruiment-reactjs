@@ -45,7 +45,6 @@ import CandidateDashboardPage from '../pages/candidate/DashboardPage';
 import CandidateProfilePage from '../pages/candidate/ProfilePage';
 import CandidateJobSearchPage from '../pages/candidate/JobSearchPage';
 import CandidateJobDetailPage from '../pages/candidate/JobDetailPage';
-import CandidateApplicationFormPage from '../pages/candidate/ApplicationFormPage';
 import CandidateApplicationsPage from '../pages/candidate/ApplicationsPage';
 import CandidateApplicationDetailPage from '../pages/candidate/ApplicationDetailPage';
 import CVTemplatesPage from '../pages/candidate/CVTemplatesPage';
@@ -178,7 +177,6 @@ const AppRoutes = () => {
         <Route path="profile" element={<CandidateProfilePage />} />
         <Route path="job-search" element={<CandidateJobSearchPage />} />
         <Route path="jobs/:id" element={<CandidateJobDetailPage />} />
-        <Route path="applications/new/:jobId" element={<CandidateApplicationFormPage />} />
         <Route path="applications" element={<CandidateApplicationsPage />} />
         <Route path="applications/:id" element={<CandidateApplicationDetailPage />} />
         <Route path="cv-templates" element={<CVTemplatesPage />} />
